@@ -26,6 +26,7 @@ public class BungeeAPI {
 			Bukkit.getLogger().warning("[NeoCore] Could not send message due to no online players: " + msg);
 			return;
 		}
+		Bukkit.getLogger().info("[NeoCore BC] " + msg);
 		p.sendPluginMessage(NeoCore.inst(), "BungeeCord", out.toByteArray());
 	}
 	
