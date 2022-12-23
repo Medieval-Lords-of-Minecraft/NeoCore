@@ -30,10 +30,12 @@ import me.neoblade298.neocore.events.NeoPluginLoadEvent;
 import me.neoblade298.neocore.exceptions.NeoIOException;
 import me.neoblade298.neocore.info.InfoAPI;
 import me.neoblade298.neocore.instancing.InstanceType;
+import me.neoblade298.neocore.io.DefaultListener;
 import me.neoblade298.neocore.io.FileLoader;
 import me.neoblade298.neocore.io.IOComponent;
 import me.neoblade298.neocore.io.IOManager;
 import me.neoblade298.neocore.io.IOType;
+import me.neoblade298.neocore.io.SkillAPIListener;
 import me.neoblade298.neocore.messaging.MessagingManager;
 import me.neoblade298.neocore.player.*;
 import me.neoblade298.neocore.scheduler.ScheduleInterval;
@@ -94,6 +96,8 @@ public class NeoCore extends JavaPlugin implements Listener {
         
         // playerdata
 		getServer().getPluginManager().registerEvents(new IOManager(connection, properties), this);
+		if (instType == InstanceType.TOWNY) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
+		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
         IOManager.register(this, new PlayerDataManager());
         
         // CoreBar

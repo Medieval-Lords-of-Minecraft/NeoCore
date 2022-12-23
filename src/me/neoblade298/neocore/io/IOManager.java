@@ -23,9 +23,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.sucy.skill.api.event.PlayerLoadCompleteEvent;
-import com.sucy.skill.api.event.PlayerSaveEvent;
-
 import me.neoblade298.neocore.NeoCore;
 import me.neoblade298.neocore.bungee.BungeeAPI;
 import me.neoblade298.neocore.player.PlayerTags;
@@ -93,21 +90,12 @@ public class IOManager implements Listener {
 	public void onKick(PlayerKickEvent e) {
 		save(e.getPlayer());
 	}
-	
-	@EventHandler
-	public void onSAPISave(PlayerSaveEvent e) {
-		save(e.getPlayer());
-	}
 
 	@EventHandler
 	public void onPrejoin(AsyncPlayerPreLoginEvent e) {
 		preload(Bukkit.getOfflinePlayer(e.getUniqueId()));
 	}
 
-	@EventHandler
-	public void onSkillAPILoad(PlayerLoadCompleteEvent e) {
-		load(e.getPlayer());
-	}
 	
 	/* Currently doesn't work as pluginmessage fails if last player logs off (e.g. boss instance)
 	@EventHandler
@@ -128,7 +116,7 @@ public class IOManager implements Listener {
 	}
 	*/
 	
-	private void save(Player p) {
+	protected static void save(Player p) {
 		HashSet<String> disabledKeys = disabledIO.get(IOType.SAVE);
 		if (disabledKeys.contains("*")) {
 			return;
@@ -196,7 +184,7 @@ public class IOManager implements Listener {
 		}.runTaskAsynchronously(NeoCore.inst());
 	}
 	
-	public void autosave(Player p) {
+	protected static void autosave(Player p) {
 		HashSet<String> disabledKeys = disabledIO.get(IOType.AUTOSAVE);
 		if (disabledKeys.contains("*")) {
 			return;
@@ -242,7 +230,7 @@ public class IOManager implements Listener {
 		}.runTaskAsynchronously(NeoCore.inst());
 	}
 	
-	private void preload(OfflinePlayer p) {
+	protected static void preload(OfflinePlayer p) {
 		IOType type = IOType.PRELOAD;
 		HashSet<String> disabledKeys = disabledIO.get(type);
 		if (disabledKeys.contains("*")) {
@@ -279,7 +267,7 @@ public class IOManager implements Listener {
 		}.runTaskAsynchronously(NeoCore.inst());
 	}
 	
-	private void load(Player p) {
+	protected static void load(Player p) {
 		IOType type = IOType.LOAD;
 		HashSet<String> disabledKeys = disabledIO.get(type);
 		if (disabledKeys.contains("*")) {
