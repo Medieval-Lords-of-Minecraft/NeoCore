@@ -141,7 +141,8 @@ public class IOManager implements Listener {
 		
 		BungeeAPI.sendPluginMessage(IO_CHANNEL, new String[] { START_SAVE_ID, uuid.toString(), Long.toString(System.currentTimeMillis()) });
 		isSaving.add(uuid);
-		lastSave.put(uuid, System.currentTimeMillis());
+		long timestamp = System.currentTimeMillis();
+		lastSave.put(uuid, timestamp);
 		IOType type = IOType.SAVE;
 		performingIO.get(type).add(uuid);
 		
@@ -158,18 +159,9 @@ public class IOManager implements Listener {
 						if (!disabledKeys.contains(io.getKey().toUpperCase())) {
 							try {
 								io.savePlayer(p, insert, delete);
-								int deleted = 0, inserted = 0;
-								for (int i : delete.executeBatch()) {
-									deleted += i;
-								}
-								for (int i : insert.executeBatch()) {
-									inserted += i;
-								}
-								if (io instanceof PlayerTags) {
-									Bukkit.getLogger().info("[NeoCore Debug] Inserted " + inserted + " and deleted " + deleted);
-								}
+								int deleted = delete.executeBatch().length, inserted = insert.executeBatch().length;
 								if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " saved player " + uuid + " in " + 
-										(System.currentTimeMillis() - timestamp) + "ms");
+										(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
 							}
 							catch (Exception ex) {
 								Bukkit.getLogger().log(Level.WARNING, "[NeoCore] Failed to handle save for component " + io.getKey() + " for player " + uuid);
@@ -203,7 +195,8 @@ public class IOManager implements Listener {
 			// If saved less than 10 seconds ago, don't save again
 			return;
 		}
-		lastSave.put(uuid, System.currentTimeMillis());
+		long timestamp = System.currentTimeMillis();
+		lastSave.put(uuid, timestamp);
 		IOType type = IOType.AUTOSAVE;
 		performingIO.get(type).add(uuid);
 		
@@ -219,8 +212,9 @@ public class IOManager implements Listener {
 						if (!disabledKeys.contains(io.getKey().toUpperCase())) {
 							try {
 								io.autosavePlayer(p, insert, delete);
-								delete.executeBatch();
-								insert.executeBatch();
+								int deleted = delete.executeBatch().length, inserted = insert.executeBatch().length;
+								if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " autosaved player " + uuid + " in " + 
+										(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
 							}
 							catch (Exception ex) {
 								Bukkit.getLogger().log(Level.WARNING, "[NeoCore] Failed to handle autosave for component " + io.getKey());
