@@ -67,12 +67,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 		// SQL
 		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
 		ConfigurationSection sql = cfg.getConfigurationSection("sql");
-		String connection = "jdbc:mysql://" + sql.getString("host") + ":" + sql.getString("port") + "/" + 
-				sql.getString("db") + sql.getString("flags");
-		Properties properties = new Properties();
-		properties.setProperty("useSSL", "false");
-		properties.setProperty("user",  sql.getString("username"));
-		properties.setProperty("password", sql.getString("password"));
 		
 		// Instance config
 		File instancecfg = new File(this.getDataFolder(), "instance.yml");
@@ -95,7 +89,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	    this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeListener());
         
         // playerdata
-		getServer().getPluginManager().registerEvents(new IOManager(connection, properties), this);
+		getServer().getPluginManager().registerEvents(new IOManager(sql), this);
 		if (instType == InstanceType.TOWNY) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
 		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
         IOManager.register(this, new PlayerDataManager());

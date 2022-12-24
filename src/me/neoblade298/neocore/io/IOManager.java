@@ -14,6 +14,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,7 +31,10 @@ import me.neoblade298.neocore.player.PlayerTags;
 public class IOManager implements Listener {
 	private static final String IO_CHANNEL = "neocore_io", START_SAVE_ID = "startsave", END_SAVE_ID = "endsave";
 	// private static final int SAVE_TIMEOUT = 10000; // Time before we throw out a save start msg and don't count it for performance
-	private static String connection;
+	private static HashMap<String, String> connectionStrings = new HashMap<String, String>();
+	private static HashMap<String, String> pluginToDb = new HashMap<String, String>();
+	private static HashMap<String, String> componentToDb = new HashMap<String, String>();
+	private static String connectionPrefix, connectionSuffix;
 	private static Properties properties;
 	private static HashMap<UUID, Long> lastSave = new HashMap<UUID, Long>();
 	private static HashMap<String, IOComponent> components = new HashMap<String, IOComponent>();
@@ -66,14 +70,19 @@ public class IOManager implements Listener {
 		orderedComponents = new TreeSet<IOComponent>(comp);
 	}
 	
-	public IOManager(String connection, Properties properties) {
+	public IOManager(ConfigurationSection cfg) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		IOManager.connection = connection;
-		IOManager.properties = properties;
+		connectionPrefix = "jdbc:mysql://" + cfg.getString("host") + ":" + cfg.getString("port") + "/"; 
+		connectionSuffix = cfg.getString("flags");
+		Properties properties = new Properties();
+		properties.setProperty("useSSL", "false");
+		properties.setProperty("user",  cfg.getString("username"));
+		properties.setProperty("password", cfg.getString("password"));
+		connectionStrings.put(null, connectionPrefix + cfg.getString("db") + connectionSuffix);
 	}
 	
 	public static void register(JavaPlugin plugin, IOComponent component) {
@@ -135,7 +144,6 @@ public class IOManager implements Listener {
 		lastSave.put(uuid, System.currentTimeMillis());
 		IOType type = IOType.SAVE;
 		performingIO.get(type).add(uuid);
-		long timestamp = System.currentTimeMillis();
 		
 		new BukkitRunnable() {
 			public void run() {
@@ -362,6 +370,10 @@ public class IOManager implements Listener {
 		return null;
 	}
 	
+	public static Statement getStatement(String db) {
+		
+	}
+	
 	public static void disableIO(IOType type, String key) {
 		disabledIO.get(type).add(key.toUpperCase());
 	}
@@ -423,5 +435,11 @@ public class IOManager implements Listener {
 	
 	public static HashMap<IOType, HashSet<String>> getDisabledIO() {
 		return disabledIO;
+	}
+	
+	private String getOrCreateConnection(String db) {
+		String connection = connectionStrings.getOrDefault(db, connectionPrefix + db + connectionSuffix);
+		connectionStrings.put(db, connection);
+		return connection;
 	}
 }
