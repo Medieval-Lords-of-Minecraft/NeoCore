@@ -79,11 +79,11 @@ public class IOManager implements Listener {
 		ConfigurationSection sql = cfg.getConfigurationSection("sql");
 		connectionPrefix = "jdbc:mysql://" + sql.getString("host") + ":" + sql.getString("port") + "/"; 
 		connectionSuffix = sql.getString("flags");
-		Properties properties = new Properties();
+		properties = new Properties();
 		properties.setProperty("useSSL", "false");
-		properties.setProperty("user",  cfg.getString("username"));
-		properties.setProperty("password", cfg.getString("password"));
-		connectionStrings.put(null, connectionPrefix + cfg.getString("db") + connectionSuffix);
+		properties.setProperty("user",  sql.getString("username"));
+		properties.setProperty("password", sql.getString("password"));
+		connectionStrings.put(null, connectionPrefix + sql.getString("db") + connectionSuffix);
 		
 		ConfigurationSection alternates = cfg.getConfigurationSection("db-overrides");
 		if (alternates != null) {

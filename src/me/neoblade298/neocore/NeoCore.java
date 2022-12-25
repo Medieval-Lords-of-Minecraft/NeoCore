@@ -9,7 +9,6 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -61,12 +60,10 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public void onEnable() {
 		inst = this;
-		Bukkit.getServer().getLogger().info("NeoCore Enabled");
 		getServer().getPluginManager().registerEvents(this, this);
 		
-		// SQL
+		// Config
 		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
-		ConfigurationSection sql = cfg.getConfigurationSection("sql");
 		
 		// Instance config
 		File instancecfg = new File(this.getDataFolder(), "instance.yml");
@@ -89,7 +86,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	    this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeListener());
         
         // playerdata
-		getServer().getPluginManager().registerEvents(new IOManager(sql), this);
+		getServer().getPluginManager().registerEvents(new IOManager(cfg), this);
 		if (instType == InstanceType.TOWNY) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
 		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
         IOManager.register(this, new PlayerDataManager(), "PlayerDataManager");
