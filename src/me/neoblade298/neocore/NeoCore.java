@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 
@@ -33,6 +32,7 @@ import me.neoblade298.neocore.instancing.InstanceType;
 import me.neoblade298.neocore.io.DefaultListener;
 import me.neoblade298.neocore.io.FileLoader;
 import me.neoblade298.neocore.io.IOComponent;
+import me.neoblade298.neocore.io.IOComponentWrapper;
 import me.neoblade298.neocore.io.IOManager;
 import me.neoblade298.neocore.io.IOType;
 import me.neoblade298.neocore.io.SkillAPIListener;
@@ -92,7 +92,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents(new IOManager(sql), this);
 		if (instType == InstanceType.TOWNY) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
 		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
-        IOManager.register(this, new PlayerDataManager());
+        IOManager.register(this, new PlayerDataManager(), "PlayerDataManager");
         
         // CoreBar
 		getServer().getPluginManager().registerEvents(new BarAPI(), this);
@@ -126,12 +126,12 @@ public class NeoCore extends JavaPlugin implements Listener {
 			public void run() {
 				new BukkitRunnable() {
 					public void run() {
-						Statement insert = getStatement();
-						Statement delete = getStatement();
-						for (IOComponent component : IOManager.getComponents()) {
+						Statement insert = getDefaultStatement();
+						Statement delete = getDefaultStatement();
+						for (IOComponentWrapper component : IOManager.getComponents()) {
 							for (Player p : Bukkit.getOnlinePlayers()) {
 								try {
-									component.autosavePlayer(p, insert, delete);
+									component.getComponent().autosavePlayer(p, insert, delete);
 								}
 								catch (Exception e) {
 									Bukkit.getLogger().warning("[NeoCore] Failed to autosave player " + p.getName() + " for component " + component.getKey()
@@ -182,8 +182,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdIODisable());
 		mngr.register(new CmdIODisabled());
 		mngr.register(new CmdIOList());
-		mngr.register(new CmdIORemoveSaving());
-		mngr.register(new CmdIOViewSaving());
 	}
 	
 	public static void reload() {
@@ -236,13 +234,24 @@ public class NeoCore extends JavaPlugin implements Listener {
 		return instDisplay;
 	}
 	
-	public static IOComponent registerIOComponent(JavaPlugin plugin, IOComponent component) {
-		IOManager.register(plugin, component);
-		return component;
+	public static IOComponentWrapper registerIOComponent(JavaPlugin plugin, IOComponent component, String key, int priority) {
+		return IOManager.register(plugin, component, key, priority);
 	}
 	
-	public static Statement getStatement() {
-		return IOManager.getStatement();
+	public static IOComponentWrapper registerIOComponent(JavaPlugin plugin, IOComponent component, String key) {
+		return IOManager.register(plugin, component, key, 0);
+	}
+	
+	public static Statement getDefaultStatement() {
+		return IOManager.getDefaultStatement();
+	}
+	
+	public static Statement getStatement(String key) {
+		return IOManager.getStatement(key);
+	}
+	
+	public static Statement getStatement(IOComponentWrapper io) {
+		return IOManager.getStatement(io);
 	}
 	
 	public static void loadFiles(File load, FileLoader loader) throws NeoIOException {
@@ -292,7 +301,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 	
 	public static boolean isSaving(Player p) {
-		return IOManager.isSaving(p);
+		return !IOManager.isPerformingIO(p.getUniqueId(), IOType.SAVE) && !IOManager.isPerformingIO(p.getUniqueId(), IOType.AUTOSAVE);
 	}
 	
 	public static boolean isLoaded(Player p) {

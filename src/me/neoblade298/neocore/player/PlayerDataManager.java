@@ -41,11 +41,6 @@ public class PlayerDataManager implements IOComponent {
 
 	@Override
 	public void cleanup(Statement insert, Statement delete) {}
-
-	@Override
-	public String getKey() {
-		return "PlayerDataManager";
-	}
 	
 	public static PlayerFields getPlayerFields(String key) {
 		return fields.get(key);
