@@ -115,12 +115,33 @@ public class CommandManager implements CommandExecutor {
 		if (cmd.getArgs() != null) {
 			CommandArguments cargs = cmd.getArgs();
 			if (args.length < cargs.getMin()) {
+				String line = "";
+				// Add subcommand name
+				if (cmd.getKey().length() != 0) {
+					line += " " + cmd.getKey();
+				}
+				
+				// Add args
+				if (cmd.getArgOverride() != null) {
+					line += " " + cmd.getArgOverride();
+				}
+				else if (cmd.getArgs() != null) {
+					line += " " + cmd.getArgs().getDisplay();
+				}
+				
+				// Add description
+				if (cmd.getDescription() != null) {
+					line += "§7 - " + cmd.getDescription();
+					s.sendMessage(line);
+				}
 				s.sendMessage("§cThis command requires at least " + cargs.getMin() + " args but received " + args.length + ".");
+				s.sendMessage("§c" + getCommandLine(cmd));
 				return false;
 			}
 			
 			if (args.length > cargs.getMax()) {
 				s.sendMessage("§cThis command requires at most " + cargs.getMax() + " args but received " + args.length + ".");
+				s.sendMessage("§c" + getCommandLine(cmd));
 				return false;
 			}
 		}
@@ -158,5 +179,28 @@ public class CommandManager implements CommandExecutor {
 	
 	public Set<String> getKeys() {
 		return handlers.keySet();
+	}
+	
+	public String getCommandLine(Subcommand sc) {
+		String line = sc.getColor() + "/" + base;
+		
+		// Add subcommand name
+		if (sc.getKey().length() != 0) {
+			line += " " + sc.getKey();
+		}
+		
+		// Add args
+		if (sc.getArgOverride() != null) {
+			line += " " + sc.getArgOverride();
+		}
+		else if (sc.getArgs() != null) {
+			line += " " + sc.getArgs().getDisplay();
+		}
+		
+		// Add description
+		if (sc.getDescription() != null) {
+			line += "§7 - " + sc.getDescription();
+		}
+		return line;
 	}
 }
