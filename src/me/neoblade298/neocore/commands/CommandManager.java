@@ -182,7 +182,7 @@ public class CommandManager implements CommandExecutor {
 	}
 	
 	public String getCommandLine(Subcommand sc) {
-		String line = sc.getColor() + "/" + base;
+		String line = (sc.getColor() == null ? "" : sc.getColor()) + "/" + base;
 		
 		// Add subcommand name
 		if (sc.getKey().length() != 0) {
