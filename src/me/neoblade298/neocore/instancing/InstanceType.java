@@ -5,5 +5,7 @@ public enum InstanceType {
 	QUESTS,
 	DEV,
 	SESSIONS,
+	HUB,
+	CREATIVE,
 	OTHER;
 }
