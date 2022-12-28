@@ -10,10 +10,12 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,21 +26,23 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.NeoCore;
-import me.neoblade298.neocore.bungee.BungeeAPI;
-import me.neoblade298.neocore.player.PlayerTags;
 
 public class IOManager implements Listener {
-	private static final String IO_CHANNEL = "neocore_io", START_SAVE_ID = "startsave", END_SAVE_ID = "endsave";
-	// private static final int SAVE_TIMEOUT = 10000; // Time before we throw out a save start msg and don't count it for performance
-	private static String connection;
-	private static Properties properties;
 	private static HashMap<UUID, Long> lastSave = new HashMap<UUID, Long>();
-	private static HashMap<String, IOComponent> components = new HashMap<String, IOComponent>();
-	private static TreeSet<IOComponent> orderedComponents;
+	
+	// SQL
+	private static HashMap<String, String> connectionStrings = new HashMap<String, String>();
+	private static HashMap<String, String> pluginDbs = new HashMap<String, String>();
+	private static HashMap<String, String> componentDbs = new HashMap<String, String>();
+	private static String connectionPrefix, connectionSuffix;
+	private static Properties properties;
+	
+	
+	private static HashMap<String, IOComponentWrapper> components = new HashMap<String, IOComponentWrapper>();
+	private static TreeSet<IOComponentWrapper> orderedComponents;
 	private static HashMap<IOType, HashSet<String>> disabledIO = new HashMap<IOType, HashSet<String>>();
 	private static HashMap<IOType, HashSet<UUID>> performingIO = new HashMap<IOType, HashSet<UUID>>();
 	private static HashMap<IOType, HashMap<UUID, ArrayList<PostIOTask>>> postIORunnables = new HashMap<IOType, HashMap<UUID, ArrayList<PostIOTask>>>();
-	private static HashSet<UUID> isSaving = new HashSet<UUID>();
 	private static boolean debug = false;
 	
 	static {
@@ -49,9 +53,9 @@ public class IOManager implements Listener {
 		}
 		
 
-		Comparator<IOComponent> comp = new Comparator<IOComponent>() {
+		Comparator<IOComponentWrapper> comp = new Comparator<IOComponentWrapper>() {
 			@Override
-			public int compare(IOComponent i1, IOComponent i2) {
+			public int compare(IOComponentWrapper i1, IOComponentWrapper i2) {
 				if (i1.getPriority() > i2.getPriority()) {
 					return -1;
 				}
@@ -63,22 +67,64 @@ public class IOManager implements Listener {
 				}
 			}
 		};
-		orderedComponents = new TreeSet<IOComponent>(comp);
+		orderedComponents = new TreeSet<IOComponentWrapper>(comp);
 	}
 	
-	public IOManager(String connection, Properties properties) {
+	public IOManager(ConfigurationSection cfg) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		IOManager.connection = connection;
-		IOManager.properties = properties;
+		ConfigurationSection sql = cfg.getConfigurationSection("sql");
+		connectionPrefix = "jdbc:mysql://" + sql.getString("host") + ":" + sql.getString("port") + "/"; 
+		connectionSuffix = sql.getString("flags");
+		properties = new Properties();
+		properties.setProperty("useSSL", "false");
+		properties.setProperty("user",  sql.getString("username"));
+		properties.setProperty("password", sql.getString("password"));
+		connectionStrings.put(null, connectionPrefix + sql.getString("db") + connectionSuffix);
+		
+		ConfigurationSection alternates = cfg.getConfigurationSection("db-overrides");
+		if (alternates != null) {
+			ConfigurationSection perPlugin = alternates.getConfigurationSection("per-plugin");
+			if (perPlugin != null) {
+				for (String plugin : perPlugin.getKeys(false)) {
+					String db = perPlugin.getString(plugin);
+					pluginDbs.put(plugin.toUpperCase(), db);
+					connectionStrings.putIfAbsent(db, connectionPrefix + db + connectionSuffix);
+				}
+			}
+
+			ConfigurationSection perComponent = alternates.getConfigurationSection("per-component");
+			if (perComponent != null) {
+				for (String comp : perComponent.getKeys(false)) {
+					String db = perComponent.getString(comp);
+					componentDbs.put(comp.toUpperCase(), db);
+					connectionStrings.putIfAbsent(db, connectionPrefix + db + connectionSuffix);
+				}
+			}
+		}
+	}
+
+	public static IOComponentWrapper register(JavaPlugin plugin, IOComponent component, String key) {
+		return register(plugin, component, key, 0);
 	}
 	
-	public static void register(JavaPlugin plugin, IOComponent component) {
-		components.put(plugin.getName() + "-" + component.getKey(), component);
-		orderedComponents.add(component);
+	public static IOComponentWrapper register(JavaPlugin plugin, IOComponent component, String key, int priority) {
+		IOComponentWrapper io = new IOComponentWrapper(component, key, 0, plugin);
+		components.put(key, io);
+		
+		// Check for component and plugin io overrides
+		if (componentDbs.containsKey(key.toUpperCase())) {
+			io.setDatabase(componentDbs.get(key.toUpperCase()));
+		}
+		else if (pluginDbs.containsKey(plugin.getName().toUpperCase())) {
+			io.setDatabase(pluginDbs.get(plugin.getName().toUpperCase()));
+			
+		}
+		orderedComponents.add(io);
+		return io;
 	}
 	
 	@EventHandler
@@ -95,26 +141,6 @@ public class IOManager implements Listener {
 	public void onPrejoin(AsyncPlayerPreLoginEvent e) {
 		preload(Bukkit.getOfflinePlayer(e.getUniqueId()));
 	}
-
-	
-	/* Currently doesn't work as pluginmessage fails if last player logs off (e.g. boss instance)
-	@EventHandler
-	public void onPluginMessage(PluginMessageEvent e) {
-		if (!e.getChannel().equals(IO_CHANNEL)) return;
-
-		ArrayList<String> msgs = e.getMessages();
-		long timestamp = Long.parseLong(msgs.get(2));
-		if (timestamp + SAVE_TIMEOUT < System.currentTimeMillis()) return;
-		UUID uuid = UUID.fromString(msgs.get(1));
-		
-		if (msgs.get(0).equals(START_SAVE_ID)) {
-			isSaving.add(uuid);
-		}
-		else if (msgs.get(0).equals(END_SAVE_ID)) {
-			isSaving.remove(uuid);
-		}
-	}
-	*/
 	
 	protected static void save(Player p) {
 		HashSet<String> disabledKeys = disabledIO.get(IOType.SAVE);
@@ -123,45 +149,40 @@ public class IOManager implements Listener {
 		}
 		
 		UUID uuid = p.getUniqueId();
-		// If somehow the person is already saving, don't try saving again
-		if (isSaving.contains(uuid)) return;
 		if (lastSave.getOrDefault(uuid, 0L) + 10000 >= System.currentTimeMillis()) {
 			// If saved less than 10 seconds ago, don't save again
 			return;
 		}
 		
-		BungeeAPI.sendPluginMessage(IO_CHANNEL, new String[] { START_SAVE_ID, uuid.toString(), Long.toString(System.currentTimeMillis()) });
-		isSaving.add(uuid);
-		lastSave.put(uuid, System.currentTimeMillis());
+		long timestamp = System.currentTimeMillis();
+		lastSave.put(uuid, timestamp);
 		IOType type = IOType.SAVE;
 		performingIO.get(type).add(uuid);
-		long timestamp = System.currentTimeMillis();
 		
 		new BukkitRunnable() {
 			public void run() {
 				try {
-					Connection con = DriverManager.getConnection(connection, properties);
-					Statement insert = con.createStatement();
-					Statement delete = con.createStatement();
+					// Set up statements per db
+					HashMap<String, Statement> inserts = new HashMap<String, Statement>();
+					HashMap<String, Statement> deletes = new HashMap<String, Statement>();
+					for (Entry<String, String> e : connectionStrings.entrySet()) {
+						Connection con = DriverManager.getConnection(e.getValue(), properties);
+						inserts.put(e.getKey(), con.createStatement());
+						deletes.put(e.getKey(), con.createStatement());
+					}
 
 					// Save account
 					long timestamp = System.currentTimeMillis();
-					for (IOComponent io : orderedComponents) {
+					for (IOComponentWrapper io : orderedComponents) {
 						if (!disabledKeys.contains(io.getKey().toUpperCase())) {
 							try {
-								io.savePlayer(p, insert, delete);
-								int deleted = 0, inserted = 0;
-								for (int i : delete.executeBatch()) {
-									deleted += i;
-								}
-								for (int i : insert.executeBatch()) {
-									inserted += i;
-								}
-								if (io instanceof PlayerTags) {
-									Bukkit.getLogger().info("[NeoCore Debug] Inserted " + inserted + " and deleted " + deleted);
-								}
+								Statement insert = inserts.getOrDefault(io.getDatabase(), inserts.get(null));
+								Statement delete = deletes.getOrDefault(io.getDatabase(), deletes.get(null));
+								
+								io.getComponent().savePlayer(p, insert, delete);
+								int deleted = delete.executeBatch().length, inserted = insert.executeBatch().length;
 								if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " saved player " + uuid + " in " + 
-										(System.currentTimeMillis() - timestamp) + "ms");
+										(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
 							}
 							catch (Exception ex) {
 								Bukkit.getLogger().log(Level.WARNING, "[NeoCore] Failed to handle save for component " + io.getKey() + " for player " + uuid);
@@ -175,44 +196,58 @@ public class IOManager implements Listener {
 				}
 				finally {
 					endIOTask(type, uuid);
-					BungeeAPI.sendPluginMessage(IO_CHANNEL, new String[] { END_SAVE_ID, uuid.toString(), Long.toString(System.currentTimeMillis()) });
 					Bukkit.getLogger().info("[NeoCore] Finished saving player " + uuid + ", took " + (System.currentTimeMillis() - timestamp) + "ms");
 					if (debug) Bukkit.getLogger().info("[NeoCore Debug] Finished saving at time " + System.currentTimeMillis());
-					isSaving.remove(uuid);
 				}
 			}
 		}.runTaskAsynchronously(NeoCore.inst());
 	}
 	
-	protected static void autosave(Player p) {
-		HashSet<String> disabledKeys = disabledIO.get(IOType.AUTOSAVE);
+	public static void autosave() {
+		IOType type = IOType.AUTOSAVE;
+		HashSet<String> disabledKeys = disabledIO.get(type);
 		if (disabledKeys.contains("*")) {
 			return;
 		}
 		
-		UUID uuid = p.getUniqueId();
-		if (lastSave.getOrDefault(uuid, 0L) + 10000 >= System.currentTimeMillis()) {
-			// If saved less than 10 seconds ago, don't save again
-			return;
+		long timestamp = System.currentTimeMillis();
+		
+		ArrayList<Player> toSave = new ArrayList<Player>();
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			UUID uuid = p.getUniqueId();
+			if (lastSave.getOrDefault(uuid, 0L) + 10000 >= System.currentTimeMillis()) {
+				// If saved less than 10 seconds ago, don't save again
+				continue;
+			}
+			lastSave.put(uuid, timestamp);
+			performingIO.get(type).add(uuid);
+			toSave.add(p);
 		}
-		lastSave.put(uuid, System.currentTimeMillis());
-		IOType type = IOType.AUTOSAVE;
-		performingIO.get(type).add(uuid);
 		
 		new BukkitRunnable() {
 			public void run() {
 				try {
-					Connection con = DriverManager.getConnection(connection, properties);
-					Statement insert = con.createStatement();
-					Statement delete = con.createStatement();
+					// Set up statements per db
+					HashMap<String, Statement> inserts = new HashMap<String, Statement>();
+					HashMap<String, Statement> deletes = new HashMap<String, Statement>();
+					for (Entry<String, String> e : connectionStrings.entrySet()) {
+						Connection con = DriverManager.getConnection(e.getValue(), properties);
+						inserts.put(e.getKey(), con.createStatement());
+						deletes.put(e.getKey(), con.createStatement());
+					}
 
 					// Save account
-					for (IOComponent io : orderedComponents) {
+					for (IOComponentWrapper io : orderedComponents) {
 						if (!disabledKeys.contains(io.getKey().toUpperCase())) {
 							try {
-								io.autosavePlayer(p, insert, delete);
-								delete.executeBatch();
-								insert.executeBatch();
+								Statement insert = inserts.getOrDefault(io.getDatabase(), inserts.get(null));
+								Statement delete = deletes.getOrDefault(io.getDatabase(), deletes.get(null));
+								for (Player p : toSave) {
+									io.getComponent().autosavePlayer(p, insert, delete);
+								}
+								int deleted = delete.executeBatch().length, inserted = insert.executeBatch().length;
+								if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " autosaved players in " + 
+										(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
 							}
 							catch (Exception ex) {
 								Bukkit.getLogger().log(Level.WARNING, "[NeoCore] Failed to handle autosave for component " + io.getKey());
@@ -224,7 +259,9 @@ public class IOManager implements Listener {
 					ex.printStackTrace();
 				}
 				finally {
-					endIOTask(type, p.getUniqueId());
+					for (Player p : toSave) {
+						endIOTask(type, p.getUniqueId());
+					}
 				}
 			}
 		}.runTaskAsynchronously(NeoCore.inst());
@@ -241,14 +278,19 @@ public class IOManager implements Listener {
 		new BukkitRunnable() {
 			public void run() {
 				try {
-					Connection con = DriverManager.getConnection(connection, properties);
-					Statement stmt = con.createStatement();
+					// Set up statements per db
+					HashMap<String, Statement> stmts = new HashMap<String, Statement>();
+					for (Entry<String, String> e : connectionStrings.entrySet()) {
+						Connection con = DriverManager.getConnection(e.getValue(), properties);
+						stmts.put(e.getKey(), con.createStatement());
+					}
 
 					// Save account
-					for (IOComponent io : orderedComponents) {
+					for (IOComponentWrapper io : orderedComponents) {
 						if (!disabledKeys.contains(io.getKey().toUpperCase())) {
 							try {
-								io.preloadPlayer(p, stmt);
+								Statement stmt = stmts.getOrDefault(io.getDatabase(), stmts.get(null));
+								io.getComponent().preloadPlayer(p, stmt);
 								stmt.executeBatch();
 							}
 							catch (Exception ex) {
@@ -279,25 +321,28 @@ public class IOManager implements Listener {
 			int count = 0;
 			public void run() {
 				try {
-					if (isSaving.contains(p.getUniqueId())) {
-						Bukkit.getLogger().warning("[NeoCore] Player " + p.getName() + " is still saving, skipping attempt " + count);
-						return;
-					}
 					if (++count > 5) {
 						this.cancel();
 						endIOTask(type, p.getUniqueId());
 						Bukkit.getLogger().warning("[NeoCore] Failed to load player " + p.getName());
 						return;
 					}
-					Connection con = DriverManager.getConnection(connection, properties);
-					Statement stmt = con.createStatement();
-					if (debug) Bukkit.getLogger().info("[NeoCore Debug] Began loading at time " + System.currentTimeMillis());
+
+					// Set up statements per db
+					HashMap<String, Statement> stmts = new HashMap<String, Statement>();
+					for (Entry<String, String> e : connectionStrings.entrySet()) {
+						Connection con = DriverManager.getConnection(e.getValue(), properties);
+						stmts.put(e.getKey(), con.createStatement());
+					}
+					
 
 					// Save account
-					for (IOComponent io : orderedComponents) {
+					if (debug) Bukkit.getLogger().info("[NeoCore Debug] Began loading at time " + System.currentTimeMillis());
+					for (IOComponentWrapper io : orderedComponents) {
 						if (!disabledKeys.contains(io.getKey().toUpperCase())) {
 							try {
-								io.loadPlayer(p, stmt);
+								Statement stmt = stmts.getOrDefault(io.getDatabase(), stmts.get(null));
+								io.getComponent().loadPlayer(p, stmt);
 								stmt.executeBatch();
 							}
 							catch (Exception ex) {
@@ -325,18 +370,27 @@ public class IOManager implements Listener {
 		}
 		
 		try {
-			Connection con = DriverManager.getConnection(connection, properties);
-			Statement insert = con.createStatement();
-			Statement delete = con.createStatement();
+			// Set up statements per db
+			long timestamp = System.currentTimeMillis();
+			HashMap<String, Statement> inserts = new HashMap<String, Statement>();
+			HashMap<String, Statement> deletes = new HashMap<String, Statement>();
+			for (Entry<String, String> e : connectionStrings.entrySet()) {
+				Connection con = DriverManager.getConnection(e.getValue(), properties);
+				inserts.put(e.getKey(), con.createStatement());
+				deletes.put(e.getKey(), con.createStatement());
+			}
 			
 			// Any final cleanup
-			for (IOComponent io : orderedComponents) {
+			for (IOComponentWrapper io : orderedComponents) {
 				if (!disabledKeys.contains(io.getKey().toUpperCase())) {
 					try {
 						Bukkit.getLogger().info("[NeoCore] Cleaning up component " + io.getKey());
-						io.cleanup(insert, delete);
-						delete.executeBatch();
-						insert.executeBatch();
+						Statement insert = inserts.getOrDefault(io.getDatabase(), inserts.get(null));
+						Statement delete = deletes.getOrDefault(io.getDatabase(), deletes.get(null));
+						io.getComponent().cleanup(insert, delete);
+						int deleted = delete.executeBatch().length, inserted = insert.executeBatch().length;
+						if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " handled cleanup in " + 
+								(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
 					}
 					catch (Exception ex) {
 						Bukkit.getLogger().log(Level.WARNING, "[NeoCore] Failed to handle cleanup for component " + io.getKey());
@@ -352,10 +406,29 @@ public class IOManager implements Listener {
 		}
 	}
 	
-	public static Statement getStatement() {
+	public static Statement getStatement(String key) {
 		try {
-			Connection con = DriverManager.getConnection(connection, properties);
-			return con.createStatement();
+			String connectionString = components.containsKey(key) ?
+					connectionStrings.get(components.get(key).getDatabase()) : connectionStrings.get(null);
+			return DriverManager.getConnection(connectionString, properties).createStatement();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static Statement getStatement(IOComponentWrapper io) {
+		try {
+			return DriverManager.getConnection(connectionStrings.getOrDefault(io.getDatabase(), connectionStrings.get(null)), properties).createStatement();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static Statement getDefaultStatement() {
+		try {
+			return DriverManager.getConnection(connectionStrings.get(null), properties).createStatement();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -403,17 +476,8 @@ public class IOManager implements Listener {
 		}
 	}
 	
-	public static TreeSet<IOComponent> getComponents() {
+	public static TreeSet<IOComponentWrapper> getComponents() {
 		return orderedComponents;
-	}
-	
-	// Applies to cross-server saves, unlike isPerformingIO. Use to make sure you load AFTER save is complete
-	public static boolean isSaving(Player p) {
-		return isSaving.contains(p.getUniqueId());
-	}
-	
-	public static HashSet<UUID> getSavingUsers() {
-		return isSaving;
 	}
 	
 	public static boolean toggleDebug() {
