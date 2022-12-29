@@ -39,6 +39,7 @@ public class BungeeListener implements PluginMessageListener, Listener {
 		short len = in.readShort();
 		byte[] msgbytes = new byte[len];
 
+		in.readFully(msgbytes);
 		DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
 		ArrayList<String> msgs = new ArrayList<String>();
 		
