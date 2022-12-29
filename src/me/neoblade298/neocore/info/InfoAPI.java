@@ -3,6 +3,8 @@ package me.neoblade298.neocore.info;
 import java.io.File;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
+
 import me.neoblade298.neocore.NeoCore;
 import me.neoblade298.neocore.exceptions.NeoIOException;
 import me.neoblade298.neocore.io.FileLoader;
@@ -13,6 +15,7 @@ public class InfoAPI {
 	
 	static {
 		bossLoader = (cfg, file) -> {
+			if (!Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) return;
 			for (String key : cfg.getKeys(false)) {
 				BossInfo bi = new BossInfo(cfg.getConfigurationSection(key));
 				bossInfo.put(bi.getKey(), bi);

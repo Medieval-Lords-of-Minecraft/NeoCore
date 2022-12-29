@@ -82,8 +82,11 @@ public class NeoCore extends JavaPlugin implements Listener {
         initCommands();
         
         // Bungeecord
+        BungeeListener bl = new BungeeListener();
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-	    this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeListener());
+	    this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", bl);
+        getServer().getMessenger().registerIncomingPluginChannel( this, "neocore:bungee", bl); 
+        getServer().getPluginManager().registerEvents(bl, this);
         
         // playerdata
 		getServer().getPluginManager().registerEvents(new IOManager(cfg), this);
@@ -249,6 +252,10 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public static Statement getStatement(IOComponentWrapper io) {
 		return IOManager.getStatement(io);
+	}
+	
+	public static Statement getPluginStatement(String key) {
+		return IOManager.getPluginStatement(key);
 	}
 	
 	public static void loadFiles(File load, FileLoader loader) throws NeoIOException {
