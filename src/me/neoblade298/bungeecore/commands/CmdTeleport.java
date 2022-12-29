@@ -47,8 +47,10 @@ public class CmdTeleport extends Command {
 	
 	private void sendTeleportMsg(ProxiedPlayer src, ProxiedPlayer trg) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF("neocore-tp");
 		out.writeUTF(src.getUniqueId().toString());
 		out.writeUTF(trg.getUniqueId().toString());
-		trg.getServer().getInfo().sendData("neocore-tp", out.toByteArray());
+		trg.getServer().getInfo().sendData("neocore:bungee", out.toByteArray());
+		ProxyServer.getInstance().getLogger().info("Sent msg to " + trg.getServer().getInfo() + ", byte array length " + out.toByteArray().length);
 	}
 }

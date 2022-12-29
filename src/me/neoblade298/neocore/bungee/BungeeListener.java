@@ -10,13 +10,20 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
+import me.neoblade298.neocore.NeoCore;
+
 public class BungeeListener implements PluginMessageListener {
 	@Override
 	public void onPluginMessageReceived(String channel, Player p, byte[] msg) {
+		if (channel.equals("neocore:bungee")) {
+			readBungeeCoreMessage(msg);
+			return;
+		}
 		if (!channel.equals("BungeeCord")) {
 			return;
 		}
@@ -26,7 +33,6 @@ public class BungeeListener implements PluginMessageListener {
 		
 		short len = in.readShort();
 		byte[] msgbytes = new byte[len];
-		in.readFully(msgbytes);
 
 		DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
 		ArrayList<String> msgs = new ArrayList<String>();
@@ -42,22 +48,26 @@ public class BungeeListener implements PluginMessageListener {
 				e.printStackTrace();
 			}
 		}
-		Bukkit.getLogger().info("Read message " + subchannel + " " + msg);
 		
 		// Pre-read plugin message for any neocore messages, return true if the message was handled
-		if (!readPluginMessage(subchannel, msgs)) {
-			Bukkit.getPluginManager().callEvent(new PluginMessageEvent(subchannel, msgs));
-		}
+		Bukkit.getPluginManager().callEvent(new PluginMessageEvent(subchannel, msgs));
 	}
 	
-	private boolean readPluginMessage(String subchannel, ArrayList<String> msgs) {
+	private boolean readBungeeCoreMessage(byte[] msg) {
+		ByteArrayDataInput in = ByteStreams.newDataInput(msg);
+		System.out.println("Read bungeecore msg");
+		String subchannel = in.readUTF();
 		if (subchannel.equals("neocore-tp")) {
-			UUID src = UUID.fromString(msgs.get(0));
-			UUID trg = UUID.fromString(msgs.get(1));
-			Player playerSrc = Bukkit.getPlayer(src);
-			Player playerTrg = Bukkit.getPlayer(trg);
 			
-			playerSrc.teleport(playerTrg);
+			new BukkitRunnable() {
+				public void run() {
+					UUID src = UUID.fromString(in.readUTF());
+					UUID trg = UUID.fromString(in.readUTF());
+					Player playerSrc = Bukkit.getPlayer(src);
+					Player playerTrg = Bukkit.getPlayer(trg);
+					playerSrc.teleport(playerTrg);
+				}
+			}.runTaskLater(NeoCore.inst(), 40L);
 			return true;
 		}
 		return false;

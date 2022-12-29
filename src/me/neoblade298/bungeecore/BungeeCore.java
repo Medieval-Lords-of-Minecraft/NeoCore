@@ -8,6 +8,7 @@ public class BungeeCore extends Plugin
 {
     @Override
     public void onEnable() {
-        ProxyServer.getInstance().getPluginManager().registerCommand(this, new CmdTeleport());
+        getProxy().getPluginManager().registerCommand(this, new CmdTeleport());
+        getProxy().registerChannel("neocore:bungee");
     }
 }

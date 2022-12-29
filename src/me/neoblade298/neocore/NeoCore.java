@@ -82,8 +82,10 @@ public class NeoCore extends JavaPlugin implements Listener {
         initCommands();
         
         // Bungeecord
+        BungeeListener bl = new BungeeListener();
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-	    this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeListener());
+	    this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", bl);
+        getServer().getMessenger().registerIncomingPluginChannel( this, "neocore:bungee", bl); 
         
         // playerdata
 		getServer().getPluginManager().registerEvents(new IOManager(cfg), this);
