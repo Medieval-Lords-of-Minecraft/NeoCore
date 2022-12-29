@@ -38,23 +38,23 @@ public class MessagingManager {
 		NeoCore.loadFiles(new File(NeoCore.inst().getDataFolder(), "messages"), msgLoader);
 	}
 	
-	public static void sendMessage(CommandSender s, String key) {
-		sendMessage(s, key, 1);
+	public static void sendMessage(CommandSender s, CommandSender recipient, String key) {
+		sendMessage(s, recipient, key, 1);
 	}
 	
-	public static void sendMessage(CommandSender s, String key, int page) {
+	public static void sendMessage(CommandSender s, CommandSender recipient, String key, int page) {
 		page--;
 		if (messages.containsKey(key.toUpperCase())) {
 			BaseComponent[][] msgs = messages.get(key.toUpperCase());
 			if (msgs.length <= page) {
-				Util.msg(s, "&cThis doesn't have " + page + " pages!");
+				Util.msg(recipient, "&cThis doesn't have " + page + " pages!");
 				return;
 			}
 			
 			s.spigot().sendMessage(msgs[page]);
 		}
 		else {
-			Util.msg(s, "&cMessage " + key + " doesn't exist!");
+			Util.msg(recipient, "&cMessage " + key + " doesn't exist!");
 			Bukkit.getLogger().warning("[NeoCore] Failed to send message to " + s.getName() + ", key doesn't exist: " + key);
 		}
 	}

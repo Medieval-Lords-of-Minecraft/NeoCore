@@ -60,11 +60,11 @@ public class CmdCoreSendMessage implements Subcommand {
 	}
 	
 	public static void parseAndRun(CommandSender s, CommandSender recipient, String key) {
-		MessagingManager.sendMessage(s, key);
+		MessagingManager.sendMessage(s, recipient, key);
 	}
 	
 	public static void parseAndRun(CommandSender s, CommandSender recipient, String key, int page) {
-		MessagingManager.sendMessage(s, key, page);
+		MessagingManager.sendMessage(s, recipient, key, page);
 		if (s != recipient) {
 			Util.msg(s, "&7Successfully sent message");
 		}
