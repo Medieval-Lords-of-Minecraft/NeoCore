@@ -26,15 +26,6 @@
     </plugins>
   </build>
   
-  <profiles>
-    <profile>
-        <id>Neoblade298</id>
-        <build>
-            <directory>../../Downloads</directory>
-        </build>
-    </profile>
-	</profiles>
-  
   <repositories>
     <repository>
         <id>bungeecord-repo</id>

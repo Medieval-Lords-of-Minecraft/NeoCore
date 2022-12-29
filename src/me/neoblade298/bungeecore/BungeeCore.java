@@ -1,17 +1,13 @@
 package me.neoblade298.bungeecore;
 
-import java.util.HashMap;
-import java.util.UUID;
-
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import me.neoblade298.bungeecore.commands.*;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class BungeeCore extends Plugin
 {
     @Override
     public void onEnable() {
-        // You should not put an enable message in your plugin.
-        // BungeeCord already does so
-        getLogger().info("Yay! It loads!");
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new CmdTeleport());
     }
 }
