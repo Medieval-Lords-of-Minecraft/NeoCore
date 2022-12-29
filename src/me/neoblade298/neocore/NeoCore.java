@@ -254,6 +254,10 @@ public class NeoCore extends JavaPlugin implements Listener {
 		return IOManager.getStatement(io);
 	}
 	
+	public static Statement getPluginStatement(String key) {
+		return IOManager.getPluginStatement(key);
+	}
+	
 	public static void loadFiles(File load, FileLoader loader) throws NeoIOException {
 		if (!load.exists()) {
 			Bukkit.getLogger().warning("[NeoCore] Failed to load file " + load.getPath() + ", file doesn't exist");

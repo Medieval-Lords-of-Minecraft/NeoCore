@@ -2,6 +2,7 @@ package me.neoblade298.neocore.io;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -121,7 +122,6 @@ public class IOManager implements Listener {
 		}
 		else if (pluginDbs.containsKey(plugin.getName().toUpperCase())) {
 			io.setDatabase(pluginDbs.get(plugin.getName().toUpperCase()));
-			
 		}
 		orderedComponents.add(io);
 		return io;
@@ -422,6 +422,17 @@ public class IOManager implements Listener {
 			return DriverManager.getConnection(connectionStrings.getOrDefault(io.getDatabase(), connectionStrings.get(null)), properties).createStatement();
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static Statement getPluginStatement(String key) {
+		String pluginDb = pluginDbs.get(key);
+		try {
+			return DriverManager.getConnection(connectionStrings.getOrDefault(pluginDb, connectionStrings.get(null)), properties).createStatement();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return null;
 	}
