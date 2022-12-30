@@ -38,19 +38,19 @@ public class BungeeAPI {
 		p.sendPluginMessage(NeoCore.inst(), "BungeeCord", out.toByteArray());
 	}
 	
-	public static void sendPluginMessage(String channel, String... msgs) {
+	public static void sendPluginMessage(String channel, String[] msgs) {
 		sendPluginMessage("ALL", Iterables.getFirst(Bukkit.getOnlinePlayers(), null), channel, msgs);
 	}
 	
-	public static void sendPluginMessage(String server, String channel, String... msgs) {
+	public static void sendPluginMessage(String server, String channel, String[] msgs) {
 		sendPluginMessage(server, Iterables.getFirst(Bukkit.getOnlinePlayers(), null), channel, msgs);
 	}
 	
-	public static void sendPluginMessage(Player p, String channel, String... msgs) {
+	public static void sendPluginMessage(Player p, String channel, String[] msgs) {
 		sendPluginMessage("ALL", p, channel, msgs);
 	}
 	
-	public static void sendPluginMessage(String server, Player p, String channel, String... msgs) {
+	public static void sendPluginMessage(String server, Player p, String channel, String[] msgs) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("Forward");
 		out.writeUTF(server);
