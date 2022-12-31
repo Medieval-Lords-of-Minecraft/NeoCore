@@ -14,12 +14,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
-
-import me.neoblade298.neocore.NeoCore;
 
 public class BungeeListener implements PluginMessageListener, Listener {
 	private static HashMap<UUID, UUID> tpCallbacks = new HashMap<UUID, UUID>();
