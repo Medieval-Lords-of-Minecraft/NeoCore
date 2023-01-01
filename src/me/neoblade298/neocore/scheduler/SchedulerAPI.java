@@ -18,7 +18,7 @@ import me.neoblade298.neocore.util.Util;
 
 public class SchedulerAPI {
 	private static final int DAYS_AVAILABLE_IN_SCHEDULER = 3;
-	private static final int startupTime = getDateKey(Calendar.getInstance());
+	private static final Calendar startupTime = Calendar.getInstance();
 	private static ArrayList<HashMap<Integer, ArrayList<CoreRunnable>>> schedule = new ArrayList<HashMap<Integer, ArrayList<CoreRunnable>>>(3);
 	private static HashMap<ScheduleInterval, ArrayList<CoreRunnable>> repeaters = new HashMap<ScheduleInterval, ArrayList<CoreRunnable>>();
 	
@@ -49,7 +49,7 @@ public class SchedulerAPI {
 	
 	private static void runScheduledItems() {
 		Calendar inst = Calendar.getInstance();
-		int diff = getDateKey(inst) - startupTime;
+		int diff = getDaysFromStartup(inst);
 		int hour = inst.get(Calendar.HOUR_OF_DAY);
 		int minute = inst.get(Calendar.MINUTE);
 		minute -= minute % 15;
@@ -99,7 +99,7 @@ public class SchedulerAPI {
 	}
 	
 	private static CoreRunnable schedule(String key, int date, int hour, int minute, int second, Runnable runnable) {
-		int diff = date - startupTime;
+		int diff = getDaysFromStartup(date);
 		if (diff >= 0 && diff <= 2) {
 			int scheduledMinute = minute - (minute % 15); // Round to previous 15
 			int offset = ((minute % 15) * 60) + second; // Offset is number of seconds after the scheduled 15 minute interval
@@ -288,7 +288,7 @@ public class SchedulerAPI {
 	}
 	
 	public static void display(CommandSender s) {
-		int diff = getDateKey(Calendar.getInstance()) - startupTime;
+		int diff = getDaysFromStartup(Calendar.getInstance());
 		
 		Util.msg(s, "&6-- Scheduled Runnables --");
 		for (Entry<Integer, ArrayList<CoreRunnable>> e : schedule.get(diff).entrySet()) {
@@ -333,5 +333,17 @@ public class SchedulerAPI {
 			}
 			Util.msg(s, msg);
 		}
+	}
+	
+	public static int getDaysFromStartup(Calendar inst) {
+		return (int) Duration.between(startupTime.toInstant(), inst.toInstant()).toDays();
+	}
+	
+	public static int getDaysFromStartup(int dateKey) {
+		Calendar date = Calendar.getInstance();
+		date.set(Calendar.YEAR, dateKey / 10000);
+		date.set(Calendar.MONTH, (dateKey % 10000) / 100);
+		date.set(Calendar.DAY_OF_MONTH, dateKey % 10);
+		return getDaysFromStartup(date);
 	}
 }

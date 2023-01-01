@@ -6,8 +6,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 
-import me.ShanaChans.LordTags.TagManager;
-
 public abstract class CoreInventory {
 	private Inventory inv;
 	private Player p;
