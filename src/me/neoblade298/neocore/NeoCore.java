@@ -28,6 +28,7 @@ import me.neoblade298.neocore.events.NeoPluginLoadEvent;
 import me.neoblade298.neocore.exceptions.NeoIOException;
 import me.neoblade298.neocore.info.InfoAPI;
 import me.neoblade298.neocore.instancing.InstanceType;
+import me.neoblade298.neocore.inventories.InventoryListener;
 import me.neoblade298.neocore.io.DefaultListener;
 import me.neoblade298.neocore.io.FileLoader;
 import me.neoblade298.neocore.io.IOComponent;
@@ -96,8 +97,11 @@ public class NeoCore extends JavaPlugin implements Listener {
         
         // CoreBar
 		getServer().getPluginManager().registerEvents(new BarAPI(), this);
+		
+		// Inventories
+		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         
-        // teleports
+        // Teleports
         getServer().getPluginManager().registerEvents(new TeleportAPI(), this);
         
         // CommandSets
