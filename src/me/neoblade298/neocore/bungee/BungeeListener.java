@@ -14,8 +14,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+
+import me.neoblade298.neocore.NeoCore;
 
 public class BungeeListener implements PluginMessageListener, Listener {
 	private static HashMap<UUID, UUID> tpCallbacks = new HashMap<UUID, UUID>();
@@ -77,13 +81,18 @@ public class BungeeListener implements PluginMessageListener, Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		UUID uuid = e.getPlayer().getUniqueId();
-		if (tpCallbacks.containsKey(uuid)) {
-			Player src = Bukkit.getPlayer(uuid);
-			Player trg = Bukkit.getPlayer(tpCallbacks.get(uuid));
-			if (src != null && trg != null ) {
-				src.teleport(trg);
+		
+		new BukkitRunnable() {
+			public void run() {
+				if (tpCallbacks.containsKey(uuid)) {
+					Player src = Bukkit.getPlayer(uuid);
+					Player trg = Bukkit.getPlayer(tpCallbacks.get(uuid));
+					if (src != null && trg != null ) {
+						src.teleport(trg);
+					}
+					tpCallbacks.remove(uuid);
+				}
 			}
-			tpCallbacks.remove(uuid);
-		}
+		}.runTaskLater(NeoCore.inst(), 20L);
 	}
 }
