@@ -195,6 +195,9 @@ public class NeoCore extends JavaPlugin implements Listener {
 
 		mngr = new CommandManager("fix", "neocore.admin", ChatColor.DARK_RED, this);
 		mngr.register(new CmdFix());
+
+		mngr = new CommandManager("rename", "neocore.admin", ChatColor.DARK_RED, this);
+		mngr.register(new CmdRename());
 	}
 	
 	public static void reload() {
