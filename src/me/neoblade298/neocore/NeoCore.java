@@ -11,7 +11,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -24,7 +23,6 @@ import me.neoblade298.neocore.commands.*;
 import me.neoblade298.neocore.commands.builtin.*;
 import me.neoblade298.neocore.commandsets.CommandSetManager;
 import me.neoblade298.neocore.events.NeoCoreInitEvent;
-import me.neoblade298.neocore.events.NeoPluginLoadEvent;
 import me.neoblade298.neocore.exceptions.NeoIOException;
 import me.neoblade298.neocore.info.InfoAPI;
 import me.neoblade298.neocore.instancing.InstanceType;
@@ -47,7 +45,6 @@ import net.milkbowl.vault.economy.Economy;
 
 public class NeoCore extends JavaPlugin implements Listener {
 	private static NeoCore inst;
-	private static HashMap<String, ArrayList<Dependant>> dependants = new HashMap<String, ArrayList<Dependant>>();
 	private static Economy econ;
 	private static boolean debug;
 	
@@ -61,7 +58,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public void onEnable() {
 		inst = this;
-		getServer().getPluginManager().registerEvents(this, this);
 		
 		// Config
 		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
@@ -223,23 +219,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public static NeoCore inst() {
 		return inst;
-	}
-	
-	public static Dependant addDependant(String msg, Dependant d) {
-		ArrayList<Dependant> list = dependants.getOrDefault(msg, new ArrayList<Dependant>());
-		list.add(d);
-		dependants.put(msg, list);
-		return d;
-	}
-	
-	@EventHandler
-	public void onDependableLoad(NeoPluginLoadEvent e) {
-		String msg = e.getMessage();
-		if (dependants.containsKey(msg)) {
-			for (Dependant dep : dependants.get(msg)) {
-				dep.run();
-			}
-		}
 	}
 	
 	public static InstanceType getInstanceType() {
