@@ -67,9 +67,4 @@ public class CmdRename implements Subcommand {
 			p.sendMessage("§4[§c§lMLMC§4] §cYou don't have enough gold for this!");
 		}
 	}
-
-	@Override
-	public String getArgOverride() {
-		return "[name]";
-	}
 }

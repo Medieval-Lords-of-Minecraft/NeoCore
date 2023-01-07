@@ -44,6 +44,7 @@ public class CommandManager implements CommandExecutor {
 	}
 	
 	public boolean handleCommand(CommandSender sender, String[] args) {
+		// Run command no args
 		if (args.length == 0) {
 			if (handlers.containsKey("") ) {
 				runCommand("", sender, args);
@@ -53,14 +54,17 @@ public class CommandManager implements CommandExecutor {
 				return false;
 			}
 		}
+		// Run no-arg command with a number value, specifically for command lists
 		else if (StringUtils.isNumeric(args[0]) && handlers.get("") != null && handlers.get("") instanceof CmdList) {
 			runCommand("", sender, args);
 			return true;
 		}
+		// Run command normally
 		else if (handlers.containsKey(args[0].toUpperCase())) {
 			runCommand(args[0], sender, args);
 			return true;
 		}
+		// Run subcommand with args (like /rename [variable])
 		else if (!handlers.containsKey(args[0].toUpperCase()) && handlers.containsKey("")) {
 			Subcommand cmd = handlers.get("");
 			CommandArguments cArgs = cmd.getArgs();
@@ -69,6 +73,10 @@ public class CommandManager implements CommandExecutor {
 					runCommand("", sender, args);
 					return true;
 				}
+			}
+			else {
+				runCommand("", sender, args);
+				return true;
 			}
 		}
 		return false;
