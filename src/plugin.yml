@@ -1,8 +1,7 @@
 name: NeoCore
 main: me.neoblade298.neocore.NeoCore
 author: [Neoblade298]
-depend: [Vault]
-softdepend: [MythicMobs, NBTAPI, Essentials]
+softdepend: [MythicMobs, NBTAPI, Essentials, Vault]
 version: 1.0
 api-version: 1.19
 commands:

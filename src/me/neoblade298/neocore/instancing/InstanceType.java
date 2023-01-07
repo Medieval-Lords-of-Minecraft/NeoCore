@@ -1,11 +1,20 @@
 package me.neoblade298.neocore.instancing;
 
 public enum InstanceType {
-	TOWNY,
-	QUESTS,
-	DEV,
-	SESSIONS,
-	HUB,
-	CREATIVE,
-	OTHER;
+	TOWNY(false),
+	QUESTS(true),
+	DEV(true),
+	SESSIONS(true),
+	HUB(false),
+	CREATIVE(false),
+	OTHER(false);
+	
+	private final boolean usesSkillAPI;
+	private InstanceType(boolean usesSkillAPI) {
+		this.usesSkillAPI = usesSkillAPI;
+	}
+	
+	public boolean usesSkillAPI() {
+		return this.usesSkillAPI;
+	}
 }

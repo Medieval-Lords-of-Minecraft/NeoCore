@@ -76,8 +76,12 @@ public class NeoCore extends JavaPlugin implements Listener {
 		}
 		
 		// economy
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        econ = rsp.getProvider();
+        if (getServer().getPluginManager().getPlugin("Vault") != null) {
+            RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+            if (rsp != null) {
+                econ = rsp.getProvider();
+            }
+        }
         
         // core commands
         initCommands();
@@ -91,7 +95,7 @@ public class NeoCore extends JavaPlugin implements Listener {
         
         // playerdata
 		getServer().getPluginManager().registerEvents(new IOManager(cfg), this);
-		if (instType == InstanceType.TOWNY) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
+		if (!instType.usesSkillAPI()) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
 		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
         IOManager.register(this, new PlayerDataManager(), "PlayerDataManager");
         
