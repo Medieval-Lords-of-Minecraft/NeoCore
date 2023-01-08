@@ -44,11 +44,11 @@ public class CmdNBTGet implements Subcommand {
 			p.sendMessage("Type: Integer");
 			p.sendMessage("" + nbti.getInteger(args[0]));
 		}
-		else if (args[2].equalsIgnoreCase("double")) {
+		if (type == NBTType.NBTTagDouble) {
 			p.sendMessage("Type: Double");
 			p.sendMessage("" + nbti.getDouble(args[0]));
 		}
-		else if (args[2].equalsIgnoreCase("string")) {
+		if (type == NBTType.NBTTagString) {
 			p.sendMessage("Type: String");
 			p.sendMessage(nbti.getString(args[0]));
 		}
