@@ -10,6 +10,7 @@ public class BungeeCore extends Plugin
         getProxy().getPluginManager().registerCommand(this, new CmdTp());
         getProxy().getPluginManager().registerCommand(this, new CmdTphere());
         getProxy().getPluginManager().registerCommand(this, new CmdUptime());
+        getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
         getProxy().registerChannel("neocore:bungee");
     }
 }
