@@ -4,6 +4,7 @@ public enum IOType {
 	SAVE,
 	LOAD,
 	PRELOAD,
+	FULLLOAD,
 	CLEANUP,
 	AUTOSAVE;
 }

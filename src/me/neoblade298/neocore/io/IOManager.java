@@ -274,6 +274,7 @@ public class IOManager implements Listener {
 			return;
 		}
 		performingIO.get(type).add(p.getUniqueId());
+		performingIO.get(IOType.FULLLOAD).add(p.getUniqueId());
 		
 		new BukkitRunnable() {
 			public void run() {
@@ -324,6 +325,7 @@ public class IOManager implements Listener {
 					if (++count > 5) {
 						this.cancel();
 						endIOTask(type, p.getUniqueId());
+						endIOTask(IOType.FULLLOAD, p.getUniqueId());
 						Bukkit.getLogger().warning("[NeoCore] Failed to load player " + p.getName());
 						return;
 					}
@@ -352,12 +354,11 @@ public class IOManager implements Listener {
 						}
 					}
 					Bukkit.getLogger().info("[NeoCore] Successfully loaded player " + p.getName() + " in " + count + " attempts");
+					endIOTask(type, p.getUniqueId());
+					endIOTask(IOType.FULLLOAD, p.getUniqueId());
 					this.cancel();
 				} catch (Exception ex) {
 					ex.printStackTrace();
-				}
-				finally {
-					endIOTask(type, p.getUniqueId());
 				}
 			}
 		}.runTaskTimerAsynchronously(NeoCore.inst(), 0L, 20L);
@@ -431,7 +432,6 @@ public class IOManager implements Listener {
 		try {
 			return DriverManager.getConnection(connectionStrings.getOrDefault(pluginDb, connectionStrings.get(null)), properties).createStatement();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

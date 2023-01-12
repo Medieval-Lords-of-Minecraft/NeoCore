@@ -308,7 +308,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 	
 	public static boolean isLoaded(Player p) {
-		return !IOManager.isPerformingIO(p.getUniqueId(), IOType.LOAD) && !IOManager.isPerformingIO(p.getUniqueId(), IOType.PRELOAD);
+		return !IOManager.isPerformingIO(p.getUniqueId(), IOType.FULLLOAD);
 	}
 	
 	public static boolean isPerformingIO(UUID uuid, IOType type) {
