@@ -16,6 +16,7 @@ public class CmdSendAll extends Command {
 		if (!sender.hasPermission("mycommand.staff")) return;
 		if (args.length != 2) {
 			BUtil.msg(sender, "&cNot enough arguments! /sendall [server-from] [server-to]");
+			return;
 		}
 		for (ProxiedPlayer p : ProxyServer.getInstance().getServerInfo(args[0]).getPlayers()) {
 			p.connect(ProxyServer.getInstance().getServerInfo(args[1]));

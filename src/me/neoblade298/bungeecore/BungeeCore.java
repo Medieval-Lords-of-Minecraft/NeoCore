@@ -7,6 +7,7 @@ public class BungeeCore extends Plugin
 {
     @Override
     public void onEnable() {
+        getProxy().getPluginManager().registerCommand(this, new CmdHub());
         getProxy().getPluginManager().registerCommand(this, new CmdTp());
         getProxy().getPluginManager().registerCommand(this, new CmdTphere());
         getProxy().getPluginManager().registerCommand(this, new CmdUptime());
