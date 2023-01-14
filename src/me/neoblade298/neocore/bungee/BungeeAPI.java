@@ -77,4 +77,30 @@ public class BungeeAPI {
 		}
 		p.sendPluginMessage(NeoCore.inst(), "BungeeCord", out.toByteArray());
 	}
+	
+	public static void sendBungeeMessage(String[] msgs) {
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF("NeoCore");
+		Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+		
+		ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
+		DataOutputStream msgout = new DataOutputStream(msgbytes);
+		try {
+			for (String msg : msgs) {
+				msgout.writeUTF(msg);
+			}
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
+		out.write(msgbytes.toByteArray());
+		
+		if (p == null) {
+			Bukkit.getLogger().warning("[NeoCore] Could not send bungee message due to no online players: " + msgs);
+			for (String msg : msgs) {
+				Bukkit.getLogger().warning("[NeoCore] - " + msg);
+			}
+			return;
+		}
+		p.sendPluginMessage(NeoCore.inst(), "BungeeCord", out.toByteArray());
+	}
 }

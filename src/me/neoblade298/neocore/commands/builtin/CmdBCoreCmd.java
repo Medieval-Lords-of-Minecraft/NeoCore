@@ -7,11 +7,11 @@ import me.neoblade298.neocore.commands.Subcommand;
 import me.neoblade298.neocore.commands.SubcommandRunner;
 import me.neoblade298.neocore.util.Util;
 
-public class CmdBCoreBroadcast implements Subcommand {
+public class CmdBCoreCmd implements Subcommand {
 
 	@Override
 	public String getPermission() {
-		return "mycommand.staff";
+		return "mycommand.admin";
 	}
 
 	@Override
@@ -21,32 +21,27 @@ public class CmdBCoreBroadcast implements Subcommand {
 
 	@Override
 	public String getKey() {
-		return "bc";
-	}
-	
-	@Override
-	public String[] getAliases() {
-		return new String[] {"broadcast"};
+		return "cmd";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Broadcasts a message on all servers";
+		return "Sends a command for the bungee console to use";
 	}
 
 	@Override
 	public String getArgOverride() {
-		return "[msg]";
+		return "[cmd]";
 	}
 
 	@Override
 	public void run(CommandSender s, String[] args) {
 		if (args.length == 0) {
-			Util.msg(s, "&cMust have a message to send!");
+			Util.msg(s, "&cMust have a command to send!");
 		}
 		else {
-			// Send msg
-			BungeeAPI.broadcast(Util.connectArgs(args));
+			// Send cmd
+			BungeeAPI.sendBungeeMessage(new String[] {"cmd", Util.connectArgs(args)});
 		}
 	}
 
