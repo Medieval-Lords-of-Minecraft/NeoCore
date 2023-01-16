@@ -1,11 +1,18 @@
 package me.neoblade298.bungeecore;
 
-import java.io.EOFException;
+import java.io.File;
+import java.sql.Statement;
+
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
 import me.neoblade298.bungeecore.commands.*;
+import me.neoblade298.neocore.io.IOComponent;
+import me.neoblade298.neocore.io.IOComponentWrapper;
+import me.neoblade298.neocore.io.IOManager;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -22,6 +29,10 @@ public class BungeeCore extends Plugin implements Listener
         getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
         getProxy().getPluginManager().registerListener(this, this);
         getProxy().registerChannel("neocore:bungee");
+        
+        // Bungee IO - Essentially just used for sql
+		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
+		new IOManager(cfg);
     }
     
     @EventHandler
@@ -35,4 +46,28 @@ public class BungeeCore extends Plugin implements Listener
 			}
 		} catch (Exception ex) {	}
     }
+	
+	public static IOComponentWrapper registerIOComponent(JavaPlugin plugin, IOComponent component, String key, int priority) {
+		return IOManager.register(plugin, component, key, priority);
+	}
+	
+	public static IOComponentWrapper registerIOComponent(JavaPlugin plugin, IOComponent component, String key) {
+		return IOManager.register(plugin, component, key, 0);
+	}
+	
+	public static Statement getDefaultStatement() {
+		return IOManager.getDefaultStatement();
+	}
+	
+	public static Statement getStatement(String key) {
+		return IOManager.getStatement(key);
+	}
+	
+	public static Statement getStatement(IOComponentWrapper io) {
+		return IOManager.getStatement(io);
+	}
+	
+	public static Statement getPluginStatement(String key) {
+		return IOManager.getPluginStatement(key);
+	}
 }
