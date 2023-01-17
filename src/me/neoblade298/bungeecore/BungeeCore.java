@@ -96,4 +96,8 @@ public class BungeeCore extends Plugin implements Listener
 			server.sendData("neocore:bungee", out.toByteArray());
 		}
 	}
+	
+	public static BungeeCore inst() {
+		return inst;
+	}
 }
