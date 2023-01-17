@@ -3,12 +3,14 @@ package me.neoblade298.bungeecore.commands;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
+import me.neoblade298.bungeecore.BungeeCore;
 import me.neoblade298.bungeecore.util.BUtil;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -59,10 +61,8 @@ public class CmdTp extends Command {
 	}
 	
 	public static void sendTeleportMsg(ProxiedPlayer src, ProxiedPlayer trg, boolean instant) {
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF(instant ? "neocore-tp-instant" : "neocore-tp");
-		out.writeUTF(src.getUniqueId().toString());
-		out.writeUTF(trg.getUniqueId().toString());
-		trg.getServer().getInfo().sendData("neocore:bungee", out.toByteArray());
+		String[] msgs = new String[] { (instant ? "neocore-tp-instant" : "neocore-tp"),
+				src.getUniqueId().toString(), trg.getUniqueId().toString()};
+		BungeeCore.sendPluginMessage(new ServerInfo[] {trg.getServer().getInfo()}, msgs);
 	}
 }

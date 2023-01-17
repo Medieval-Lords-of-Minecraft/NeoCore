@@ -76,6 +76,17 @@ public class BungeeListener implements PluginMessageListener, Listener {
 			UUID trg = UUID.fromString(in.readUTF());
 			tpCallbacks.put(src, trg);
 		}
+		else {
+			ArrayList<String> msgs = new ArrayList<String>();
+			try {
+				for (int i = 0; i < 10; i++) {
+					msgs.add(in.readUTF());
+				}
+			}
+			// Read until EOF Exception
+			catch (Exception e) {}
+			Bukkit.getPluginManager().callEvent(new PluginMessageEvent(subchannel, msgs));
+		}
 	}
 	
 	@EventHandler
