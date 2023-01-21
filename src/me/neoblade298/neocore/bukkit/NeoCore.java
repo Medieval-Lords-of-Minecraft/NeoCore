@@ -34,6 +34,7 @@ import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
 import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.io.SkillAPIListener;
+import me.neoblade298.neocore.bukkit.listeners.EssentialsListener;
 import me.neoblade298.neocore.bukkit.player.*;
 import me.neoblade298.neocore.bukkit.scheduler.ScheduleInterval;
 import me.neoblade298.neocore.bukkit.scheduler.SchedulerAPI;
@@ -166,6 +167,11 @@ public class NeoCore extends JavaPlugin implements Listener {
 				}.runTaskAsynchronously(NeoCore.inst());
 			}
 		});
+		
+		// Outside compatibilities
+		if (getServer().getPluginManager().isPluginEnabled("Essentials")) {
+			getServer().getPluginManager().registerEvents(new EssentialsListener(), this);
+		}
 	}
 
 	private void initCommands() {
