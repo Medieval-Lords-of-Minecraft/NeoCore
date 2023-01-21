@@ -7,6 +7,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class DefaultListener implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
-		IOManager.load(e.getPlayer());
+		PlayerIOManager.load(e.getPlayer());
 	}
 }

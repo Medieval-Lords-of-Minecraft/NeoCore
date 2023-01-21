@@ -30,7 +30,7 @@ import me.neoblade298.neocore.bukkit.inventories.InventoryListener;
 import me.neoblade298.neocore.bukkit.io.DefaultListener;
 import me.neoblade298.neocore.bukkit.io.IOComponent;
 import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
-import me.neoblade298.neocore.bukkit.io.IOManager;
+import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.io.SkillAPIListener;
 import me.neoblade298.neocore.bukkit.player.*;
 import me.neoblade298.neocore.bukkit.scheduler.ScheduleInterval;
@@ -98,10 +98,10 @@ public class NeoCore extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(bl, this);
         
         // playerdata
-		getServer().getPluginManager().registerEvents(new IOManager(cfg), this);
+		getServer().getPluginManager().registerEvents(new PlayerIOManager(cfg), this);
 		if (!instType.usesSkillAPI()) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
 		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
-        IOManager.register(this, new PlayerDataManager(), "PlayerDataManager");
+        PlayerIOManager.register(this, new PlayerDataManager(), "PlayerDataManager");
         
         // CoreBar
 		getServer().getPluginManager().registerEvents(new BarAPI(), this);
@@ -140,7 +140,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 					public void run() {
 						Statement insert = getDefaultStatement();
 						Statement delete = getDefaultStatement();
-						for (IOComponentWrapper component : IOManager.getComponents()) {
+						for (IOComponentWrapper component : PlayerIOManager.getComponents()) {
 							for (Player p : Bukkit.getOnlinePlayers()) {
 								try {
 									component.getComponent().autosavePlayer(p, insert, delete);
@@ -220,7 +220,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 	
 	public void onDisable() {
-		IOManager.handleDisable();
+		PlayerIOManager.handleDisable();
 	    org.bukkit.Bukkit.getServer().getLogger().info("NeoCore Disabled");
 	    this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
 	    super.onDisable();
@@ -243,11 +243,11 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 	
 	public static IOComponentWrapper registerIOComponent(JavaPlugin plugin, IOComponent component, String key, int priority) {
-		return IOManager.register(plugin, component, key, priority);
+		return PlayerIOManager.register(plugin, component, key, priority);
 	}
 	
 	public static IOComponentWrapper registerIOComponent(JavaPlugin plugin, IOComponent component, String key) {
-		return IOManager.register(plugin, component, key, 0);
+		return PlayerIOManager.register(plugin, component, key, 0);
 	}
 	
 	public static Statement getDefaultStatement() {
@@ -305,19 +305,19 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 	
 	public static boolean isSaving(Player p) {
-		return !IOManager.isPerformingIO(p.getUniqueId(), IOType.SAVE) && !IOManager.isPerformingIO(p.getUniqueId(), IOType.AUTOSAVE);
+		return !PlayerIOManager.isPerformingIO(p.getUniqueId(), IOType.SAVE) && !PlayerIOManager.isPerformingIO(p.getUniqueId(), IOType.AUTOSAVE);
 	}
 	
 	public static boolean isLoaded(Player p) {
-		return !IOManager.isPerformingIO(p.getUniqueId(), IOType.FULLLOAD);
+		return !PlayerIOManager.isPerformingIO(p.getUniqueId(), IOType.FULLLOAD);
 	}
 	
 	public static boolean isPerformingIO(UUID uuid, IOType type) {
-		return IOManager.isPerformingIO(uuid, type);
+		return PlayerIOManager.isPerformingIO(uuid, type);
 	}
 	
 	public static void addPostIORunnable(BukkitRunnable task, IOType type, UUID uuid, boolean async) {
-		IOManager.addPostIORunnable(task, type, uuid, async);
+		PlayerIOManager.addPostIORunnable(task, type, uuid, async);
 	}
 	
 	@EventHandler

@@ -11,11 +11,11 @@ public class SkillAPIListener implements Listener {
 	
 	@EventHandler
 	public void onSAPISave(PlayerSaveEvent e) {
-		IOManager.save(e.getPlayer());
+		PlayerIOManager.save(e.getPlayer());
 	}
 	
 	@EventHandler
 	public void onSkillAPILoad(PlayerLoadCompleteEvent e) {
-		IOManager.load(e.getPlayer());
+		PlayerIOManager.load(e.getPlayer());
 	}
 }

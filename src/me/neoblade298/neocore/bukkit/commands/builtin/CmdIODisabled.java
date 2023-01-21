@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.bukkit.io.IOManager;
+import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.shared.io.IOType;
 import me.neoblade298.neocore.util.Util;
 
@@ -36,7 +36,7 @@ public class CmdIODisabled implements Subcommand {
 	public void run(CommandSender s, String[] args) {
 		for (IOType type : IOType.values()) {
 			String msg = "&6" + type + "&7:";
-			for (String key : IOManager.getDisabledIO().get(type)) {
+			for (String key : PlayerIOManager.getDisabledIO().get(type)) {
 				msg += " &e" + key;
 			}
 			Util.msg(s, msg, false);

@@ -8,7 +8,7 @@ import me.neoblade298.neocore.bukkit.commands.CommandArgument;
 import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.bukkit.io.IOManager;
+import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.shared.io.IOType;
 import me.neoblade298.neocore.util.Util;
 
@@ -40,11 +40,11 @@ public class CmdIODisable implements Subcommand {
 	public void run(CommandSender s, String[] args) {
 		IOType type = IOType.valueOf(args[0].toUpperCase());
 		if (args.length == 1) {
-			IOManager.disableIO(type);
+			PlayerIOManager.disableIO(type);
 			Util.msg(s, "Successfully set " + type + " to disabled.");
 		}
 		else {
-			IOManager.disableIO(type, args[1]);
+			PlayerIOManager.disableIO(type, args[1]);
 			Util.msg(s, "Successfully set " + type + " to disabled for manager " + args[1] + ".");
 		}
 	}

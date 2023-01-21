@@ -28,7 +28,7 @@ import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.shared.io.IOType;
 import me.neoblade298.neocore.shared.io.SQLManager;
 
-public class IOManager implements Listener {
+public class PlayerIOManager implements Listener {
 	private static HashMap<UUID, Long> lastSave = new HashMap<UUID, Long>();
 	private static HashMap<String, IOComponentWrapper> components = new HashMap<String, IOComponentWrapper>();
 	private static TreeSet<IOComponentWrapper> orderedComponents;
@@ -62,7 +62,7 @@ public class IOManager implements Listener {
 		orderedComponents = new TreeSet<IOComponentWrapper>(comp);
 	}
 	
-	public IOManager(ConfigurationSection cfg) {
+	public PlayerIOManager(ConfigurationSection cfg) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {

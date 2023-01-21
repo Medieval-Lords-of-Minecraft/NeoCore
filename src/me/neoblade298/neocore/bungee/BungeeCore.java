@@ -16,7 +16,7 @@ import com.google.common.io.ByteStreams;
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.io.IOComponent;
 import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
-import me.neoblade298.neocore.bukkit.io.IOManager;
+import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bungee.commands.*;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.FileLoader;
@@ -51,7 +51,7 @@ public class BungeeCore extends Plugin implements Listener
         reload();
         
         YamlConfiguration cfg = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
-		new IOManager(cfg);
+		new PlayerIOManager(cfg);
     }
     
     private void reload() {
@@ -78,11 +78,11 @@ public class BungeeCore extends Plugin implements Listener
     }
 	
 	public static IOComponentWrapper registerIOComponent(JavaPlugin plugin, IOComponent component, String key, int priority) {
-		return IOManager.register(plugin, component, key, priority);
+		return PlayerIOManager.register(plugin, component, key, priority);
 	}
 	
 	public static IOComponentWrapper registerIOComponent(JavaPlugin plugin, IOComponent component, String key) {
-		return IOManager.register(plugin, component, key, 0);
+		return PlayerIOManager.register(plugin, component, key, 0);
 	}
 	
 	public static Statement getDefaultStatement() {
