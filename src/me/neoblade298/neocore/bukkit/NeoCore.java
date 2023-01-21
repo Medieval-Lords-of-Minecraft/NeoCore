@@ -7,15 +7,19 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.bar.BarAPI;
+import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
 import me.neoblade298.neocore.bukkit.bungee.BungeeListener;
 import me.neoblade298.neocore.bukkit.commands.*;
 import me.neoblade298.neocore.bukkit.commands.builtin.*;
@@ -48,8 +52,9 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	// Instance information
 	private static InstanceType instType = InstanceType.TOWNY;
-	private static String instKey = null;
-	private static String instDisplay = null;
+	private static String instKey, instDisplay;
+	
+	private static String welcome;
 	
 	public static Random gen = new Random();
 	
@@ -67,6 +72,11 @@ public class NeoCore extends JavaPlugin implements Listener {
 			instKey = icfg.getString("key");
 			instDisplay = Util.translateColors(icfg.getString("display"));
 			instType = InstanceType.valueOf(icfg.getString("type").toUpperCase());
+		}
+		
+		ConfigurationSection gen = cfg.getConfigurationSection("general");
+		if (gen != null) {
+			welcome = gen.getString("welcome", "&4[&c&lMLMC&4] &7Welcome &e%player% &7to MLMC!");
 		}
 		
 		// economy
@@ -308,5 +318,12 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public static void addPostIORunnable(BukkitRunnable task, IOType type, UUID uuid, boolean async) {
 		IOManager.addPostIORunnable(task, type, uuid, async);
+	}
+	
+	@EventHandler
+	public void onJoin(PlayerJoinEvent e) {
+		if (instType == InstanceType.HUB && !e.getPlayer().hasPlayedBefore()) {
+			BungeeAPI.broadcast(welcome.replaceAll("%player%", e.getPlayer().getName()));
+		}
 	}
 }
