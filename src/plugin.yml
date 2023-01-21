@@ -1,5 +1,5 @@
 name: NeoCore
-main: me.neoblade298.neocore.spigot.NeoCore
+main: me.neoblade298.neocore.bukkit.NeoCore
 author: [Neoblade298]
 softdepend: [MythicMobs, NBTAPI, Essentials, Vault]
 version: 1.0

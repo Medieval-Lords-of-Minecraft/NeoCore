@@ -1,4 +1,4 @@
 name: NeoCore
-main: me.neoblade298.bungeecore.BungeeCore
+main: me.neoblade298.neocore.bungee.BungeeCore
 author: [Neoblade298]
 version: 1.0

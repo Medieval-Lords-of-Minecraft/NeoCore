@@ -28,8 +28,10 @@ import me.neoblade298.neocore.bukkit.events.NeoCoreInitEvent;
 import me.neoblade298.neocore.bukkit.info.InfoAPI;
 import me.neoblade298.neocore.bukkit.inventories.InventoryListener;
 import me.neoblade298.neocore.bukkit.io.DefaultListener;
+import me.neoblade298.neocore.bukkit.io.FileLoader;
 import me.neoblade298.neocore.bukkit.io.IOComponent;
 import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
+import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.io.SkillAPIListener;
 import me.neoblade298.neocore.bukkit.player.*;
@@ -37,8 +39,6 @@ import me.neoblade298.neocore.bukkit.scheduler.ScheduleInterval;
 import me.neoblade298.neocore.bukkit.scheduler.SchedulerAPI;
 import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
-import me.neoblade298.neocore.shared.io.FileLoader;
-import me.neoblade298.neocore.shared.io.IOType;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
 import me.neoblade298.neocore.util.Util;
@@ -86,6 +86,9 @@ public class NeoCore extends JavaPlugin implements Listener {
                 econ = rsp.getProvider();
             }
         }
+        
+        // Main listener
+        getServer().getPluginManager().registerEvents(this, this);
         
         // core commands
         initCommands();
@@ -323,7 +326,11 @@ public class NeoCore extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		if (instType == InstanceType.HUB && !e.getPlayer().hasPlayedBefore()) {
-			BungeeAPI.broadcast(welcome.replaceAll("%player%", e.getPlayer().getName()));
+			new BukkitRunnable() {
+				public void run() {
+					BungeeAPI.broadcast(welcome.replaceAll("%player%", e.getPlayer().getName()));
+				}
+			}.runTaskLaterAsynchronously(this, 60L);
 		}
 	}
 }

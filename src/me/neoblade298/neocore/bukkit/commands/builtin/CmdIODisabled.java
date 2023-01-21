@@ -5,8 +5,8 @@ import org.bukkit.command.CommandSender;
 import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
+import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
-import me.neoblade298.neocore.shared.io.IOType;
 import me.neoblade298.neocore.util.Util;
 
 public class CmdIODisabled implements Subcommand {

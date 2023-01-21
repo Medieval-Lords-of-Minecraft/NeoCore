@@ -25,7 +25,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.shared.io.IOType;
 import me.neoblade298.neocore.shared.io.SQLManager;
 
 public class PlayerIOManager implements Listener {

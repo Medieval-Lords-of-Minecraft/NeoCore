@@ -6,8 +6,8 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.io.FileLoader;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
-import me.neoblade298.neocore.shared.io.FileLoader;
 
 public class InfoAPI {
 	private static HashMap<String, BossInfo> bossInfo = new HashMap<String, BossInfo>();

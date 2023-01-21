@@ -5,9 +5,10 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Properties;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.event.Listener;
 
-public class SQLManager implements Listener {
+import net.md_5.bungee.config.Configuration;
+
+public class SQLManager {
 	private static HashMap<String, String> connectionStrings = new HashMap<String, String>();
 	private static HashMap<String, String> userDbs = new HashMap<String, String>(); // User -> database key -> connection string
 	private static String connectionPrefix, connectionSuffix;
@@ -28,17 +29,25 @@ public class SQLManager implements Listener {
 		properties.setProperty("password", sql.getString("password"));
 		connectionStrings.put(null, connectionPrefix + sql.getString("db") + connectionSuffix);
 		
-		ConfigurationSection alternates = cfg.getConfigurationSection("db-overrides");
-		if (alternates != null) {
-			ConfigurationSection perUser = alternates.getConfigurationSection("users");
-			if (perUser != null) {
-				for (String user : perUser.getKeys(false)) {
-					String db = perUser.getString(user);
-					userDbs.put(user.toUpperCase(), db);
-					connectionStrings.putIfAbsent(db, connectionPrefix + db + connectionSuffix);
-				}
+		ConfigurationSection users = sql.getConfigurationSection("users");
+		if (users != null) {
+			for (String user : users.getKeys(false)) {
+				String db = users.getString(user);
+				userDbs.put(user.toUpperCase(), db);
+				connectionStrings.putIfAbsent(db, connectionPrefix + db + connectionSuffix);
 			}
 		}
+	}
+	
+	public static void load(Configuration cfg) {
+		Configuration sql = cfg.getSection("sql");
+		connectionPrefix = "jdbc:mysql://" + sql.getString("host") + ":" + sql.getString("port") + "/"; 
+		connectionSuffix = sql.getString("flags");
+		properties = new Properties();
+		properties.setProperty("useSSL", "false");
+		properties.setProperty("user",  sql.getString("username"));
+		properties.setProperty("password", sql.getString("password"));
+		connectionStrings.put(null, connectionPrefix + sql.getString("db") + connectionSuffix);
 	}
 	
 	public static String getDatabase(String user) {

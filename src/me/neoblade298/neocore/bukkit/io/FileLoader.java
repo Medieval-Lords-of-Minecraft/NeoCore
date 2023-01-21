@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.shared.io;
+package me.neoblade298.neocore.bukkit.io;
 
 import java.io.File;
 

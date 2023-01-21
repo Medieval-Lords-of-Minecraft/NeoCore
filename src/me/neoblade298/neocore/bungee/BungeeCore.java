@@ -1,35 +1,28 @@
 package me.neoblade298.neocore.bungee;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.bukkit.io.IOComponent;
-import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
-import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bungee.commands.*;
-import me.neoblade298.neocore.shared.exceptions.NeoIOException;
-import me.neoblade298.neocore.shared.io.FileLoader;
+import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
-import me.neoblade298.neocore.util.Util;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 import net.md_5.bungee.event.EventHandler;
 
 public class BungeeCore extends Plugin implements Listener
@@ -50,19 +43,32 @@ public class BungeeCore extends Plugin implements Listener
         inst = this;
         reload();
         
-        YamlConfiguration cfg = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
-		new PlayerIOManager(cfg);
+        Configuration cfg = null;
+		try {
+			cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
+	        SQLManager.load(cfg);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     private void reload() {
     	loadFiles(new File(this.getDataFolder(), "motd.yml"), (yml, cfg) -> {
-    		MessagingManager.parseMessage(yml.getConfigurationSection("motd"));
+    		motd = MessagingManager.parseMessage(yml.getSection("motd"));
+    		for (BaseComponent comp : motd) {
+    			if (comp instanceof TextComponent) {
+    				TextComponent text = (TextComponent) comp;
+    				text.setText(text.getText().replaceAll("%ONLINE%", "" + getProxy().getOnlineCount()));
+    			}
+    		}
     	});
     }
     
     @EventHandler
     public void onJoin(PostLoginEvent e) {
-    	e.getPlayer().sendMessage(motd);
+    	getProxy().getScheduler().schedule(this, () -> { 
+    		e.getPlayer().sendMessage(motd);
+		}, 3, TimeUnit.SECONDS);
     }
     
     @EventHandler
@@ -76,14 +82,6 @@ public class BungeeCore extends Plugin implements Listener
 			}
 		} catch (Exception ex) {	}
     }
-	
-	public static IOComponentWrapper registerIOComponent(JavaPlugin plugin, IOComponent component, String key, int priority) {
-		return PlayerIOManager.register(plugin, component, key, priority);
-	}
-	
-	public static IOComponentWrapper registerIOComponent(JavaPlugin plugin, IOComponent component, String key) {
-		return PlayerIOManager.register(plugin, component, key, 0);
-	}
 	
 	public static Statement getDefaultStatement() {
 		return SQLManager.getDefaultStatement();
@@ -129,8 +127,13 @@ public class BungeeCore extends Plugin implements Listener
 			}
 		}
 		else {
-			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(load);
-			loader.load(cfg, load);
+			Configuration cfg;
+			try {
+				cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(load);
+				loader.load(cfg, load);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
