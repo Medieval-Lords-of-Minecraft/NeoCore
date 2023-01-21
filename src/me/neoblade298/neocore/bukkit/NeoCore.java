@@ -3,8 +3,6 @@ package me.neoblade298.neocore.bukkit;
 import java.io.File;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 
@@ -37,6 +35,7 @@ import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.FileLoader;
 import me.neoblade298.neocore.shared.io.IOType;
+import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
 import me.neoblade298.neocore.util.Util;
 import net.md_5.bungee.api.ChatColor;
@@ -242,19 +241,11 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 	
 	public static Statement getDefaultStatement() {
-		return IOManager.getDefaultStatement();
+		return SQLManager.getDefaultStatement();
 	}
 	
-	public static Statement getStatement(String key) {
-		return IOManager.getStatement(key);
-	}
-	
-	public static Statement getStatement(IOComponentWrapper io) {
-		return IOManager.getStatement(io);
-	}
-	
-	public static Statement getPluginStatement(String key) {
-		return IOManager.getPluginStatement(key);
+	public static Statement getStatement(String user) {
+		return SQLManager.getStatement(user);
 	}
 	
 	public static void loadFiles(File load, FileLoader loader) throws NeoIOException {

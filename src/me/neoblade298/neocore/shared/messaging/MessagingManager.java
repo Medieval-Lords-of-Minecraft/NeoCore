@@ -10,7 +10,6 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
-import me.neoblade298.neocore.shared.io.FileLoader;
 import me.neoblade298.neocore.util.Util;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

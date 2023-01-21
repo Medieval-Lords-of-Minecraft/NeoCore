@@ -20,6 +20,7 @@ import me.neoblade298.neocore.bukkit.io.IOManager;
 import me.neoblade298.neocore.bungee.commands.*;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.FileLoader;
+import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
 import me.neoblade298.neocore.util.Util;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -85,19 +86,11 @@ public class BungeeCore extends Plugin implements Listener
 	}
 	
 	public static Statement getDefaultStatement() {
-		return IOManager.getDefaultStatement();
+		return SQLManager.getDefaultStatement();
 	}
 	
-	public static Statement getStatement(String key) {
-		return IOManager.getStatement(key);
-	}
-	
-	public static Statement getStatement(IOComponentWrapper io) {
-		return IOManager.getStatement(io);
-	}
-	
-	public static Statement getPluginStatement(String key) {
-		return IOManager.getPluginStatement(key);
+	public static Statement getStatement(String user) {
+		return SQLManager.getStatement(user);
 	}
 	
 	public static void sendPluginMessage(String[] servers, String[] msgs) {

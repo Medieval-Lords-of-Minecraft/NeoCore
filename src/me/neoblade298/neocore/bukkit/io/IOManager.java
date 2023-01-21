@@ -2,13 +2,11 @@ package me.neoblade298.neocore.bukkit.io;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Map.Entry;
@@ -367,14 +365,6 @@ public class IOManager implements Listener {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-	
-	public static Statement getStatement(String user) {
-		return SQLManager.getStatement(user);
-	}
-	
-	public static Statement getDefaultStatement() {
-		return SQLManager.getDefaultStatement();
 	}
 	
 	public static void disableIO(IOType type, String key) {
