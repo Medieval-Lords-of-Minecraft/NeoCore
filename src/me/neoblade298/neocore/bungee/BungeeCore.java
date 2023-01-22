@@ -13,6 +13,7 @@ import me.neoblade298.neocore.bungee.commands.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -33,6 +34,7 @@ public class BungeeCore extends Plugin implements Listener
     @Override
     public void onEnable() {
         getProxy().getPluginManager().registerCommand(this, new CmdHub());
+        getProxy().getPluginManager().registerCommand(this, new CmdMotd());
         getProxy().getPluginManager().registerCommand(this, new CmdTp());
         getProxy().getPluginManager().registerCommand(this, new CmdTphere());
         getProxy().getPluginManager().registerCommand(this, new CmdUptime());
@@ -55,20 +57,28 @@ public class BungeeCore extends Plugin implements Listener
     private void reload() {
     	loadFiles(new File(this.getDataFolder(), "motd.yml"), (yml, cfg) -> {
     		motd = MessagingManager.parseMessage(yml.getSection("motd"));
-    		for (BaseComponent comp : motd) {
-    			if (comp instanceof TextComponent) {
-    				TextComponent text = (TextComponent) comp;
-    				text.setText(text.getText().replaceAll("%ONLINE%", "" + getProxy().getOnlineCount()));
-    			}
-    		}
     	});
     }
     
     @EventHandler
     public void onJoin(PostLoginEvent e) {
-    	getProxy().getScheduler().schedule(this, () -> { 
-    		e.getPlayer().sendMessage(motd);
+    	getProxy().getScheduler().schedule(this, () -> {
+    		sendMotd(e.getPlayer());
 		}, 3, TimeUnit.SECONDS);
+    }
+    
+    public static void sendMotd(CommandSender s) {
+		BaseComponent[] msg = new BaseComponent[motd.length];
+		int idx = 0;
+		for (BaseComponent comp : motd) {
+			BaseComponent dupe = comp.duplicate();
+			msg[idx++] = dupe;
+			if (dupe instanceof TextComponent) {
+				TextComponent text = (TextComponent) dupe;
+				text.setText(text.getText().replaceAll("%ONLINE%", "" + inst.getProxy().getOnlineCount()));
+			}
+		}
+		s.sendMessage(msg);
     }
     
     @EventHandler
