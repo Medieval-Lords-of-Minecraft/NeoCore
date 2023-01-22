@@ -25,7 +25,7 @@ public class MessagingManager {
 	
 	public static void reload() throws NeoIOException {
 		messages.clear();
-		NeoCore.loadFiles(new File(NeoCore.inst().getDataFolder(), "messages.yml"), (cfg, file) -> {
+		NeoCore.loadFiles(new File(NeoCore.inst().getDataFolder(), "messages"), (cfg, file) -> {
 			for (String key : cfg.getKeys(false)) {
 				ConfigurationSection sec = cfg.getConfigurationSection(key);
 				messages.put(key.toUpperCase(), parsePage(sec));
