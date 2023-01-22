@@ -3,6 +3,8 @@ package me.neoblade298.neocore.bungee;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -13,6 +15,7 @@ import me.neoblade298.neocore.bungee.commands.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
+import me.neoblade298.neocore.util.Util;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -30,6 +33,8 @@ public class BungeeCore extends Plugin implements Listener
 {
 	private static BungeeCore inst;
 	private static BaseComponent[] motd;
+	private static List<String> announcements = new ArrayList<String>();
+	private static Configuration announceyml;
 	
     @Override
     public void onEnable() {
@@ -43,21 +48,23 @@ public class BungeeCore extends Plugin implements Listener
         getProxy().registerChannel("neocore:bungee");
         
         inst = this;
-        reload();
         
         Configuration cfg = null;
 		try {
 			cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
 	        SQLManager.load(cfg);
+	        reload();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }
     
-    private void reload() {
+    private void reload() throws IOException {
     	loadFiles(new File(this.getDataFolder(), "motd.yml"), (yml, cfg) -> {
     		motd = MessagingManager.parseMessage(yml.getSection("motd"));
     	});
+    	announceyml = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "announcements.yml"));
+    	announcements = announceyml.getStringList("announcements");
     }
     
     @EventHandler
@@ -68,7 +75,7 @@ public class BungeeCore extends Plugin implements Listener
     }
     
     public static void sendMotd(CommandSender s) {
-		BaseComponent[] msg = new BaseComponent[motd.length];
+		BaseComponent[] msg = new BaseComponent[motd.length + (announcements.size() > 0 ? announcements.size() : 1)];
 		int idx = 0;
 		for (BaseComponent comp : motd) {
 			BaseComponent dupe = comp.duplicate();
@@ -78,7 +85,35 @@ public class BungeeCore extends Plugin implements Listener
 				text.setText(text.getText().replaceAll("%ONLINE%", "" + inst.getProxy().getOnlineCount()));
 			}
 		}
+		if (announcements.size() > 0) {
+			for (int i = 0; i < announcements.size(); i++) {
+				msg[idx++] = new TextComponent(Util.translateColors("§6- §e" + announcements.get(i) + (i + 1 == announcements.size() ? "" : "\n")));
+			}
+		}
+		else {
+			msg[idx++] = new TextComponent(Util.translateColors("&6- &eNone for now!"));
+		}
 		s.sendMessage(msg);
+    }
+    
+    public static void addMotd(CommandSender s, String msg) {
+    	announcements.add(msg);
+    	announceyml.set("announcements", announcements);
+    	try {
+			ConfigurationProvider.getProvider(YamlConfiguration.class).save(announceyml, new File(inst.getDataFolder(), "announcements.yml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public static void removeMotd(CommandSender s, int idx) {
+    	announcements.remove(idx);
+    	announceyml.set("announcements", announcements);
+    	try {
+			ConfigurationProvider.getProvider(YamlConfiguration.class).save(announceyml, new File(inst.getDataFolder(), "announcements.yml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     @EventHandler
