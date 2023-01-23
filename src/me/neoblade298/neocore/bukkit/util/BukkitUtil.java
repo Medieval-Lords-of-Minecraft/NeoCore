@@ -8,6 +8,8 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.neoblade298.neocore.shared.util.SharedUtil;
+
 public class BukkitUtil {
 	public static void msgGroup(Collection<Player> s, String msg, boolean hasPrefix) {
 		for (CommandSender sender : s) {
@@ -29,11 +31,11 @@ public class BukkitUtil {
 		if (hasPrefix) {
 			msg = "&4[&c&lMLMC&4] &7" + msg;
 		}
-		s.sendMessage(translateColors(msg));
+		s.sendMessage(SharedUtil.translateColors(msg));
 	}
 
 	public static void msgCentered(CommandSender s, String msg) {
-		s.sendMessage(center(msg));
+		s.sendMessage(SharedUtil.center(msg));
 	}
 
 	public static Location stringToLoc(String loc) {

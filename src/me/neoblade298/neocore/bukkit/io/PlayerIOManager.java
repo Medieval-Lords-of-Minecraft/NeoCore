@@ -13,7 +13,6 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -112,6 +111,7 @@ public class PlayerIOManager implements Listener {
 		
 		new BukkitRunnable() {
 			public void run() {
+				ArrayList<Connection> cons = new ArrayList<Connection>(SQLManager.getDataSources().size());
 				try {
 					// Set up statements per db
 					HashMap<String, Statement> inserts = new HashMap<String, Statement>();
@@ -146,6 +146,9 @@ public class PlayerIOManager implements Listener {
 					ex.printStackTrace();
 				}
 				finally {
+					for (Connection con : cons) {
+						con.close();
+					}
 					endIOTask(type, uuid);
 					Bukkit.getLogger().info("[NeoCore] Finished saving player " + uuid + ", took " + (System.currentTimeMillis() - timestamp) + "ms");
 					if (debug) Bukkit.getLogger().info("[NeoCore Debug] Finished saving at time " + System.currentTimeMillis());

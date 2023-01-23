@@ -16,15 +16,4 @@ public class BungeeUtil {
 		}
 		s.sendMessage(new TextComponent(SharedUtil.translateColors(msg)));
 	}
-	
-	public static void broadcast(String msg) {
-		broadcast(msg, true);
-	}
-	
-	public static void broadcast(String msg, boolean hasPrefix) {
-		if (hasPrefix) {
-			msg = "&4[&c&lMLMC&4] &7" + msg;
-		}
-		BungeeCore.inst().getProxy().broadcast(new TextComponent(SharedUtil.translateColors(msg)));
-	}
 }
