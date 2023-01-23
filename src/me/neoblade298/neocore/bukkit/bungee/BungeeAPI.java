@@ -12,14 +12,14 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class BungeeAPI {
 	public static void broadcast(String msg) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("Message");
 		out.writeUTF("ALL");
-		out.writeUTF(Util.translateColors(msg));
+		out.writeUTF(SharedUtil.translateColors(msg));
 
 		Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
 		if (p == null) {

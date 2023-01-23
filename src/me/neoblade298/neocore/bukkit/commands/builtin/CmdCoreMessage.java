@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class CmdCoreMessage implements Subcommand {
 
@@ -44,11 +44,11 @@ public class CmdCoreMessage implements Subcommand {
 		
 		// message only
 		if (offset == 0) {
-			Util.msg(recipient, Util.connectArgs(args));
+			SharedUtil.msg(recipient, SharedUtil.connectArgs(args));
 		}
 		// message and page
 		else if (offset == 1) {
-			Util.msg(recipient, Util.connectArgs(args, 1));
+			SharedUtil.msg(recipient, SharedUtil.connectArgs(args, 1));
 		}
 	}
 

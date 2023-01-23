@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class TeleportAPI implements Listener {
 	private static final int TELEPORT_DELAY = 4; // 4 seconds
@@ -22,14 +22,14 @@ public class TeleportAPI implements Listener {
 		Player p = (Player) e.getEntity();
 		
 		if (!teleports.containsKey(p)) return;
-		Util.msg(p, "&cTeleport cancelled, you took damage!");
+		SharedUtil.msg(p, "&cTeleport cancelled, you took damage!");
 		cancelTeleport(p);
 	}
 	
 	public static void teleportPlayer(Player p, Location loc) {
 		final Location formerLoc = p.getLocation();
 		ArrayList<BukkitTask> tasks = new ArrayList<BukkitTask>(TELEPORT_DELAY + 1);
-		Util.msg(p, "&7Teleporting! Don't move for 4s...");
+		SharedUtil.msg(p, "&7Teleporting! Don't move for 4s...");
 		BukkitTask teleport = new BukkitRunnable() {
 			public void run() {
 				p.teleport(loc);
@@ -48,7 +48,7 @@ public class TeleportAPI implements Listener {
 						if (Math.abs(loc.getX() - formerLoc.getX()) > 1 ||
 								Math.abs(loc.getY() - formerLoc.getY()) > 1 ||
 								Math.abs(loc.getZ() - formerLoc.getZ()) > 1) {
-							Util.msg(p, "&cTeleport cancelled, you moved!");
+							SharedUtil.msg(p, "&cTeleport cancelled, you moved!");
 							cancelTeleport(p);
 						}
 					}

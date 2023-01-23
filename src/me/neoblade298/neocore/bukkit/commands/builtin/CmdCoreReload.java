@@ -6,7 +6,7 @@ import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class CmdCoreReload implements Subcommand {
 	private static final CommandArguments args = new CommandArguments();
@@ -34,7 +34,7 @@ public class CmdCoreReload implements Subcommand {
 	@Override
 	public void run(CommandSender s, String[] args) {
 		NeoCore.reload();
-		Util.msg(s, "&7Successful reload");
+		SharedUtil.msg(s, "&7Successful reload");
 	}
 
 	@Override

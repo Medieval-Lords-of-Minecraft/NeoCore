@@ -6,7 +6,7 @@ import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
 import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class CmdBCoreBroadcast implements Subcommand {
 
@@ -43,11 +43,11 @@ public class CmdBCoreBroadcast implements Subcommand {
 	@Override
 	public void run(CommandSender s, String[] args) {
 		if (args.length == 0) {
-			Util.msg(s, "&cMust have a message to send!");
+			SharedUtil.msg(s, "&cMust have a message to send!");
 		}
 		else {
 			// Send msg
-			BungeeAPI.broadcast(Util.connectArgs(args));
+			BungeeAPI.broadcast(SharedUtil.connectArgs(args));
 		}
 	}
 

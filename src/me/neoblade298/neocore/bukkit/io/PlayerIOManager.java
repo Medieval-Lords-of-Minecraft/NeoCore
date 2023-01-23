@@ -1,7 +1,6 @@
 package me.neoblade298.neocore.bukkit.io;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,6 +22,8 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.zaxxer.hikari.HikariDataSource;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.shared.io.SQLManager;
@@ -59,15 +60,6 @@ public class PlayerIOManager implements Listener {
 			}
 		};
 		orderedComponents = new TreeSet<IOComponentWrapper>(comp);
-	}
-	
-	public PlayerIOManager(ConfigurationSection cfg) {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		SQLManager.load(cfg);
 	}
 
 	public static IOComponentWrapper register(JavaPlugin plugin, IOComponent component, String key) {
@@ -124,8 +116,8 @@ public class PlayerIOManager implements Listener {
 					// Set up statements per db
 					HashMap<String, Statement> inserts = new HashMap<String, Statement>();
 					HashMap<String, Statement> deletes = new HashMap<String, Statement>();
-					for (Entry<String, String> e : SQLManager.getConnectionStrings().entrySet()) {
-						Connection con = DriverManager.getConnection(e.getValue(), SQLManager.getProperties());
+					for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
+						Connection con = e.getValue().getConnection();
 						inserts.put(e.getKey(), con.createStatement());
 						deletes.put(e.getKey(), con.createStatement());
 					}
@@ -189,8 +181,8 @@ public class PlayerIOManager implements Listener {
 					// Set up statements per db
 					HashMap<String, Statement> inserts = new HashMap<String, Statement>();
 					HashMap<String, Statement> deletes = new HashMap<String, Statement>();
-					for (Entry<String, String> e : SQLManager.getConnectionStrings().entrySet()) {
-						Connection con = DriverManager.getConnection(e.getValue(), SQLManager.getProperties());
+					for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
+						Connection con = e.getValue().getConnection();
 						inserts.put(e.getKey(), con.createStatement());
 						deletes.put(e.getKey(), con.createStatement());
 					}
@@ -240,8 +232,8 @@ public class PlayerIOManager implements Listener {
 				try {
 					// Set up statements per db
 					HashMap<String, Statement> stmts = new HashMap<String, Statement>();
-					for (Entry<String, String> e : SQLManager.getConnectionStrings().entrySet()) {
-						Connection con = DriverManager.getConnection(e.getValue(), SQLManager.getProperties());
+					for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
+						Connection con = e.getValue().getConnection();
 						stmts.put(e.getKey(), con.createStatement());
 					}
 
@@ -291,8 +283,8 @@ public class PlayerIOManager implements Listener {
 
 					// Set up statements per db
 					HashMap<String, Statement> stmts = new HashMap<String, Statement>();
-					for (Entry<String, String> e : SQLManager.getConnectionStrings().entrySet()) {
-						Connection con = DriverManager.getConnection(e.getValue(), SQLManager.getProperties());
+					for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
+						Connection con = e.getValue().getConnection();
 						stmts.put(e.getKey(), con.createStatement());
 					}
 					
@@ -334,8 +326,8 @@ public class PlayerIOManager implements Listener {
 			long timestamp = System.currentTimeMillis();
 			HashMap<String, Statement> inserts = new HashMap<String, Statement>();
 			HashMap<String, Statement> deletes = new HashMap<String, Statement>();
-			for (Entry<String, String> e : SQLManager.getConnectionStrings().entrySet()) {
-				Connection con = DriverManager.getConnection(e.getValue(), SQLManager.getProperties());
+			for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
+				Connection con = e.getValue().getConnection();
 				inserts.put(e.getKey(), con.createStatement());
 				deletes.put(e.getKey(), con.createStatement());
 			}

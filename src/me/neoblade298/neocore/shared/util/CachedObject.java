@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.util;
+package me.neoblade298.neocore.shared.util;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -15,7 +15,7 @@ import me.neoblade298.neocore.bungee.commands.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -52,7 +52,7 @@ public class BungeeCore extends Plugin implements Listener
         Configuration cfg = null;
 		try {
 			cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
-	        SQLManager.load(cfg);
+	        SQLManager.load(cfg.getSection("sql"));
 	        reload();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -87,11 +87,11 @@ public class BungeeCore extends Plugin implements Listener
 		}
 		if (announcements.size() > 0) {
 			for (int i = 0; i < announcements.size(); i++) {
-				msg[idx++] = new TextComponent(Util.translateColors("§6- §e" + announcements.get(i) + (i + 1 == announcements.size() ? "" : "\n")));
+				msg[idx++] = new TextComponent(SharedUtil.translateColors("§6- §e" + announcements.get(i) + (i + 1 == announcements.size() ? "" : "\n")));
 			}
 		}
 		else {
-			msg[idx++] = new TextComponent(Util.translateColors("&6- &eNone for now!"));
+			msg[idx++] = new TextComponent(SharedUtil.translateColors("&6- &eNone for now!"));
 		}
 		s.sendMessage(msg);
     }

@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class CmdCoreTitle implements Subcommand {
 
@@ -80,7 +80,7 @@ public class CmdCoreTitle implements Subcommand {
 			}
 		}
 		
-		p.sendTitle(Util.translateColors(title), Util.translateColors(subtitle), fadeIn, stay, fadeOut);
+		p.sendTitle(SharedUtil.translateColors(title), SharedUtil.translateColors(subtitle), fadeIn, stay, fadeOut);
 	}
 
 	@Override

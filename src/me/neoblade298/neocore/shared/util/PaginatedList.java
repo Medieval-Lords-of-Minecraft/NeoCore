@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.util;
+package me.neoblade298.neocore.shared.util;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -161,7 +161,7 @@ public class PaginatedList<E> implements Iterable<E> {
 	}
 	
 	public void displayFooter(CommandSender s, int page) {
-		Util.msg(s, "&7Page &f" + (page + 1) + " &7/ " + pages.size());
+		SharedUtil.msg(s, "&7Page &f" + (page + 1) + " &7/ " + pages.size());
 	}
 
 	@Override

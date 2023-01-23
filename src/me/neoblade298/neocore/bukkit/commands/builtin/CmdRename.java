@@ -9,7 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 
@@ -45,9 +45,9 @@ public class CmdRename implements Subcommand {
 				ItemMeta meta = item.getItemMeta();
 
 				// Put together rename string
-				String rename = Util.connectArgs(args);
+				String rename = SharedUtil.connectArgs(args);
 
-				rename = Util.translateColors(rename);
+				rename = SharedUtil.translateColors(rename);
 				
 				if (ChatColor.stripColor(rename).length() > 30 && !p.hasPermission("mycommand.staff")) {
 					p.sendMessage("§4[§c§lMLMC§4] §cName must be less than 30 characters!");

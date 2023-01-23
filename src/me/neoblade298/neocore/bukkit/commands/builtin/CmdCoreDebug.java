@@ -6,7 +6,7 @@ import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class CmdCoreDebug implements Subcommand {
 	private static final CommandArguments args = new CommandArguments();
@@ -34,10 +34,10 @@ public class CmdCoreDebug implements Subcommand {
 	@Override
 	public void run(CommandSender s, String[] args) {
 		if (NeoCore.toggleDebug()) {
-			Util.msg(s, "&7Successfully enabled debug mode!");
+			SharedUtil.msg(s, "&7Successfully enabled debug mode!");
 		}
 		else {
-			Util.msg(s, "&7Successfully disabled debug mode!");
+			SharedUtil.msg(s, "&7Successfully disabled debug mode!");
 		}
 	}
 

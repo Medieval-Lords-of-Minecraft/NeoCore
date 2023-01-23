@@ -3,9 +3,9 @@ package me.neoblade298.neocore.bungee.util;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 
-public class BUtil {
+public class BungeeUtil {
 	public static void msg(CommandSender s, String msg) {
 		msg(s, msg, true);
 	}
@@ -14,7 +14,7 @@ public class BUtil {
 		if (hasPrefix) {
 			msg = "&4[&c&lMLMC&4] &7" + msg;
 		}
-		s.sendMessage(new TextComponent(Util.translateColors(msg)));
+		s.sendMessage(new TextComponent(SharedUtil.translateColors(msg)));
 	}
 	
 	public static void broadcast(String msg) {
@@ -25,6 +25,6 @@ public class BUtil {
 		if (hasPrefix) {
 			msg = "&4[&c&lMLMC&4] &7" + msg;
 		}
-		BungeeCore.inst().getProxy().broadcast(new TextComponent(Util.translateColors(msg)));
+		BungeeCore.inst().getProxy().broadcast(new TextComponent(SharedUtil.translateColors(msg)));
 	}
 }

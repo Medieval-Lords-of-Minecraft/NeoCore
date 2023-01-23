@@ -10,7 +10,7 @@ import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class CmdCoreSendMessage implements Subcommand {
 	private static final CommandArguments args = new CommandArguments(Arrays.asList(
@@ -66,7 +66,7 @@ public class CmdCoreSendMessage implements Subcommand {
 	public static void parseAndRun(CommandSender s, CommandSender recipient, String key, int page) {
 		MessagingManager.sendMessage(s, recipient, key, page);
 		if (s != recipient) {
-			Util.msg(s, "&7Successfully sent message");
+			SharedUtil.msg(s, "&7Successfully sent message");
 		}
 	}
 

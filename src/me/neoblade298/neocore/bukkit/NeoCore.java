@@ -42,7 +42,7 @@ import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 
@@ -71,7 +71,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		if (instancecfg.exists()) {
 			YamlConfiguration icfg = YamlConfiguration.loadConfiguration(instancecfg);
 			instKey = icfg.getString("key");
-			instDisplay = Util.translateColors(icfg.getString("display"));
+			instDisplay = SharedUtil.translateColors(icfg.getString("display"));
 			instType = InstanceType.valueOf(icfg.getString("type").toUpperCase());
 		}
 		
@@ -88,6 +88,9 @@ public class NeoCore extends JavaPlugin implements Listener {
             }
         }
         
+        // SQL
+		SQLManager.load(cfg.getConfigurationSection("sql"));
+        
         // Main listener
         getServer().getPluginManager().registerEvents(this, this);
         
@@ -102,7 +105,7 @@ public class NeoCore extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(bl, this);
         
         // playerdata
-		getServer().getPluginManager().registerEvents(new PlayerIOManager(cfg), this);
+		getServer().getPluginManager().registerEvents(new PlayerIOManager(), this);
 		if (!instType.usesSkillAPI()) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
 		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
         PlayerIOManager.register(this, new PlayerDataManager(), "PlayerDataManager");
