@@ -12,7 +12,7 @@ import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.bukkit.player.PlayerDataManager;
 import me.neoblade298.neocore.bukkit.player.PlayerTags;
-import me.neoblade298.neocore.shared.util.SharedUtil;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 
 // /core addtag [player] [tag]
 public class CmdCoreAddTag implements Subcommand {
@@ -45,14 +45,14 @@ public class CmdCoreAddTag implements Subcommand {
 		Player p = Bukkit.getPlayer(args[0]);
 		
 		if (p == null) {
-			SharedUtil.msg(s, "&cThat user isn't online!");
+			BukkitUtil.msg(s, "&cThat user isn't online!");
 			return;
 		}
 		
 		// Must be staff to change hidden tags or tags that aren't yours
 		if ((tags.isHidden() || !p.equals(s))
 				&& !s.hasPermission("mycommand.staff")) {
-			SharedUtil.msg(s, "&cYou can't change this!");
+			BukkitUtil.msg(s, "&cYou can't change this!");
 			return;
 		}
 		

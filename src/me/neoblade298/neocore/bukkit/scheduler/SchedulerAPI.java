@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.shared.util.SharedUtil;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 
 public class SchedulerAPI {
 	private static final int DAYS_AVAILABLE_IN_SCHEDULER = 3;
@@ -290,24 +290,24 @@ public class SchedulerAPI {
 	public static void display(CommandSender s) {
 		int diff = getDaysFromStartup(Calendar.getInstance());
 		
-		SharedUtil.msg(s, "&6-- Scheduled Runnables --");
+		BukkitUtil.msg(s, "&6-- Scheduled Runnables --");
 		for (Entry<Integer, ArrayList<CoreRunnable>> e : schedule.get(diff).entrySet()) {
 			ArrayList<CoreRunnable> crs = e.getValue();
 			String msg = "&e" + e.getKey() + "&f: &6" + crs.get(0).getKey();
 			for (int i = 1; i < crs.size(); i++) {
 				msg += "&7, &6" + crs.get(i).getKey();
 			}
-			SharedUtil.msg(s, msg);
+			BukkitUtil.msg(s, msg);
 		}
 
-		SharedUtil.msg(s, "&6-- Repeating Runnables --");
+		BukkitUtil.msg(s, "&6-- Repeating Runnables --");
 		ArrayList<CoreRunnable> list = repeaters.get(ScheduleInterval.DAILY);
 		if (list.size() != 0) {
 			String msg = "&eDaily&f: &6" + list.get(0).getKey();
 			for (int i = 1; i < list.size(); i++) {
 				msg += "&7, &6" + list.get(i).getKey();
 			}
-			SharedUtil.msg(s, msg);
+			BukkitUtil.msg(s, msg);
 		}
 		list = repeaters.get(ScheduleInterval.HOUR);
 		if (list.size() != 0) {
@@ -315,7 +315,7 @@ public class SchedulerAPI {
 			for (int i = 1; i < list.size(); i++) {
 				msg += "&7, &6" + list.get(i).getKey();
 			}
-			SharedUtil.msg(s, msg);
+			BukkitUtil.msg(s, msg);
 		}
 		list = repeaters.get(ScheduleInterval.HALF_HOUR);
 		if (list.size() != 0) {
@@ -323,7 +323,7 @@ public class SchedulerAPI {
 			for (int i = 1; i < list.size(); i++) {
 				msg += "&7, &6" + list.get(i).getKey();
 			}
-			SharedUtil.msg(s, msg);
+			BukkitUtil.msg(s, msg);
 		}
 		list = repeaters.get(ScheduleInterval.FIFTEEN_MINUTES);
 		if (list.size() != 0) {
@@ -331,7 +331,7 @@ public class SchedulerAPI {
 			for (int i = 1; i < list.size(); i++) {
 				msg += "&7, &6" + list.get(i).getKey();
 			}
-			SharedUtil.msg(s, msg);
+			BukkitUtil.msg(s, msg);
 		}
 	}
 	

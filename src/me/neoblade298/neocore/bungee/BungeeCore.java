@@ -2,7 +2,6 @@ package me.neoblade298.neocore.bungee;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

@@ -10,7 +10,7 @@ import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
-import me.neoblade298.neocore.shared.util.SharedUtil;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 
 public class CmdIODisable implements Subcommand {
 	private static final CommandArguments args = new CommandArguments(Arrays.asList(new CommandArgument("action", true),
@@ -41,11 +41,11 @@ public class CmdIODisable implements Subcommand {
 		IOType type = IOType.valueOf(args[0].toUpperCase());
 		if (args.length == 1) {
 			PlayerIOManager.disableIO(type);
-			SharedUtil.msg(s, "Successfully set " + type + " to disabled.");
+			BukkitUtil.msg(s, "Successfully set " + type + " to disabled.");
 		}
 		else {
 			PlayerIOManager.disableIO(type, args[1]);
-			SharedUtil.msg(s, "Successfully set " + type + " to disabled for manager " + args[1] + ".");
+			BukkitUtil.msg(s, "Successfully set " + type + " to disabled for manager " + args[1] + ".");
 		}
 	}
 
