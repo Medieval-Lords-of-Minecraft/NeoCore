@@ -1,7 +1,7 @@
 package me.neoblade298.neocore.shared.io;
 
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -72,10 +72,10 @@ public class SQLManager {
 		return dataSources;
 	}
 	
-	public static Statement getStatement(String user) {
+	public static Connection getConnection(String user) {
 		try {
 			String db = userDbs.getOrDefault(user, null);
-			return dataSources.get(db).getConnection().createStatement();
+			return dataSources.get(db).getConnection();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}

@@ -1,6 +1,7 @@
 package me.neoblade298.neocore.bukkit;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.Random;
 import java.util.UUID;
 
@@ -236,8 +237,8 @@ public class NeoCore extends JavaPlugin implements Listener {
 		return PlayerIOManager.register(plugin, component, key, 0);
 	}
 	
-	public static void getStatement(String user) {
-		SQLManager.getStatement(user);
+	public static Connection getConnection(String user) {
+		return SQLManager.getConnection(user);
 	}
 	
 	public static void loadFiles(File load, FileLoader loader) throws NeoIOException {
