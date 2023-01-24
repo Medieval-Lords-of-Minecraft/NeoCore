@@ -44,7 +44,7 @@ public class BungeeCore extends Plugin implements Listener
         getProxy().getPluginManager().registerCommand(this, new CmdTphere());
         getProxy().getPluginManager().registerCommand(this, new CmdUptime());
         getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
-        getProxy().getPluginManager().registerListener(this, this);
+        getProxy().getPluginManager().registerListener(new BungeeListener(), this);
         getProxy().registerChannel("neocore:bungee");
         
         inst = this;
@@ -65,13 +65,6 @@ public class BungeeCore extends Plugin implements Listener
     	});
     	announceyml = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "announcements.yml"));
     	announcements = announceyml.getStringList("announcements");
-    }
-    
-    @EventHandler
-    public void onJoin(PostLoginEvent e) {
-    	getProxy().getScheduler().schedule(this, () -> {
-    		sendMotd(e.getPlayer());
-		}, 3, TimeUnit.SECONDS);
     }
     
     public static void sendMotd(CommandSender s) {
@@ -114,18 +107,6 @@ public class BungeeCore extends Plugin implements Listener
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-    }
-    
-    @EventHandler
-    public void onBungeeMessage(PluginMessageEvent e) {
-		ByteArrayDataInput in = ByteStreams.newDataInput(e.getData());
-		try {
-			if (in.readUTF().equals("NeoCore")) {
-				if (in.readUTF().equals("cmd")) {
-					getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), in.readUTF());
-				}
-			}
-		} catch (Exception ex) {	}
     }
 	
 	public static Connection getConnection(String user) {
