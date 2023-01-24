@@ -3,6 +3,9 @@ package me.neoblade298.neocore.shared.io;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -13,6 +16,7 @@ import net.md_5.bungee.config.Configuration;
 public class SQLManager {
 	private static HashMap<String, String> userDbs = new HashMap<String, String>(); // User -> database key -> datasource
     private static HashMap<String, HikariDataSource> dataSources = new HashMap<String, HikariDataSource>();
+    private static Queue<ConnectionDetails> latestConnections = new LinkedList<ConnectionDetails>();
 	
     // Bukkit
 	public static void load(ConfigurationSection cfg) {
@@ -76,10 +80,19 @@ public class SQLManager {
 	public static Connection getConnection(String user) {
 		try {
 			String db = userDbs.getOrDefault(user, null);
-			return dataSources.get(db).getConnection();
+			Connection con = dataSources.get(db).getConnection();
+			latestConnections.add(new ConnectionDetails(user, con));
+			if (latestConnections.size() > 100) {
+				latestConnections.poll();
+			}
+			return con;
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static Queue<ConnectionDetails> getLatestConnections() {
+		return latestConnections;
 	}
 }

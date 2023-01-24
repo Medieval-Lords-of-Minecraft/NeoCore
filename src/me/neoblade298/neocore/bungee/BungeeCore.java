@@ -13,6 +13,7 @@ import com.google.common.io.ByteStreams;
 
 import me.neoblade298.neocore.bungee.commands.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
+import me.neoblade298.neocore.bungee.listeners.BungeeListener;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
@@ -44,7 +45,7 @@ public class BungeeCore extends Plugin implements Listener
         getProxy().getPluginManager().registerCommand(this, new CmdTphere());
         getProxy().getPluginManager().registerCommand(this, new CmdUptime());
         getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
-        getProxy().getPluginManager().registerListener(new BungeeListener(), this);
+        getProxy().getPluginManager().registerListener(this, new BungeeListener());
         getProxy().registerChannel("neocore:bungee");
         
         inst = this;
