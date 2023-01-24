@@ -1,6 +1,5 @@
 package me.neoblade298.neocore.shared.io;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -24,7 +23,8 @@ public class SQLManager {
         config.setJdbcUrl(connectionPrefix + cfg.getString("db") + connectionSuffix);
         config.setUsername(cfg.getString("username"));
         config.setPassword(cfg.getString("password"));
-        config.setMaximumPoolSize(5);
+        config.setMaximumPoolSize(8);
+        config.setConnectionTimeout(5000);
         dataSources.put(null, new HikariDataSource(config));
 		
 		ConfigurationSection users = cfg.getConfigurationSection("users");
@@ -72,31 +72,13 @@ public class SQLManager {
 		return dataSources;
 	}
 	
-	public static void runSql(String user, StatementExecutor exec) {
+	public static Statement getStatement(String user) {
 		try {
 			String db = userDbs.getOrDefault(user, null);
-			Statement stmt = dataSources.get(db).getConnection().createStatement();
-			exec.use(stmt);
-			stmt.close();
+			return dataSources.get(db).getConnection().createStatement();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-	}
-	
-	public static void runSql(String user, int numStatements, MultiStatementExecutor exec) {
-		try {
-			String db = userDbs.getOrDefault(user, null);
-			Connection con = dataSources.get(db).getConnection();
-			Statement[] stmts = new Statement[numStatements];
-			for (int i = 0; i < numStatements; i++) {
-				stmts[i] = con.createStatement();
-			}
-			exec.use(stmts);
-			for (int i = 0; i < numStatements; i++) {
-				stmts[i].close();
-			}
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
+		return null;
 	}
 }

@@ -12,9 +12,7 @@ import com.google.common.io.ByteStreams;
 
 import me.neoblade298.neocore.bungee.commands.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
-import me.neoblade298.neocore.shared.io.MultiStatementExecutor;
 import me.neoblade298.neocore.shared.io.SQLManager;
-import me.neoblade298.neocore.shared.io.StatementExecutor;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.CommandSender;
@@ -129,12 +127,8 @@ public class BungeeCore extends Plugin implements Listener
 		} catch (Exception ex) {	}
     }
 	
-	public static void runSql(String user, StatementExecutor exec) {
-		SQLManager.runSql(user, exec);
-	}
-	
-	public static void runSql(String user, int numStatements, MultiStatementExecutor exec) {
-		SQLManager.runSql(user, numStatements, exec);
+	public static void getStatement(String user) {
+		SQLManager.getStatement(user);
 	}
 	
 	public static void sendPluginMessage(String[] servers, String[] msgs) {

@@ -38,9 +38,7 @@ import me.neoblade298.neocore.bukkit.scheduler.ScheduleInterval;
 import me.neoblade298.neocore.bukkit.scheduler.SchedulerAPI;
 import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
-import me.neoblade298.neocore.shared.io.MultiStatementExecutor;
 import me.neoblade298.neocore.shared.io.SQLManager;
-import me.neoblade298.neocore.shared.io.StatementExecutor;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.ChatColor;
@@ -238,12 +236,8 @@ public class NeoCore extends JavaPlugin implements Listener {
 		return PlayerIOManager.register(plugin, component, key, 0);
 	}
 	
-	public static void runSql(String user, StatementExecutor exec) {
-		SQLManager.runSql(user, exec);
-	}
-	
-	public static void runSql(String user, int numStatements, MultiStatementExecutor exec) {
-		SQLManager.runSql(user, numStatements, exec);
+	public static void getStatement(String user) {
+		SQLManager.getStatement(user);
 	}
 	
 	public static void loadFiles(File load, FileLoader loader) throws NeoIOException {
