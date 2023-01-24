@@ -25,6 +25,7 @@ public class SQLManager {
         config.setPassword(cfg.getString("password"));
         config.setMaximumPoolSize(8);
         config.setConnectionTimeout(5000);
+        config.setLeakDetectionThreshold(30000);
         dataSources.put(null, new HikariDataSource(config));
 		
 		ConfigurationSection users = cfg.getConfigurationSection("users");
