@@ -182,7 +182,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdIODisable());
 		mngr.register(new CmdIODisabled());
 		mngr.register(new CmdIOList());
-		mngr.register(new CmdIOFindLeaks());
 		
 		mngr = new CommandManager("nbt", "neocore.admin", ChatColor.DARK_RED, this);
 		mngr.registerCommandList("");

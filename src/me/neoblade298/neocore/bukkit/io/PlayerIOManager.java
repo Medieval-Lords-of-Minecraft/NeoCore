@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -180,6 +179,7 @@ public class PlayerIOManager implements Listener {
 			toSave.add(p);
 		}
 		
+		if (toSave.size() == 0) return;
 		new BukkitRunnable() {
 			public void run() {
 				ArrayList<Connection> cons = new ArrayList<Connection>(SQLManager.getDataSources().size());
@@ -372,6 +372,9 @@ public class PlayerIOManager implements Listener {
 			}
 			closeStatements(inserts);
 			closeStatements(deletes);
+			for (Connection con : cons) {
+				con.close();
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -433,6 +436,7 @@ public class PlayerIOManager implements Listener {
 			for (Connection con : cons) {
 					con.close();
 			}
+			cons.clear();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
