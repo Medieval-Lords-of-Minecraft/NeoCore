@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -113,10 +114,10 @@ public class PlayerIOManager implements Listener {
 		new BukkitRunnable() {
 			public void run() {
 				ArrayList<Connection> cons = new ArrayList<Connection>(SQLManager.getDataSources().size());
+				HashMap<String, Statement> inserts = new HashMap<String, Statement>();
+				HashMap<String, Statement> deletes = new HashMap<String, Statement>();
 				try {
 					// Set up statements per db
-					HashMap<String, Statement> inserts = new HashMap<String, Statement>();
-					HashMap<String, Statement> deletes = new HashMap<String, Statement>();
 					for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
 						Connection con = e.getValue().getConnection();
 						cons.add(con);
@@ -143,6 +144,8 @@ public class PlayerIOManager implements Listener {
 							}
 						}
 					}
+					closeStatements(inserts);
+					closeStatements(deletes);
 				} catch (Exception ex) {
 					Bukkit.getLogger().log(Level.WARNING, "[NeoCore] Failed to handle saving for player " + uuid);
 					ex.printStackTrace();
@@ -180,10 +183,10 @@ public class PlayerIOManager implements Listener {
 		new BukkitRunnable() {
 			public void run() {
 				ArrayList<Connection> cons = new ArrayList<Connection>(SQLManager.getDataSources().size());
+				HashMap<String, Statement> inserts = new HashMap<String, Statement>();
+				HashMap<String, Statement> deletes = new HashMap<String, Statement>();
 				try {
 					// Set up statements per db
-					HashMap<String, Statement> inserts = new HashMap<String, Statement>();
-					HashMap<String, Statement> deletes = new HashMap<String, Statement>();
 					for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
 						Connection con = e.getValue().getConnection();
 						cons.add(con);
@@ -214,6 +217,8 @@ public class PlayerIOManager implements Listener {
 					ex.printStackTrace();
 				}
 				finally {
+					closeStatements(inserts);
+					closeStatements(deletes);
 					for (Player p : toSave) {
 						endIOTask(type, p.getUniqueId(), cons);
 					}
@@ -234,9 +239,9 @@ public class PlayerIOManager implements Listener {
 		new BukkitRunnable() {
 			public void run() {
 				ArrayList<Connection> cons = new ArrayList<Connection>(SQLManager.getDataSources().size());
+				HashMap<String, Statement> stmts = new HashMap<String, Statement>();
 				try {
 					// Set up statements per db
-					HashMap<String, Statement> stmts = new HashMap<String, Statement>();
 					for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
 						Connection con = e.getValue().getConnection();
 						cons.add(con);
@@ -261,6 +266,7 @@ public class PlayerIOManager implements Listener {
 					ex.printStackTrace();
 				}
 				finally {
+					closeStatements(stmts);
 					endIOTask(type, p.getUniqueId(), cons);
 				}
 			}
@@ -279,6 +285,7 @@ public class PlayerIOManager implements Listener {
 			int count = 0;
 			public void run() {
 				ArrayList<Connection> cons = new ArrayList<Connection>(SQLManager.getDataSources().size());
+				HashMap<String, Statement> stmts = new HashMap<String, Statement>();
 				try {
 					if (++count > 5) {
 						this.cancel();
@@ -289,7 +296,6 @@ public class PlayerIOManager implements Listener {
 					}
 
 					// Set up statements per db
-					HashMap<String, Statement> stmts = new HashMap<String, Statement>();
 					for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
 						Connection con = e.getValue().getConnection();
 						cons.add(con);
@@ -313,6 +319,7 @@ public class PlayerIOManager implements Listener {
 						}
 					}
 					Bukkit.getLogger().info("[NeoCore] Successfully loaded player " + p.getName() + " in " + count + " attempts");
+					closeStatements(stmts);
 					endIOTask(type, p.getUniqueId(), cons);
 					endIOTask(IOType.FULLLOAD, p.getUniqueId(), cons);
 					this.cancel();
@@ -330,11 +337,11 @@ public class PlayerIOManager implements Listener {
 		}
 
 		ArrayList<Connection> cons = new ArrayList<Connection>(SQLManager.getDataSources().size());
+		HashMap<String, Statement> inserts = new HashMap<String, Statement>();
+		HashMap<String, Statement> deletes = new HashMap<String, Statement>();
 		try {
 			// Set up statements per db
 			long timestamp = System.currentTimeMillis();
-			HashMap<String, Statement> inserts = new HashMap<String, Statement>();
-			HashMap<String, Statement> deletes = new HashMap<String, Statement>();
 			for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
 				Connection con = e.getValue().getConnection();
 				cons.add(con);
@@ -363,6 +370,8 @@ public class PlayerIOManager implements Listener {
 					Bukkit.getLogger().info("[NeoCore] Skipping cleanup for component " + io.getKey());
 				}
 			}
+			closeStatements(inserts);
+			closeStatements(deletes);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -392,6 +401,17 @@ public class PlayerIOManager implements Listener {
 	
 	public static boolean isPerformingIO(UUID uuid, IOType type) {
 		return performingIO.get(type).contains(uuid);
+	}
+	
+	private static void closeStatements(HashMap<String, Statement> stmts) {
+		if (stmts == null) return;
+		try {
+			for (Statement stmt : stmts.values()) {
+					stmt.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private static void endIOTask(IOType type, UUID uuid, ArrayList<Connection> cons) {
