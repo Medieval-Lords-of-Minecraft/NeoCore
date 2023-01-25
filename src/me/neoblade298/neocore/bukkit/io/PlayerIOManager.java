@@ -204,7 +204,7 @@ public class PlayerIOManager implements Listener {
 								if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " autosaved in " + 
 										(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
 								
-								// Save per plaeyr
+								// Save per player
 								for (Player p : toSave) {
 									io.getComponent().autosavePlayer(p, insert, delete);
 								}
