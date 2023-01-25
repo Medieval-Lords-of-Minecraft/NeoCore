@@ -194,16 +194,22 @@ public class PlayerIOManager implements Listener {
 						deletes.put(e.getKey(), con.createStatement());
 					}
 
-					// Save account
 					for (IOComponentWrapper io : orderedComponents) {
 						if (!disabledKeys.contains(io.getKey().toUpperCase())) {
-							try {
-								Statement insert = inserts.getOrDefault(io.getDatabase(), inserts.get(null));
-								Statement delete = deletes.getOrDefault(io.getDatabase(), deletes.get(null));
+							try (Statement insert = inserts.getOrDefault(io.getDatabase(), inserts.get(null));
+								Statement delete = deletes.getOrDefault(io.getDatabase(), deletes.get(null));) {
+								// Save general
+								io.getComponent().autosave(insert, delete);
+								int deleted = delete.executeBatch().length, inserted = insert.executeBatch().length;
+								if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " autosaved in " + 
+										(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
+								
+								// Save per plaeyr
 								for (Player p : toSave) {
 									io.getComponent().autosavePlayer(p, insert, delete);
 								}
-								int deleted = delete.executeBatch().length, inserted = insert.executeBatch().length;
+								deleted = delete.executeBatch().length;
+								inserted = insert.executeBatch().length;
 								if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " autosaved players in " + 
 										(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
 							}
