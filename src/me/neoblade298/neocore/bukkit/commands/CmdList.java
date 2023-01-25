@@ -6,8 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.util.PaginatedList;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.shared.util.PaginatedList;
 import net.md_5.bungee.api.ChatColor;
 
 public class CmdList implements Subcommand {
@@ -63,7 +63,7 @@ public class CmdList implements Subcommand {
 		}
 		else {
 			if (!StringUtils.isNumeric(args[0])) {
-				Util.msg(s, "&cInvalid subcommand!");
+				BukkitUtil.msg(s, "&cInvalid subcommand!");
 			}
 			else {
 				showPage(s, Integer.parseInt(args[0]));
@@ -89,7 +89,7 @@ public class CmdList implements Subcommand {
 	private void showPage(CommandSender s, int page) {
 		page = page - 1;
 		if (page >= pages.size() || page < 0) {
-			Util.msg(s, "&cPage is out of bounds!");
+			BukkitUtil.msg(s, "&cPage is out of bounds!");
 			return;
 		}
 
@@ -132,7 +132,7 @@ public class CmdList implements Subcommand {
 			pages.displayFooter((Player) s, page, nextCmd, prevCmd);
 		}
 		else {
-			Util.msg(s, "&7Page &f" + (page + 1) + " &7/ &f" + pages.size(), false);
+			BukkitUtil.msg(s, "&7Page &f" + (page + 1) + " &7/ &f" + pages.size(), false);
 		}
 	}
 }

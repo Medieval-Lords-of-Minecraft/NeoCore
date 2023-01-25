@@ -11,4 +11,5 @@ public interface IOComponent {
 	public void loadPlayer(Player p, Statement stmt);
 	public void cleanup(Statement insert, Statement delete);
 	public default void autosavePlayer(Player p, Statement insert, Statement delete) {}
+	public default void autosave(Statement insert, Statement delete) {}
 }

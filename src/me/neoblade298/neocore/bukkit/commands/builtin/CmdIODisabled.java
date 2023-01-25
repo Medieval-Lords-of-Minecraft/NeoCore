@@ -7,7 +7,7 @@ import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 
 public class CmdIODisabled implements Subcommand {
 	private static final CommandArguments args = new CommandArguments();
@@ -39,7 +39,7 @@ public class CmdIODisabled implements Subcommand {
 			for (String key : PlayerIOManager.getDisabledIO().get(type)) {
 				msg += " &e" + key;
 			}
-			Util.msg(s, msg, false);
+			BukkitUtil.msg(s, msg, false);
 		}
 	}
 

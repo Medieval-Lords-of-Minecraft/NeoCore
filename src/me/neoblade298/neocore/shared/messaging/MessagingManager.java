@@ -10,8 +10,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -42,14 +43,14 @@ public class MessagingManager {
 		if (messages.containsKey(key.toUpperCase())) {
 			BaseComponent[][] msgs = messages.get(key.toUpperCase());
 			if (msgs.length <= page) {
-				Util.msg(recipient, "&cThis doesn't have " + page + " pages!");
+				BukkitUtil.msg(recipient, "&cThis doesn't have " + page + " pages!");
 				return;
 			}
 			
 			s.spigot().sendMessage(msgs[page]);
 		}
 		else {
-			Util.msg(recipient, "&cMessage " + key + " doesn't exist!");
+			BukkitUtil.msg(recipient, "&cMessage " + key + " doesn't exist!");
 			Bukkit.getLogger().warning("[NeoCore] Failed to send message to " + s.getName() + ", key doesn't exist: " + key);
 		}
 	}
@@ -99,10 +100,10 @@ public class MessagingManager {
 			ConfigurationSection sec = cfg.getConfigurationSection(key);
 			if (firstKey) {
 				firstKey = false;
-				builder = new ComponentBuilder(Util.translateColors(sec.getString("text")));
+				builder = new ComponentBuilder(SharedUtil.translateColors(sec.getString("text")));
 			}
 			else {
-				builder.append(Util.translateColors(sec.getString("text")), FormatRetention.NONE);
+				builder.append(SharedUtil.translateColors(sec.getString("text")), FormatRetention.NONE);
 			}
 			
 			if (sec.getString("suggest") != null) {
@@ -118,7 +119,7 @@ public class MessagingManager {
 			}
 			
 			if (sec.getString("hover") != null) {
-				builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Util.translateColors(sec.getString("hover")))));
+				builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(SharedUtil.translateColors(sec.getString("hover")))));
 			}
 		}
 		return builder.create();
@@ -131,10 +132,10 @@ public class MessagingManager {
 			Configuration sec = cfg.getSection(key);
 			if (firstKey) {
 				firstKey = false;
-				builder = new ComponentBuilder(Util.translateColors(sec.getString("text")));
+				builder = new ComponentBuilder(SharedUtil.translateColors(sec.getString("text")));
 			}
 			else {
-				builder.append(Util.translateColors(sec.getString("text")), FormatRetention.NONE);
+				builder.append(SharedUtil.translateColors(sec.getString("text")), FormatRetention.NONE);
 			}
 			
 			if (sec.getString("suggest") != null) {
@@ -150,7 +151,7 @@ public class MessagingManager {
 			}
 			
 			if (sec.getString("hover") != null) {
-				builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Util.translateColors(sec.getString("hover")))));
+				builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(SharedUtil.translateColors(sec.getString("hover")))));
 			}
 		}
 		return builder.create();

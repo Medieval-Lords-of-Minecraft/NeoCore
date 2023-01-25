@@ -2,7 +2,7 @@ package me.neoblade298.neocore.bungee;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Statement;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -13,9 +13,10 @@ import com.google.common.io.ByteStreams;
 
 import me.neoblade298.neocore.bungee.commands.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
+import me.neoblade298.neocore.bungee.listeners.BungeeListener;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -44,7 +45,7 @@ public class BungeeCore extends Plugin implements Listener
         getProxy().getPluginManager().registerCommand(this, new CmdTphere());
         getProxy().getPluginManager().registerCommand(this, new CmdUptime());
         getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
-        getProxy().getPluginManager().registerListener(this, this);
+        getProxy().getPluginManager().registerListener(this, new BungeeListener());
         getProxy().registerChannel("neocore:bungee");
         
         inst = this;
@@ -52,7 +53,7 @@ public class BungeeCore extends Plugin implements Listener
         Configuration cfg = null;
 		try {
 			cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
-	        SQLManager.load(cfg);
+	        SQLManager.load(cfg.getSection("sql"));
 	        reload();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -65,13 +66,6 @@ public class BungeeCore extends Plugin implements Listener
     	});
     	announceyml = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "announcements.yml"));
     	announcements = announceyml.getStringList("announcements");
-    }
-    
-    @EventHandler
-    public void onJoin(PostLoginEvent e) {
-    	getProxy().getScheduler().schedule(this, () -> {
-    		sendMotd(e.getPlayer());
-		}, 3, TimeUnit.SECONDS);
     }
     
     public static void sendMotd(CommandSender s) {
@@ -87,11 +81,11 @@ public class BungeeCore extends Plugin implements Listener
 		}
 		if (announcements.size() > 0) {
 			for (int i = 0; i < announcements.size(); i++) {
-				msg[idx++] = new TextComponent(Util.translateColors("§6- §e" + announcements.get(i) + (i + 1 == announcements.size() ? "" : "\n")));
+				msg[idx++] = new TextComponent(SharedUtil.translateColors("§6- §e" + announcements.get(i) + (i + 1 == announcements.size() ? "" : "\n")));
 			}
 		}
 		else {
-			msg[idx++] = new TextComponent(Util.translateColors("&6- &eNone for now!"));
+			msg[idx++] = new TextComponent(SharedUtil.translateColors("&6- &eNone for now!"));
 		}
 		s.sendMessage(msg);
     }
@@ -115,25 +109,9 @@ public class BungeeCore extends Plugin implements Listener
 			e.printStackTrace();
 		}
     }
-    
-    @EventHandler
-    public void onBungeeMessage(PluginMessageEvent e) {
-		ByteArrayDataInput in = ByteStreams.newDataInput(e.getData());
-		try {
-			if (in.readUTF().equals("NeoCore")) {
-				if (in.readUTF().equals("cmd")) {
-					getProxy().getPluginManager().dispatchCommand(getProxy().getConsole(), in.readUTF());
-				}
-			}
-		} catch (Exception ex) {	}
-    }
 	
-	public static Statement getDefaultStatement() {
-		return SQLManager.getDefaultStatement();
-	}
-	
-	public static Statement getStatement(String user) {
-		return SQLManager.getStatement(user);
+	public static Connection getConnection(String user) {
+		return SQLManager.getConnection(user);
 	}
 	
 	public static void sendPluginMessage(String[] servers, String[] msgs) {

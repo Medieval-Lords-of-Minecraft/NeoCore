@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.util;
+package me.neoblade298.neocore.shared.util;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import org.bukkit.command.CommandSender;
 
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -161,7 +162,7 @@ public class PaginatedList<E> implements Iterable<E> {
 	}
 	
 	public void displayFooter(CommandSender s, int page) {
-		Util.msg(s, "&7Page &f" + (page + 1) + " &7/ " + pages.size());
+		BukkitUtil.msg(s, "&7Page &f" + (page + 1) + " &7/ " + pages.size());
 	}
 
 	@Override

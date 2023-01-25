@@ -11,7 +11,7 @@ import com.sucy.skill.api.player.PlayerAccounts;
 import io.lumine.mythic.api.mobs.MobManager;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class BossInfo {
 	private String key, display, displayWithLvl, displayWithLvlRounded, tag;
@@ -22,7 +22,7 @@ public class BossInfo {
 	public BossInfo(ConfigurationSection cfg) {
 		this.key = cfg.getName();
 		this.tag = "Killed" + this.key;
-		this.display = Util.translateColors("&c" + cfg.getString("display", "DEFAULT"));
+		this.display = SharedUtil.translateColors("&c" + cfg.getString("display", "DEFAULT"));
 		this.level = cfg.getInt("level");
 		int levelRounded = level - (level % 5);
 		this.healthComponents = cfg.getStringList("health-components");
