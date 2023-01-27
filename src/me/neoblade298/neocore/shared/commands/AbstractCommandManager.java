@@ -10,13 +10,13 @@ import org.apache.commons.lang.StringUtils;
 import me.neoblade298.neocore.bukkit.commands.CmdList;
 import net.md_5.bungee.api.ChatColor;
 
-public abstract class AbstractCommandManager<T extends AbstractSubcommand> {
+public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 	protected TreeMap<String, T> handlers = new TreeMap<String, T>();
 	protected HashSet<String> aliases = new HashSet<String>();
 	protected String base, perm;
 	protected ChatColor color = ChatColor.RED;
 	
-	public AbstractCommandManager(String base, String perm, ChatColor color) {
+	public AbstractSubcommandManager(String base, String perm, ChatColor color) {
 		this.base = base;
 		this.perm = perm;
 		this.color = color;

@@ -32,14 +32,11 @@ public class SubcommandManager extends Command {
 	}
 	
 	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
-		String perm = overhead.getPermission();
-		if (perm != null && !s.hasPermission(perm)) {
-			Util.msg(s, "&cYou're missing the permission: " + perm);
-			return false;
-		}
+		// If cmd permission exists, it overrides list permission
+		String activePerm = cmd.getPermission() != null ? cmd.getPermission() : overhead.getPermission();
 		
-		if ((cmd.getPermission() != null && cmd.getPermission().length() != 0) && !s.hasPermission(cmd.getPermission())) {
-			Util.msg(s, "&cYou're missing the permission: " + cmd.getPermission());
+		if (activePerm != null && !s.hasPermission(activePerm)) {
+			Util.msg(s, "&cYou're missing the permission: " + activePerm);
 			return false;
 		}
 

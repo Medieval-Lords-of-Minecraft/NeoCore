@@ -9,12 +9,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.neoblade298.neocore.shared.commands.CommandArguments;
-import me.neoblade298.neocore.shared.commands.AbstractCommandManager;
+import me.neoblade298.neocore.shared.commands.AbstractSubcommandManager;
+import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.commands.AbstractSubcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.md_5.bungee.api.ChatColor;
 
-public class SubcommandManager extends AbstractCommandManager<Subcommand> implements CommandExecutor  {
+public class SubcommandManager extends AbstractSubcommandManager<Subcommand> implements CommandExecutor  {
 	public SubcommandManager(String base, String perm, ChatColor color, JavaPlugin plugin) {
 		super(base, perm, color);
 		plugin.getCommand(base).setExecutor(this);
@@ -33,13 +34,10 @@ public class SubcommandManager extends AbstractCommandManager<Subcommand> implem
 	}
 	
 	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
-		if ((perm != null && !s.hasPermission(perm)) && !s.isOp()) {
-			s.sendMessage("§cYou're missing the permission: " + perm);
-			return false;
-		}
-		
-		if (((cmd.getPermission() != null && cmd.getPermission().length() != 0) && !s.hasPermission(cmd.getPermission())) && !s.isOp()) {
-			s.sendMessage("§cYou're missing the permission: " + cmd.getPermission());
+		// If cmd permission exists, it overrides list permission
+		String activePerm = cmd.getPermission() != null ? cmd.getPermission() : perm;
+		if (activePerm != null && !s.hasPermission(activePerm)) {
+			s.sendMessage("§cYou're missing the permission: " + activePerm);
 			return false;
 		}
 
