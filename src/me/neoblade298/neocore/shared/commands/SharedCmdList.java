@@ -75,7 +75,8 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 			
 			// Add description
 			if (sc.getDescription() != null) {
-				line += "§7 - " + sc.getDescription();
+				if (!line.endsWith(" ")) line += " ";
+				line += "§7- " + sc.getDescription();
 				msgs.add(new ComponentBuilder(line).create());
 			}
 		}
