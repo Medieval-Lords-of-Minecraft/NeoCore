@@ -18,7 +18,7 @@ public class CmdBroadcast extends Command {
 			Util.msg(s, "&c/bc [broadcast msg]");
 		}
 		else {
-			BungeeCore.inst().getProxy().broadcast(new TextComponent(SharedUtil.translateColors("&4[&c&lMLMC&4] " + SharedUtil.connectArgs(args))));
+			BungeeCore.inst().getProxy().broadcast(new TextComponent(SharedUtil.translateColors("&4[&c&lMLMC&4] &7" + SharedUtil.connectArgs(args))));
 		}
 	}
 }
