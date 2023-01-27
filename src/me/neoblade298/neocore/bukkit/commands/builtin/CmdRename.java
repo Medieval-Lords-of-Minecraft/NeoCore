@@ -8,31 +8,18 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
+import me.neoblade298.neocore.shared.commands.Arg;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 
-public class CmdRename implements Subcommand {
+public class CmdRename extends Subcommand {
 	private static int RENAME_PRICE = 1000;
-	@Override
-	public String getPermission() {
-		return "neocore.rename";
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.PLAYER_ONLY;
-	}
-
-	@Override
-	public String getKey() {
-		return "";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Renames the item in hand";
+	
+	public CmdRename(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("[name]"));
 	}
 
 	@Override

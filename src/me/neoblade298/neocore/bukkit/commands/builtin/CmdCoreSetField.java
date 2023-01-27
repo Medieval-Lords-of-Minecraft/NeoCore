@@ -1,42 +1,21 @@
 package me.neoblade298.neocore.bukkit.commands.builtin;
 
-import java.util.Arrays;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bukkit.commands.CommandArgument;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.bukkit.player.PlayerDataManager;
 import me.neoblade298.neocore.bukkit.player.PlayerFields;
 import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.shared.commands.Arg;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
 // /core addtag [player] [tag]
-public class CmdCoreSetField implements Subcommand {
-	private static final CommandArguments args = new CommandArguments(Arrays.asList(
-			new CommandArgument("player"), new CommandArgument("key"), new CommandArgument("subkey")));
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-
-	@Override
-	public String getKey() {
-		return "setfield";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Plays a message, usable by player but hidden";
+public class CmdCoreSetField extends Subcommand {
+	public CmdCoreSetField(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("player"), new Arg("key"), new Arg("subkey"));
 	}
 
 	@Override
@@ -57,10 +36,5 @@ public class CmdCoreSetField implements Subcommand {
 		}
 		
 		fields.resetField(args[2], p.getUniqueId());
-	}
-
-	@Override
-	public CommandArguments getArgs() {
-		return args;
 	}
 }

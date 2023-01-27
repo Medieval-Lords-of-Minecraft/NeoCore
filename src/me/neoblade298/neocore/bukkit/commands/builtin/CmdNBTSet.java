@@ -5,32 +5,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import de.tr7zw.nbtapi.NBTItem;
-import me.neoblade298.neocore.bukkit.commands.CommandArgument;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
+import me.neoblade298.neocore.shared.commands.Arg;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
-public class CmdNBTSet implements Subcommand {
-	private static final CommandArguments args = new CommandArguments(new CommandArgument("key"), new CommandArgument("value (/i, /d)"));
-
-	@Override
-	public String getPermission() {
-		return "neocore.nbt";
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.PLAYER_ONLY;
-	}
-
-	@Override
-	public String getKey() {
-		return "set";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Sets nbt of item in hand";
+public class CmdNBTSet extends Subcommand {
+	public CmdNBTSet(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("key"), new Arg("value (/i, /d)"));
 	}
 
 	@Override
@@ -56,10 +38,5 @@ public class CmdNBTSet implements Subcommand {
 				p.sendMessage("§7Successfully set NBT as int");
 			}
 		}
-	}
-
-	@Override
-	public CommandArguments getArgs() {
-		return args;
 	}
 }

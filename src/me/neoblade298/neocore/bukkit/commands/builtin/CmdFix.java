@@ -7,32 +7,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.neoblade298.neocore.bukkit.commands.CommandArgument;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
+import me.neoblade298.neocore.shared.commands.Arg;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
-public class CmdFix implements Subcommand {
-	private static final CommandArguments args = new CommandArguments(new CommandArgument("player", false));
-
-	@Override
-	public String getPermission() {
-		return "neocore.fix";
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-
-	@Override
-	public String getKey() {
-		return "";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Fixes given player's item in mainhand";
+public class CmdFix extends Subcommand {
+	public CmdFix(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("player", false));
 	}
 
 	@Override
@@ -60,10 +42,5 @@ public class CmdFix implements Subcommand {
 		}
 		item.setItemMeta(meta);
 		return true;
-	}
-
-	@Override
-	public CommandArguments getArgs() {
-		return args;
 	}
 }

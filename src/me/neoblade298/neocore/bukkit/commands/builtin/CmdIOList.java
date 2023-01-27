@@ -2,34 +2,15 @@ package me.neoblade298.neocore.bukkit.commands.builtin;
 
 import org.bukkit.command.CommandSender;
 
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
-public class CmdIOList implements Subcommand {
-	private static final CommandArguments args = new CommandArguments();
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-
-	@Override
-	public String getKey() {
-		return "list";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Lists IO Components by order of priority";
+public class CmdIOList extends Subcommand {
+	public CmdIOList(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
 	}
 
 	@Override
@@ -37,10 +18,5 @@ public class CmdIOList implements Subcommand {
 		for (IOComponentWrapper io : PlayerIOManager.getComponents()) {
 			BukkitUtil.msg(s, "&7- &6" + io.getKey() + " (&e" + io.getPriority() + "&6)", false);
 		}
-	}
-
-	@Override
-	public CommandArguments getArgs() {
-		return args;
 	}
 }

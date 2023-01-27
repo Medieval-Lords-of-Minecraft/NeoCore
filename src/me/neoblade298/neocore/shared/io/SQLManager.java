@@ -3,8 +3,6 @@ package me.neoblade298.neocore.shared.io;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import org.bukkit.configuration.ConfigurationSection;
 

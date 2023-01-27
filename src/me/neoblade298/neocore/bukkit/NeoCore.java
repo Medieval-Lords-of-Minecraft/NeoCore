@@ -38,6 +38,7 @@ import me.neoblade298.neocore.bukkit.player.*;
 import me.neoblade298.neocore.bukkit.scheduler.ScheduleInterval;
 import me.neoblade298.neocore.bukkit.scheduler.SchedulerAPI;
 import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
@@ -153,47 +154,42 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 
 	private void initCommands() {
-		CommandManager mngr = new CommandManager("core", this);
+		SubcommandManager mngr = new SubcommandManager("core", "neocore.admin", ChatColor.DARK_RED, this);
 		mngr.registerCommandList("");
-		mngr.register(new CmdCoreDebug());
-		mngr.register(new CmdCoreSchedule());
-		mngr.register(new CmdCoreMessage());
-		mngr.register(new CmdCoreRawMessage());
-		mngr.register(new CmdCoreSendMessage());
-		mngr.register(new CmdCorePlayerMessage());
-		mngr.register(new CmdCoreReload());
-		mngr.register(new CmdCoreCommandSet());
-		mngr.register(new CmdCoreAddTag());
-		mngr.register(new CmdCoreRemoveTag());
-		mngr.register(new CmdCoreSetField());
-		mngr.register(new CmdCoreResetField());
-		mngr.register(new CmdCoreTitle());
+		mngr.register(new CmdCoreBroadcast("bc", "Broadcasts to only the server you're on", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreDebug("debug", "Toggles debug mode", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreSchedule("schedule", "Lists all items in the current scheduler", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreMessage("msg", "Sends a player a message", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreRawMessage("rawmsg", "Sends a player a message without prefix", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreSendMessage("sendmsg", "Plays a message", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCorePlayerMessage("pmsg", "Plays a message, usable by player but hidden", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreReload("reload", "Reloads the plugin safely", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreCommandSet("commandset", "Runs a command set", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreAddTag("addtags", "Adds a player tag", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreRemoveTag("removetag", "Removes a player tag", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreSetField("setfield", "Sets a player field", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreResetField("resetfield", "Resets a player field", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreTitle("title", "Sends a title to a player", null, SubcommandRunner.BOTH));
+
+		mngr = new SubcommandManager("io", "neocore.admin", ChatColor.DARK_RED, this);
+		mngr.registerCommandList("");
+		mngr.register(new CmdIODebug("debug", "Toggles debug to view io benchmarks", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdIOEnable("enable", "Enables an IO action: save, preload, load, cleanup, autosave", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdIODisable("disable", "Enables an IO action: save, preload, load, cleanup, autosave", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdIODisabled("disabled", "Shows any disabled IO", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdIOList("list", "Lists IO Components by order of priority", null, SubcommandRunner.BOTH));
 		
-		mngr = new CommandManager("bcore", this);
+		mngr = new SubcommandManager("nbt", "neocore.admin", ChatColor.DARK_RED, this);
 		mngr.registerCommandList("");
-		mngr.register(new CmdBCoreSend());
-		mngr.register(new CmdBCoreCmd());
-		mngr.register(new CmdBCoreBroadcast());
+		mngr.register(new CmdNBTSet("set", "Sets NBT field of item in hand", null, SubcommandRunner.PLAYER_ONLY));
+		mngr.register(new CmdNBTGet("get", "Gets NBT field of item in hand", null, SubcommandRunner.PLAYER_ONLY));
+		mngr.register(new CmdNBTKeys("keys", "Shows all NBT keys of item in hand", null, SubcommandRunner.PLAYER_ONLY));
 
-		mngr = new CommandManager("io", "neocore.admin", ChatColor.DARK_RED, this);
-		mngr.registerCommandList("");
-		mngr.register(new CmdIODebug());
-		mngr.register(new CmdIOEnable());
-		mngr.register(new CmdIODisable());
-		mngr.register(new CmdIODisabled());
-		mngr.register(new CmdIOList());
-		
-		mngr = new CommandManager("nbt", "neocore.admin", ChatColor.DARK_RED, this);
-		mngr.registerCommandList("");
-		mngr.register(new CmdNBTSet());
-		mngr.register(new CmdNBTGet());
-		mngr.register(new CmdNBTKeys());
+		mngr = new SubcommandManager("fix", "neocore.admin", ChatColor.DARK_RED, this);
+		mngr.register(new CmdFix("fix", "Fixes player's item in hand", null, SubcommandRunner.BOTH));
 
-		mngr = new CommandManager("fix", "neocore.admin", ChatColor.DARK_RED, this);
-		mngr.register(new CmdFix());
-
-		mngr = new CommandManager("rename", this);
-		mngr.register(new CmdRename());
+		mngr = new SubcommandManager("rename", null, null, this);
+		mngr.register(new CmdRename("rename", "Renames player's item in hand", null, SubcommandRunner.PLAYER_ONLY));
 	}
 	
 	public static void reload() {

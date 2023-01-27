@@ -1,39 +1,18 @@
 package me.neoblade298.neocore.bukkit.commands.builtin;
 
-import java.util.Arrays;
-
 import org.bukkit.command.CommandSender;
 
-import me.neoblade298.neocore.bukkit.commands.CommandArgument;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.shared.commands.Arg;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
-public class CmdIODisable implements Subcommand {
-	private static final CommandArguments args = new CommandArguments(Arrays.asList(new CommandArgument("action", true),
-			new CommandArgument("io key", false)));
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-
-	@Override
-	public String getKey() {
-		return "disable";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Disables an IO action: save, preload, load, cleanup";
+public class CmdIODisable extends Subcommand {
+	public CmdIODisable(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("action", true), new Arg("io key", false));
 	}
 
 	@Override
@@ -47,10 +26,5 @@ public class CmdIODisable implements Subcommand {
 			PlayerIOManager.disableIO(type, args[1]);
 			BukkitUtil.msg(s, "Successfully set " + type + " to disabled for manager " + args[1] + ".");
 		}
-	}
-
-	@Override
-	public CommandArguments getArgs() {
-		return args;
 	}
 }

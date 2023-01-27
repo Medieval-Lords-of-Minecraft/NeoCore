@@ -1,39 +1,18 @@
 package me.neoblade298.neocore.bukkit.commands.builtin;
 
-import java.util.Arrays;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
-import me.neoblade298.neocore.bukkit.commands.CommandArgument;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.shared.commands.Arg;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
 
-public class CmdCoreSendMessage implements Subcommand {
-	private static final CommandArguments args = new CommandArguments(Arrays.asList(
-			new CommandArgument("player", false), new CommandArgument("message"), new CommandArgument("page", false)));
-
-	@Override
-	public String getPermission() {
-		return "mycommand.staff";
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-
-	@Override
-	public String getKey() {
-		return "sendmsg";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Plays a message";
+public class CmdCoreSendMessage extends Subcommand {
+	public CmdCoreSendMessage(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("player", false), new Arg("message"), new Arg("page", false));
 	}
 
 	@Override
@@ -68,10 +47,5 @@ public class CmdCoreSendMessage implements Subcommand {
 		if (s != recipient) {
 			BukkitUtil.msg(s, "&7Successfully sent message");
 		}
-	}
-
-	@Override
-	public CommandArguments getArgs() {
-		return args;
 	}
 }

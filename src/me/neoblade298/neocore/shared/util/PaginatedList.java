@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 import org.bukkit.command.CommandSender;
 
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -135,7 +135,7 @@ public class PaginatedList<E> implements Iterable<E> {
 		pages.clear();
 	}
 	
-	public void displayFooter(CommandSender s, int page, String nextCmd, String prevCmd) {
+	public BaseComponent[] getFooter(int page, String nextCmd, String prevCmd) {
 		// Add a previous arrow
 		ComponentBuilder b = null;
 		if (page > 0) {
@@ -158,11 +158,11 @@ public class PaginatedList<E> implements Iterable<E> {
 			.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, nextCmd))
 			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to go to next page!")));
 		}
-		s.spigot().sendMessage(b.create());
+		return b.create();
 	}
 	
-	public void displayFooter(CommandSender s, int page) {
-		BukkitUtil.msg(s, "&7Page &f" + (page + 1) + " &7/ " + pages.size());
+	public BaseComponent[] displayFooter(CommandSender s, int page) {
+		return new ComponentBuilder("&7Page &f" + (page + 1) + " &7/ " + pages.size()).create();
 	}
 
 	@Override

@@ -5,31 +5,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
-public class CmdCoreTitle implements Subcommand {
+public class CmdCoreTitle extends Subcommand {
 
-	@Override
-	public String getPermission() {
-		return "mycommand.staff";
+	public CmdCoreTitle(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
 	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-
-	@Override
-	public String getKey() {
-		return "title";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Sends a title to a player";
-	}
-
+	
 	@Override
 	public void run(CommandSender s, String[] args) {
 		Player p = Bukkit.getPlayer(args[0]);
@@ -81,10 +65,5 @@ public class CmdCoreTitle implements Subcommand {
 		}
 		
 		p.sendTitle(SharedUtil.translateColors(title), SharedUtil.translateColors(subtitle), fadeIn, stay, fadeOut);
-	}
-
-	@Override
-	public String getArgOverride() {
-		return "[player] {--title x} {--subtitle x} {--in x} {--stay x} {--out x}";
 	}
 }

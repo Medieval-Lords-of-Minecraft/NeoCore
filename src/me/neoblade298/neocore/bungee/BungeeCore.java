@@ -5,13 +5,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import me.neoblade298.neocore.bungee.commands.*;
+import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.BungeeListener;
 import me.neoblade298.neocore.shared.io.SQLManager;
@@ -21,14 +18,11 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.event.PluginMessageEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
-import net.md_5.bungee.event.EventHandler;
 
 public class BungeeCore extends Plugin implements Listener
 {
@@ -39,6 +33,7 @@ public class BungeeCore extends Plugin implements Listener
 	
     @Override
     public void onEnable() {
+        getProxy().getPluginManager().registerCommand(this, new CmdBroadcast());
         getProxy().getPluginManager().registerCommand(this, new CmdHub());
         getProxy().getPluginManager().registerCommand(this, new CmdMotd());
         getProxy().getPluginManager().registerCommand(this, new CmdTp());

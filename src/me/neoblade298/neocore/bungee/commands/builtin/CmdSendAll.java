@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bungee.commands;
+package me.neoblade298.neocore.bungee.commands.builtin;
 
 import me.neoblade298.neocore.bungee.util.BungeeUtil;
 import net.md_5.bungee.api.CommandSender;

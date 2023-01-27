@@ -1,50 +1,20 @@
 package me.neoblade298.neocore.bukkit.commands.builtin;
 
-import java.util.Arrays;
-
 import org.bukkit.command.CommandSender;
 
-import me.neoblade298.neocore.bukkit.commands.CommandArgument;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
+import me.neoblade298.neocore.shared.commands.Arg;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
-public class CmdCorePlayerMessage implements Subcommand {
-	private static final CommandArguments args = new CommandArguments(Arrays.asList(
-			new CommandArgument("message"), new CommandArgument("page", false)));
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.PLAYER_ONLY;
-	}
-
-	@Override
-	public String getKey() {
-		return "pmsg";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Plays a message, usable by player but hidden";
+public class CmdCorePlayerMessage extends Subcommand {
+	public CmdCorePlayerMessage(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("message"), new Arg("page", false));
+		hidden = true;
 	}
 
 	@Override
 	public void run(CommandSender s, String[] args) {
 		CmdCoreSendMessage.parseAndRun(s, args);
-	}
-
-	@Override
-	public CommandArguments getArgs() {
-		return args;
-	}
-	
-	@Override
-	public boolean isHidden() {
-		return true;
 	}
 }

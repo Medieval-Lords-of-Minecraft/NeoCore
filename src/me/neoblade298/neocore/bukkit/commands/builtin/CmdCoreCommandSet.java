@@ -3,29 +3,15 @@ package me.neoblade298.neocore.bukkit.commands.builtin;
 import org.bukkit.command.CommandSender;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.bukkit.commandsets.CommandSetManager;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
-public class CmdCoreCommandSet implements Subcommand {
+public class CmdCoreCommandSet extends Subcommand {
 
-	@Override
-	public String getPermission() {
-		return "mycommand.staff";
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-
-	@Override
-	public String getKey() {
-		return "commandset";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Runs a command set";
+	public CmdCoreCommandSet(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.setOverride("[key] {args}");
+		args.setMin(1);
 	}
 
 	@Override
@@ -35,10 +21,5 @@ public class CmdCoreCommandSet implements Subcommand {
 			newArgs[i - 1] = args[i];
 		}
 		CommandSetManager.runSet(args[0], newArgs);
-	}
-
-	@Override
-	public String getArgOverride() {
-		return "[key] {args}";
 	}
 }

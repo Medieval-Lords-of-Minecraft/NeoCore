@@ -6,32 +6,14 @@ import org.bukkit.inventory.ItemStack;
 
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTType;
-import me.neoblade298.neocore.bukkit.commands.CommandArgument;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
+import me.neoblade298.neocore.shared.commands.Arg;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
-public class CmdNBTGet implements Subcommand {
-	private static final CommandArguments args = new CommandArguments(new CommandArgument("key"));
-
-	@Override
-	public String getPermission() {
-		return "neocore.nbt";
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.PLAYER_ONLY;
-	}
-
-	@Override
-	public String getKey() {
-		return "get";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Sets nbt of item in hand";
+public class CmdNBTGet extends Subcommand {
+	public CmdNBTGet(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("key"));
 	}
 
 	@Override
@@ -52,10 +34,5 @@ public class CmdNBTGet implements Subcommand {
 			p.sendMessage("Type: String");
 			p.sendMessage(nbti.getString(args[0]));
 		}
-	}
-
-	@Override
-	public CommandArguments getArgs() {
-		return args;
 	}
 }

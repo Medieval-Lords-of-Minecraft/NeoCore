@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bukkit.commands;
+package me.neoblade298.neocore.shared.commands;
 
 public enum SubcommandRunner {
 	CONSOLE_ONLY,

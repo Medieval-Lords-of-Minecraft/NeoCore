@@ -1,9 +1,8 @@
-package me.neoblade298.neocore.bukkit.commands;
-
-import org.bukkit.command.CommandSender;
+package me.neoblade298.neocore.bungee.commands;
 
 import me.neoblade298.neocore.shared.commands.AbstractSubcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import net.md_5.bungee.api.CommandSender;
 
 public abstract class Subcommand extends AbstractSubcommand {
 	public Subcommand(String key, String desc, String perm, SubcommandRunner runner) {

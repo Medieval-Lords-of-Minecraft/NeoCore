@@ -1,14 +1,14 @@
-package me.neoblade298.neocore.bukkit.commands;
+package me.neoblade298.neocore.shared.commands;
 
-public class CommandArgument {
+public class Arg {
 	private boolean required;
 	private String display;
 	
-	public CommandArgument(String display) {
+	public Arg(String display) {
 		this(display, true);
 	}
 	
-	public CommandArgument(String display, boolean required) {
+	public Arg(String display, boolean required) {
 		this.display = display;
 		this.required = required;
 	}

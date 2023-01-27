@@ -4,30 +4,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
-public class CmdCoreRawMessage implements Subcommand {
+public class CmdCoreRawMessage extends Subcommand {
 
-	@Override
-	public String getPermission() {
-		return "mycommand.staff";
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-
-	@Override
-	public String getKey() {
-		return "rawmsg";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Sends a message to a player without prefix";
+	public CmdCoreRawMessage(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.setOverride("{player} [msg]");
+		args.setMin(1);
 	}
 
 	@Override
@@ -51,10 +37,5 @@ public class CmdCoreRawMessage implements Subcommand {
 		else if (offset == 1) {
 			BukkitUtil.msg(recipient, SharedUtil.connectArgs(args, 1), false);
 		}
-	}
-
-	@Override
-	public String getArgOverride() {
-		return "{player} [msg]";
 	}
 }
