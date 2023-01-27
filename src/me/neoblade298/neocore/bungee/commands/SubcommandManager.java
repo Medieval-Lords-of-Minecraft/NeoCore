@@ -4,7 +4,7 @@ import java.util.Set;
 
 import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.util.BungeeUtil;
+import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -34,31 +34,31 @@ public class SubcommandManager extends Command {
 	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
 		String perm = overhead.getPermission();
 		if (perm != null && !s.hasPermission(perm)) {
-			BungeeUtil.msg(s, "&cYou're missing the permission: " + perm);
+			Util.msg(s, "&cYou're missing the permission: " + perm);
 			return false;
 		}
 		
 		if ((cmd.getPermission() != null && cmd.getPermission().length() != 0) && !s.hasPermission(cmd.getPermission())) {
-			BungeeUtil.msg(s, "&cYou're missing the permission: " + cmd.getPermission());
+			Util.msg(s, "&cYou're missing the permission: " + cmd.getPermission());
 			return false;
 		}
 
 		if ((cmd.getRunner() == SubcommandRunner.PLAYER_ONLY && !(s instanceof ProxiedPlayer)) ||
 				(cmd.getRunner() == SubcommandRunner.CONSOLE_ONLY && !(s == BungeeCore.inst().getProxy().getConsole()))) {
-			BungeeUtil.msg(s, "&cYou are the wrong type of user for this command!");
+			Util.msg(s, "&cYou are the wrong type of user for this command!");
 			return false;
 		}
 		
 		CommandArguments cargs = cmd.getArgs();
 		if (args.length < cargs.getMin() && cargs.getMin() != -1) {
-			BungeeUtil.msg(s, "&cThis command requires at least " + cargs.getMin() + " args but received " + args.length + ".");
-			BungeeUtil.msg(s, "&c" + overhead.getCommandLine(cmd));
+			Util.msg(s, "&cThis command requires at least " + cargs.getMin() + " args but received " + args.length + ".");
+			Util.msg(s, "&c" + overhead.getCommandLine(cmd));
 			return false;
 		}
 
 		if (args.length > cargs.getMax() && cargs.getMax() != -1) {
-			BungeeUtil.msg(s, "&cThis command requires at most " + cargs.getMax() + " args but received " + args.length + ".");
-			BungeeUtil.msg(s, "&c" + overhead.getCommandLine(cmd));
+			Util.msg(s, "&cThis command requires at most " + cargs.getMax() + " args but received " + args.length + ".");
+			Util.msg(s, "&c" + overhead.getCommandLine(cmd));
 			return false;
 		}
 		

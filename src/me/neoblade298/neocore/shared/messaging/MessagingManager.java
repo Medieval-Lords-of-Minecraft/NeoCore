@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -43,14 +43,14 @@ public class MessagingManager {
 		if (messages.containsKey(key.toUpperCase())) {
 			BaseComponent[][] msgs = messages.get(key.toUpperCase());
 			if (msgs.length <= page) {
-				BukkitUtil.msg(recipient, "&cThis doesn't have " + page + " pages!");
+				Util.msg(recipient, "&cThis doesn't have " + page + " pages!");
 				return;
 			}
 			
 			s.spigot().sendMessage(msgs[page]);
 		}
 		else {
-			BukkitUtil.msg(recipient, "&cMessage " + key + " doesn't exist!");
+			Util.msg(recipient, "&cMessage " + key + " doesn't exist!");
 			Bukkit.getLogger().warning("[NeoCore] Failed to send message to " + s.getName() + ", key doesn't exist: " + key);
 		}
 	}

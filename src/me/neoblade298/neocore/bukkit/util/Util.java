@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
-public class BukkitUtil {
+public class Util {
 	public static void msgGroup(Collection<Player> s, String msg, boolean hasPrefix) {
 		for (CommandSender sender : s) {
 			msg(sender, msg, hasPrefix);

@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
 public class CmdCoreReload extends Subcommand {
@@ -15,6 +15,6 @@ public class CmdCoreReload extends Subcommand {
 	@Override
 	public void run(CommandSender s, String[] args) {
 		NeoCore.reload();
-		BukkitUtil.msg(s, "&7Successful reload");
+		Util.msg(s, "&7Successful reload");
 	}
 }

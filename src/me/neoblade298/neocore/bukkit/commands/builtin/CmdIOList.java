@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
 public class CmdIOList extends Subcommand {
@@ -16,7 +16,7 @@ public class CmdIOList extends Subcommand {
 	@Override
 	public void run(CommandSender s, String[] args) {
 		for (IOComponentWrapper io : PlayerIOManager.getComponents()) {
-			BukkitUtil.msg(s, "&7- &6" + io.getKey() + " (&e" + io.getPriority() + "&6)", false);
+			Util.msg(s, "&7- &6" + io.getKey() + " (&e" + io.getPriority() + "&6)", false);
 		}
 	}
 }

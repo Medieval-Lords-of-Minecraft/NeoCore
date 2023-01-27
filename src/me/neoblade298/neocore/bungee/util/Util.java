@@ -4,7 +4,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
-public class BungeeUtil {
+public class Util {
 	public static void msg(CommandSender s, String msg) {
 		msg(s, msg, true);
 	}

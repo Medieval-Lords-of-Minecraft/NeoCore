@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.messaging.MessagingManager;
@@ -45,7 +45,7 @@ public class CmdCoreSendMessage extends Subcommand {
 	public static void parseAndRun(CommandSender s, CommandSender recipient, String key, int page) {
 		MessagingManager.sendMessage(s, recipient, key, page);
 		if (s != recipient) {
-			BukkitUtil.msg(s, "&7Successfully sent message");
+			Util.msg(s, "&7Successfully sent message");
 		}
 	}
 }

@@ -1,6 +1,6 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
 import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.bungee.util.BungeeUtil;
+import me.neoblade298.neocore.bungee.util.Util;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -30,11 +30,11 @@ public class CmdTp extends Command {
 	
 	public static void executeTeleport(CommandSender sender, ProxiedPlayer src, ProxiedPlayer trg) {
 		if (!sender.hasPermission("mycommand.staff")) {
-			BungeeUtil.msg(sender, "&cYou don't have permission to do this!");
+			Util.msg(sender, "&cYou don't have permission to do this!");
 			return;
 		}
 		if (trg == null) {
-			BungeeUtil.msg(sender, "&cThis player is not online!");
+			Util.msg(sender, "&cThis player is not online!");
 			return;
 		}
 		

@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.player.PlayerDataManager;
 import me.neoblade298.neocore.bukkit.player.PlayerFields;
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
@@ -24,14 +24,14 @@ public class CmdCoreResetField extends Subcommand {
 		Player p = Bukkit.getPlayer(args[0]);
 		
 		if (p == null) {
-			BukkitUtil.msg(s, "&cThat user isn't online!");
+			Util.msg(s, "&cThat user isn't online!");
 			return;
 		}
 		
 		// Must be staff to change hidden tags or tags that aren't yours
 		if ((fields.isHidden() || !p.equals(s))
 				&& !s.hasPermission("mycommand.staff")) {
-			BukkitUtil.msg(s, "&cYou can't change this!");
+			Util.msg(s, "&cYou can't change this!");
 			return;
 		}
 		

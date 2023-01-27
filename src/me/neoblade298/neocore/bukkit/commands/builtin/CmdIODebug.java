@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
 public class CmdIODebug extends Subcommand {
@@ -15,10 +15,10 @@ public class CmdIODebug extends Subcommand {
 	@Override
 	public void run(CommandSender s, String[] args) {
 		if (PlayerIOManager.toggleDebug()) {
-			BukkitUtil.msg(s, "&7Successfully enabled io debug mode!");
+			Util.msg(s, "&7Successfully enabled io debug mode!");
 		}
 		else {
-			BukkitUtil.msg(s, "&7Successfully disabled io debug mode!");
+			Util.msg(s, "&7Successfully disabled io debug mode!");
 		}
 	}
 }
