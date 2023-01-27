@@ -193,10 +193,10 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdNBTKeys("keys", "Shows all NBT keys of item in hand", null, SubcommandRunner.PLAYER_ONLY));
 
 		mngr = new SubcommandManager("fix", "neocore.admin", ChatColor.DARK_RED, this);
-		mngr.register(new CmdFix("fix", "Fixes player's item in hand", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdFix("", "Fixes player's item in hand", null, SubcommandRunner.BOTH));
 
-		mngr = new SubcommandManager("rename", null, null, this);
-		mngr.register(new CmdRename("rename", "Renames player's item in hand", null, SubcommandRunner.PLAYER_ONLY));
+		mngr = new SubcommandManager("rename", null, ChatColor.RED, this);
+		mngr.register(new CmdRename("", "Renames player's item in hand", null, SubcommandRunner.PLAYER_ONLY));
 	}
 	
 	public static void reload() {
