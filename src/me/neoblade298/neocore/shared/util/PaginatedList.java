@@ -161,7 +161,7 @@ public class PaginatedList<E> implements Iterable<E> {
 		return b.create();
 	}
 	
-	public BaseComponent[] displayFooter(CommandSender s, int page) {
+	public BaseComponent[] getFooter(CommandSender s, int page) {
 		return new ComponentBuilder("&7Page &f" + (page + 1) + " &7/ " + pages.size()).create();
 	}
 
