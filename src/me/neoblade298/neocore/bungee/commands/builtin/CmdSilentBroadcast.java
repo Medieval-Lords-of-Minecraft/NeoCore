@@ -7,18 +7,18 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 
-public class CmdBroadcast extends Command {
-	public CmdBroadcast() {
-		super("bc");
+public class CmdSilentBroadcast extends Command {
+	public CmdSilentBroadcast() {
+		super("sbc");
 	}
 
 	@Override
 	public void execute(CommandSender s, String[] args) {
 		if (args.length == 0) {
-			Util.msg(s, "&c/bc [broadcast msg]");
+			Util.msg(s, "&c/sbc [broadcast msg]");
 		}
 		else {
-			BungeeCore.inst().getProxy().broadcast(new TextComponent(SharedUtil.translateColors("&4[&c&lMLMC&4] " + SharedUtil.connectArgs(args))));
+			BungeeCore.inst().getProxy().broadcast(new TextComponent(SharedUtil.translateColors(SharedUtil.connectArgs(args))));
 		}
 	}
 }

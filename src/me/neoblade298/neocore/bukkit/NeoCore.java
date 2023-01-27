@@ -162,7 +162,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdCoreMessage("msg", "Sends a player a message", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreRawMessage("rawmsg", "Sends a player a message without prefix", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreSendMessage("sendmsg", "Plays a message", null, SubcommandRunner.BOTH));
-		mngr.register(new CmdCorePlayerMessage("pmsg", "Plays a message, usable by player but hidden", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCorePlayerMessage("pmsg", "Plays a message, usable by player but hidden", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreReload("reload", "Reloads the plugin safely", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreCommandSet("commandset", "Runs a command set", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreAddTag("addtags", "Adds a player tag", null, SubcommandRunner.BOTH));
@@ -170,6 +170,10 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdCoreSetField("setfield", "Sets a player field", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreResetField("resetfield", "Resets a player field", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreTitle("title", "Sends a title to a player", null, SubcommandRunner.BOTH));
+
+		mngr = new SubcommandManager("bcore", "neocore.admin", ChatColor.DARK_RED, this);
+		mngr.registerCommandList("");
+		mngr.register(new CmdBCoreCmd("cmd", "Sends a command to bungeecord", null, SubcommandRunner.BOTH));
 
 		mngr = new SubcommandManager("io", "neocore.admin", ChatColor.DARK_RED, this);
 		mngr.registerCommandList("");

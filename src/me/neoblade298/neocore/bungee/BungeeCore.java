@@ -34,6 +34,7 @@ public class BungeeCore extends Plugin implements Listener
     @Override
     public void onEnable() {
         getProxy().getPluginManager().registerCommand(this, new CmdBroadcast());
+        getProxy().getPluginManager().registerCommand(this, new CmdSilentBroadcast());
         getProxy().getPluginManager().registerCommand(this, new CmdHub());
         getProxy().getPluginManager().registerCommand(this, new CmdMotd());
         getProxy().getPluginManager().registerCommand(this, new CmdTp());
