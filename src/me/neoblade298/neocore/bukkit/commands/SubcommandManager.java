@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 
 import me.neoblade298.neocore.shared.commands.AbstractSubcommandManager;
-import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.AbstractSubcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.md_5.bungee.api.ChatColor;
