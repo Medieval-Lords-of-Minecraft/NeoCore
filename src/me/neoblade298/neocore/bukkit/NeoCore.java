@@ -165,10 +165,10 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdCorePlayerMessage("pmsg", "Plays a message, usable by player but hidden", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreReload("reload", "Reloads the plugin safely", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreCommandSet("commandset", "Runs a command set", null, SubcommandRunner.BOTH));
-		mngr.register(new CmdCoreAddTag("addtags", "Adds a player tag", null, SubcommandRunner.BOTH));
-		mngr.register(new CmdCoreRemoveTag("removetag", "Removes a player tag", null, SubcommandRunner.BOTH));
-		mngr.register(new CmdCoreSetField("setfield", "Sets a player field", null, SubcommandRunner.BOTH));
-		mngr.register(new CmdCoreResetField("resetfield", "Resets a player field", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreAddTag("addtags", "Adds a player tag", "neocore.basic", SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreRemoveTag("removetag", "Removes a player tag", "neocore.basic", SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreSetField("setfield", "Sets a player field", "neocore.basic", SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreResetField("resetfield", "Resets a player field", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreTitle("title", "Sends a title to a player", null, SubcommandRunner.BOTH));
 
 		mngr = new SubcommandManager("bcore", "neocore.admin", ChatColor.DARK_RED, this);
