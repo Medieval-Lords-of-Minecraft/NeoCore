@@ -7,9 +7,7 @@ import java.util.regex.Pattern;
 import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class SharedUtil {
 	public static final Pattern HEX_PATTERN = Pattern.compile("&(#[A-Fa-f0-9]{6})");
@@ -94,16 +92,5 @@ public class SharedUtil {
 			}
 		}
 		return connected;
-	}
-	
-	public static void broadcast(String msg) {
-		broadcast(msg, true);
-	}
-	
-	public static void broadcast(String msg, boolean hasPrefix) {
-		if (hasPrefix) {
-			msg = "&4[&c&lMLMC&4] &7" + msg;
-		}
-		BungeeCore.inst().getProxy().broadcast(new TextComponent(SharedUtil.translateColors(msg)));
 	}
 }
