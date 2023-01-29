@@ -196,8 +196,9 @@ public class PlayerIOManager implements Listener {
 
 					for (IOComponentWrapper io : orderedComponents) {
 						if (!disabledKeys.contains(io.getKey().toUpperCase())) {
-							try (Statement insert = inserts.getOrDefault(io.getDatabase(), inserts.get(null));
-								Statement delete = deletes.getOrDefault(io.getDatabase(), deletes.get(null));) {
+							try {
+								Statement insert = inserts.getOrDefault(io.getDatabase(), inserts.get(null));
+								Statement delete = deletes.getOrDefault(io.getDatabase(), deletes.get(null));
 								// Save general
 								io.getComponent().autosave(insert, delete);
 								int deleted = delete.executeBatch().length, inserted = insert.executeBatch().length;
