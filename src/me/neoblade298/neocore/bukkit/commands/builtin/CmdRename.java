@@ -8,7 +8,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.ChatColor;
@@ -19,7 +18,7 @@ public class CmdRename extends Subcommand {
 	
 	public CmdRename(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
-		args.add(new Arg("[name]"));
+		args.setOverride("[name]");
 	}
 
 	@Override
