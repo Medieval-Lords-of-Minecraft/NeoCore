@@ -199,20 +199,22 @@ public class PlayerIOManager implements Listener {
 							try {
 								Statement insert = inserts.getOrDefault(io.getDatabase(), inserts.get(null));
 								Statement delete = deletes.getOrDefault(io.getDatabase(), deletes.get(null));
-								// Save general
-								io.getComponent().autosave(insert, delete);
-								int deleted = delete.executeBatch().length, inserted = insert.executeBatch().length;
-								if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " autosaved in " + 
-										(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
-								
 								// Save per player
 								for (Player p : toSave) {
 									io.getComponent().autosavePlayer(p, insert, delete);
 								}
-								deleted = delete.executeBatch().length;
-								inserted = insert.executeBatch().length;
+								int deleted = delete.executeBatch().length, inserted = insert.executeBatch().length;
 								if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " autosaved players in " + 
 										(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
+								
+
+								// Save general
+								io.getComponent().autosave(insert, delete);
+								deleted = delete.executeBatch().length;
+								inserted = insert.executeBatch().length;
+								if (debug) Bukkit.getLogger().info("[NeoCore Debug] Component " + io.getKey() + " autosaved in " + 
+										(System.currentTimeMillis() - timestamp) + "ms, +" + inserted + " -" + deleted);
+								
 							}
 							catch (Exception ex) {
 								Bukkit.getLogger().log(Level.WARNING, "[NeoCore] Failed to handle autosave for component " + io.getKey());
