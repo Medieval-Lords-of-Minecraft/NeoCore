@@ -11,11 +11,11 @@ import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
-// /core addtag [player] [tag]
+// /core resetfield [player] [field]
 public class CmdCoreResetField extends Subcommand {
 	public CmdCoreResetField(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
-		args.add(new Arg("player"), new Arg("key"), new Arg("subkey"), new Arg("value"));
+		args.add(new Arg("player"), new Arg("key"));
 	}
 
 	@Override
@@ -35,6 +35,6 @@ public class CmdCoreResetField extends Subcommand {
 			return;
 		}
 		
-		fields.changeField(args[2], args[3], p.getUniqueId());
+		fields.resetField(args[1], p.getUniqueId());
 	}
 }

@@ -11,7 +11,6 @@ import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
-// /core addtag [player] [tag]
 public class CmdCoreRemoveTag extends Subcommand {
 	public CmdCoreRemoveTag(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);

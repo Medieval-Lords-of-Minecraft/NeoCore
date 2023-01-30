@@ -11,11 +11,11 @@ import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 
-// /core addtag [player] [tag]
+// /core setfield [player] [field]
 public class CmdCoreSetField extends Subcommand {
 	public CmdCoreSetField(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
-		args.add(new Arg("player"), new Arg("key"), new Arg("subkey"));
+		args.add(new Arg("player"), new Arg("key"), new Arg("subkey"), new Arg("value"));
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class CmdCoreSetField extends Subcommand {
 			Util.msg(s, "&cYou can't change this!");
 			return;
 		}
-		
-		fields.resetField(args[2], p.getUniqueId());
+
+		fields.changeField(args[2], args[3], p.getUniqueId());
 	}
 }

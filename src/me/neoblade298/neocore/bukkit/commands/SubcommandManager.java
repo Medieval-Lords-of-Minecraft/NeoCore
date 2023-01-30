@@ -24,7 +24,10 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 	@Override
 	public boolean onCommand(CommandSender s, Command cmd, String lbl, String[] args) {
 		Subcommand sc = super.parseForCommand(args);
-		if (sc == null) return false;
+		if (sc == null) {
+			s.sendMessage("§cInvalid command! Are you using the right syntax? /" + base);
+			return true;
+		}
 		
 		args = super.reduceArgs(args, sc);
 		if (check(sc, s, args)) {

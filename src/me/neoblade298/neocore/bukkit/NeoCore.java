@@ -165,7 +165,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdCorePlayerMessage("pmsg", "Plays a message, usable by player but hidden", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreReload("reload", "Reloads the plugin safely", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreCommandSet("commandset", "Runs a command set", null, SubcommandRunner.BOTH));
-		mngr.register(new CmdCoreAddTag("addtags", "Adds a player tag", "neocore.basic", SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreAddTag("addtag", "Adds a player tag", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreRemoveTag("removetag", "Removes a player tag", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreSetField("setfield", "Sets a player field", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreResetField("resetfield", "Resets a player field", "neocore.basic", SubcommandRunner.BOTH));

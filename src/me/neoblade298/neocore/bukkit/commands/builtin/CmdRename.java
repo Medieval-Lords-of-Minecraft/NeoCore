@@ -19,10 +19,12 @@ public class CmdRename extends Subcommand {
 	public CmdRename(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
 		args.setOverride("[name]");
+		args.setMin(1);
 	}
 
 	@Override
 	public void run(CommandSender s, String[] args) {
+		System.out.println("Running");
 		Player p = (Player) s;
 		Economy econ = NeoCore.getEconomy();
 		if (econ.getBalance(p) >= RENAME_PRICE) {
