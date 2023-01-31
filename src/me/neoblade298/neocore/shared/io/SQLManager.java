@@ -16,6 +16,7 @@ import net.md_5.bungee.config.Configuration;
 public class SQLManager {
 	private static HashMap<String, String> userDbs = new HashMap<String, String>(); // User -> database key -> datasource
     private static HashMap<String, HikariDataSource> dataSources = new HashMap<String, HikariDataSource>();
+    private static boolean enabled = false;
 	
     // Bukkit
 	public static void load(ConfigurationSection cfg) {
@@ -46,6 +47,7 @@ public class SQLManager {
 				}
 			}
 		}
+		enabled = true;
 	}
 	
 	// Bungee
@@ -92,5 +94,9 @@ public class SQLManager {
 			ex.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static boolean isEnabled() {
+		return enabled;
 	}
 }

@@ -105,10 +105,12 @@ public class NeoCore extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(bl, this);
         
         // playerdata
-		getServer().getPluginManager().registerEvents(new PlayerIOManager(), this);
-		if (!instType.usesSkillAPI()) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
-		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
-        PlayerIOManager.register(this, new PlayerDataManager(), "PlayerDataManager");
+        if (SQLManager.isEnabled()) {
+    		getServer().getPluginManager().registerEvents(new PlayerIOManager(), this);
+    		if (!instType.usesSkillAPI()) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
+    		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
+            PlayerIOManager.register(this, new PlayerDataManager(), "PlayerDataManager");
+        }
         
         // CoreBar
 		getServer().getPluginManager().registerEvents(new BarAPI(), this);
