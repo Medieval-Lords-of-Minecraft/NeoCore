@@ -4,11 +4,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import me.neoblade298.neocore.bungee.BungeeCore;
 import net.md_5.bungee.config.Configuration;
 
 public class SQLManager {
@@ -17,6 +19,10 @@ public class SQLManager {
 	
     // Bukkit
 	public static void load(ConfigurationSection cfg) {
+		if (cfg == null) {
+			Bukkit.getLogger().warning("[NeoCore] Failed to enable SQLManager as the sql config section doesn't exist");
+			return;
+		}
 		String connectionPrefix = "jdbc:mysql://" + cfg.getString("host") + ":" + cfg.getString("port") + "/"; 
 		String connectionSuffix = cfg.getString("flags");
 
@@ -44,6 +50,10 @@ public class SQLManager {
 	
 	// Bungee
 	public static void load(Configuration cfg) {
+		if (cfg == null) {
+			BungeeCore.inst().getLogger().warning("[NeoCore] Failed to enable SQLManager as the sql config section doesn't exist");
+			return;
+		}
 		String connectionPrefix = "jdbc:mysql://" + cfg.getString("host") + ":" + cfg.getString("port") + "/"; 
 		String connectionSuffix = cfg.getString("flags");
 
