@@ -66,7 +66,7 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 		
 		if (cmd.getAliases() != null) {
 			for (String alias : cmd.getAliases()) {
-				aliases.add(alias);
+				aliases.add(alias.toUpperCase());
 				handlers.put(alias.toUpperCase(), cmd);
 			}
 		}

@@ -8,11 +8,11 @@ import java.util.List;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
+import me.neoblade298.neocore.bukkit.messaging.MessagingManager;
 import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.BungeeListener;
 import me.neoblade298.neocore.shared.io.SQLManager;
-import me.neoblade298.neocore.shared.messaging.MessagingManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;

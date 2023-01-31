@@ -4,10 +4,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.messaging.MessagingManager;
 import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
-import me.neoblade298.neocore.shared.messaging.MessagingManager;
 
 public class CmdCoreSendMessage extends Subcommand {
 	public CmdCoreSendMessage(String key, String desc, String perm, SubcommandRunner runner) {

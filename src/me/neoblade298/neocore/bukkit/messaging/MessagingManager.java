@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.shared.messaging;
+package me.neoblade298.neocore.bukkit.messaging;
 
 import java.io.File;
 import java.util.Collection;
