@@ -22,7 +22,7 @@ public class CmdBCoreCmd extends Subcommand {
 		}
 		else {
 			// Send cmd
-			BungeeAPI.sendBungeeMessage(new String[] {"cmd", SharedUtil.connectArgs(args)});
+			BungeeAPI.sendBungeeCommand(SharedUtil.connectArgs(args));
 		}
 	}
 }

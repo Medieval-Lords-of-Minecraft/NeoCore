@@ -103,4 +103,8 @@ public class BungeeAPI {
 		}
 		p.sendPluginMessage(NeoCore.inst(), "BungeeCord", out.toByteArray());
 	}
+	
+	public static void sendBungeeCommand(String command) {
+		sendBungeeMessage(new String[] {"cmd", command});
+	}
 }
