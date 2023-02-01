@@ -8,10 +8,11 @@ import java.util.List;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import me.neoblade298.neocore.bukkit.messaging.MessagingManager;
+import me.neoblade298.neocore.bungee.messaging.MessagingManager;
 import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.BungeeListener;
+import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.CommandSender;
@@ -43,6 +44,13 @@ public class BungeeCore extends Plugin implements Listener
         getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
         getProxy().getPluginManager().registerListener(this, new BungeeListener());
         getProxy().registerChannel("neocore:bungee");
+        
+        // messaging
+        try {
+			MessagingManager.reload();
+		} catch (NeoIOException e) {
+			e.printStackTrace();
+		}
         
         inst = this;
         
