@@ -2,6 +2,7 @@ package me.neoblade298.neocore.shared.commands;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,9 +30,9 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 	public ArrayList<BaseComponent[]> run(String[] args) {
 		if (pages == null) {
 			pages = new PaginatedList<T>();
-			for (T cmd : cmds.values()) {
-				if (!cmd.isHidden() && !aliases.contains(cmd.getKey())) {
-					pages.add(cmd);
+			for (Entry<String, T> entry : cmds.entrySet()) {
+				if (!entry.getValue().isHidden() && !aliases.contains(entry.getKey())) {
+					pages.add(entry.getValue());
 				}
 			}
 		}

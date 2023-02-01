@@ -44,7 +44,7 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 		else if (!handlers.containsKey(args[0].toUpperCase()) && handlers.containsKey("")) {
 			T cmd = handlers.get("");
 			CommandArguments cArgs = cmd.getArgs();
-			if ((cArgs.getMin() > 0 || cArgs.getMin() == -1) && (cArgs.getMax() > 0 || cArgs.getMax() == -1)) {
+			if ((cArgs.getMin() <= args.length || cArgs.getMin() == -1) && (cArgs.getMax() > 0 || cArgs.getMax() == -1)) {
 				return cmd;
 			}
 		}
