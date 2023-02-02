@@ -1,4 +1,6 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
+import java.util.Arrays;
+
 import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.bungee.util.Util;
 import net.md_5.bungee.api.Callback;
@@ -59,6 +61,6 @@ public class CmdTp extends Command {
 	public static void sendTeleportMsg(ProxiedPlayer src, ProxiedPlayer trg, boolean instant) {
 		String[] msgs = new String[] { (instant ? "neocore-tp-instant" : "neocore-tp"),
 				src.getUniqueId().toString(), trg.getUniqueId().toString()};
-		BungeeCore.sendPluginMessage(new ServerInfo[] {trg.getServer().getInfo()}, msgs);
+		BungeeCore.sendPluginMessage(Arrays.asList(trg.getServer().getInfo()), msgs, true);
 	}
 }

@@ -19,7 +19,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.bar.BarAPI;
 import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
-import me.neoblade298.neocore.bukkit.bungee.BungeeListener;
 import me.neoblade298.neocore.bukkit.commands.*;
 import me.neoblade298.neocore.bukkit.commands.builtin.*;
 import me.neoblade298.neocore.bukkit.commandsets.CommandSetManager;
@@ -33,6 +32,7 @@ import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
 import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.io.SkillAPIListener;
+import me.neoblade298.neocore.bukkit.listeners.BungeeListener;
 import me.neoblade298.neocore.bukkit.listeners.EssentialsListener;
 import me.neoblade298.neocore.bukkit.messaging.MessagingManager;
 import me.neoblade298.neocore.bukkit.player.*;
@@ -50,6 +50,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	private static NeoCore inst;
 	private static Economy econ;
 	private static boolean debug;
+	private static PlayerTags ptags;
 	
 	// Instance information
 	private static InstanceType instType = InstanceType.TOWNY;
@@ -104,16 +105,18 @@ public class NeoCore extends JavaPlugin implements Listener {
         getServer().getMessenger().registerIncomingPluginChannel( this, "neocore:bungee", bl); 
         getServer().getPluginManager().registerEvents(bl, this);
         
-        // playerdata
+        // io and playerdata
         if (SQLManager.isEnabled()) {
     		getServer().getPluginManager().registerEvents(new PlayerIOManager(), this);
     		if (!instType.usesSkillAPI()) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
     		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
             PlayerIOManager.register(this, new PlayerDataManager(), "PlayerDataManager");
+            
+            ptags = PlayerDataManager.createPlayerTags("neocore", NeoCore.inst(), false);
         }
         
         // CoreBar
-		getServer().getPluginManager().registerEvents(new BarAPI(), this);
+		getServer().getPluginManager().registerEvents(new BarAPI(ptags), this);
 		
 		// Inventories
 		getServer().getPluginManager().registerEvents(new InventoryListener(), this);
@@ -281,6 +284,10 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public static PlayerTags getPlayerTags(String key) {
 		return PlayerDataManager.getPlayerTags(key);
+	}
+	
+	public static PlayerTags getNeoCoreTags() {
+		return ptags;
 	}
 	
 	public static boolean isDebug() {

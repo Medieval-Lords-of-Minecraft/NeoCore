@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -118,23 +119,26 @@ public class BungeeCore extends Plugin implements Listener
 		return SQLManager.getConnection(user);
 	}
 	
-	public static void sendPluginMessage(String[] servers, String[] msgs) {
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		for (String msg : msgs) {
-			out.writeUTF(msg);
-		}
-		for (String key : servers) {
-			inst.getProxy().getServerInfo(key).sendData("neocore:bungee", out.toByteArray());
-		}
+	// All servers
+	public static void sendPluginMessage(String[] msgs, boolean queueMessage) {
+		sendPluginMessage(inst.getProxy().getServers().values(), msgs, queueMessage);
 	}
 	
-	public static void sendPluginMessage(ServerInfo[] servers, String[] msgs) {
+	public static void sendPluginMessage(String[] servers, String[] msgs, boolean queueMessage) {
+		ArrayList<ServerInfo> list = new ArrayList<ServerInfo>();
+		for (String server : servers) {
+			list.add(inst.getProxy().getServerInfo(server));
+		}
+		sendPluginMessage(list, msgs, queueMessage);
+	}
+	
+	public static void sendPluginMessage(Iterable<ServerInfo> servers, String[] msgs, boolean queueMessage) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		for (String msg : msgs) {
 			out.writeUTF(msg);
 		}
 		for (ServerInfo server : servers) {
-			server.sendData("neocore:bungee", out.toByteArray());
+			server.sendData("neocore:bungee", out.toByteArray(), queueMessage);
 		}
 	}
 	

@@ -22,8 +22,8 @@ public class BarAPI implements Listener {
 	private static HashMap<Player, CoreBar> bars = new HashMap<Player, CoreBar>();
 	private static PlayerTags ptags;
 	
-	public BarAPI() {
-        ptags = PlayerDataManager.createPlayerTags("neocore", NeoCore.inst(), false);
+	public BarAPI(PlayerTags ptags) {
+        BarAPI.ptags = ptags;
 	}
 	
 	@EventHandler

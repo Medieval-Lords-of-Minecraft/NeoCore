@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bukkit.bungee;
+package me.neoblade298.neocore.bukkit.listeners;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -20,6 +20,8 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.bungee.PluginMessageEvent;
+import me.neoblade298.neocore.bukkit.util.Util;
 
 public class BungeeListener implements PluginMessageListener, Listener {
 	private static HashMap<UUID, UUID> tpCallbacks = new HashMap<UUID, UUID>();
@@ -29,54 +31,31 @@ public class BungeeListener implements PluginMessageListener, Listener {
 			readBungeeCoreMessage(msg);
 			return;
 		}
-		if (!channel.equals("BungeeCord")) {
-			return;
-		}
-		ByteArrayDataInput in = ByteStreams.newDataInput(msg);
-		String subchannel = in.readUTF();
-		if (subchannel.startsWith("UltraEconomy")) return;
-		
-		short len = in.readShort();
-		byte[] msgbytes = new byte[len];
-
-		in.readFully(msgbytes);
-		DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
-		ArrayList<String> msgs = new ArrayList<String>();
-		
-		// Limit messages to 10 just in case some error
-		for (int i = 0; i < 10; i++) {
-			try {
-				msgs.add(msgin.readUTF());
-			}
-			catch (EOFException e) {
-				break;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		// Pre-read plugin message for any neocore messages, return true if the message was handled
-		Bukkit.getPluginManager().callEvent(new PluginMessageEvent(subchannel, msgs));
 	}
 	
 	private void readBungeeCoreMessage(byte[] msg) {
 		ByteArrayDataInput in = ByteStreams.newDataInput(msg);
 		String subchannel = in.readUTF();
-		if (subchannel.equals("neocore-tp-instant")) {
-			UUID src = UUID.fromString(in.readUTF());
-			UUID trg = UUID.fromString(in.readUTF());
+		UUID src, trg;
+		switch (subchannel) {
+		case "neocore-tp-instant": 
+			src = UUID.fromString(in.readUTF());
+			trg = UUID.fromString(in.readUTF());
 			Player psrc = Bukkit.getPlayer(src);
 			Player ptrg = Bukkit.getPlayer(trg);
 			if (psrc != null && ptrg != null ) {
 				psrc.teleport(ptrg);
 			}
-		}
-		else if (subchannel.equals("neocore-tp")) {
-			UUID src = UUID.fromString(in.readUTF());
-			UUID trg = UUID.fromString(in.readUTF());
+			break;
+		case "neocore-tp":
+			src = UUID.fromString(in.readUTF());
+			trg = UUID.fromString(in.readUTF());
 			tpCallbacks.put(src, trg);
-		}
-		else {
+			break;
+		case "mutablebc":
+			handleMutableBroadcast(in.readUTF(), in.readUTF());
+			break;
+		default:
 			ArrayList<String> msgs = new ArrayList<String>();
 			try {
 				for (int i = 0; i < 10; i++) {
@@ -86,6 +65,15 @@ public class BungeeListener implements PluginMessageListener, Listener {
 			// Read until EOF Exception
 			catch (Exception e) {}
 			Bukkit.getPluginManager().callEvent(new PluginMessageEvent(subchannel, msgs));
+			break;
+		}
+	}
+	
+	private void handleMutableBroadcast(String msg, String tagForMute) {
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			if (!NeoCore.getNeoCoreTags().exists(tagForMute, p.getUniqueId())) {
+				Util.msg(p, msg);
+			}
 		}
 	}
 	

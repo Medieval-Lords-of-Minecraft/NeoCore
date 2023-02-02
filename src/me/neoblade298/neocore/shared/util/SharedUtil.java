@@ -75,20 +75,28 @@ public class SharedUtil {
 		return descending ? sorted.descendingMultiset() : sorted;
 	}
 	
+	public static String connectArgs(String args[], char delimiter) {
+		return connectArgs(args, 0, args.length, delimiter);
+	}
+	
 	public static String connectArgs(String args[]) {
-		return connectArgs(args, 0, args.length);
+		return connectArgs(args, 0, args.length, ' ');
 	}
 	
 	public static String connectArgs(String args[], int start) {
-		return connectArgs(args, start, args.length);
+		return connectArgs(args, start, args.length, ' ');
 	}
 	
 	public static String connectArgs(String args[], int start, int end) {
+		return connectArgs(args, start, end, ' ');
+	}
+	
+	public static String connectArgs(String args[], int start, int end, char delimiter) {
 		String connected = "";
 		for (int i = start; i < end; i++) {
 			connected += args[i];
 			if (i + 1 != end) {
-				connected += " ";
+				connected += delimiter;
 			}
 		}
 		return connected;

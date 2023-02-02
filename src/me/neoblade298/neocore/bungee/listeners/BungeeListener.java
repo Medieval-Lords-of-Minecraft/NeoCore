@@ -1,5 +1,6 @@
 package me.neoblade298.neocore.bungee.listeners;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -25,10 +26,46 @@ public class BungeeListener implements Listener {
 		ByteArrayDataInput in = ByteStreams.newDataInput(e.getData());
 		try {
 			if (in.readUTF().equals("NeoCore")) {
-				if (in.readUTF().equals("cmd")) {
+				switch (in.readUTF()) {
+				case "cmd":
 					BungeeCore.inst().getProxy().getPluginManager().dispatchCommand(BungeeCore.inst().getProxy().getConsole(), in.readUTF());
+					break;
+				case "fwd":
+					handleForwardMessage(in, false);
+					break;
+				case "fwdq":
+					handleForwardMessage(in, true);
+					break;
 				}
 			}
 		} catch (Exception ex) {	}
+    }
+    
+    private void handleForwardMessage(ByteArrayDataInput in, boolean queue) {
+    	String from = in.readUTF();
+    	ArrayList<String> servers = new ArrayList<String>();
+    	String server = in.readUTF();
+    	boolean sendToAll = false;
+    	while (!server.equals("end")) {
+    		if (server.equals("all")) {
+    			sendToAll = true;
+    		}
+    		servers.add(server);
+    		server = in.readUTF();
+    	}
+    	
+    	ArrayList<String> msgs = new ArrayList<String>(); // Channel is the first one
+    	String msg = in.readUTF();
+    	while (!server.equals("EOP")) {
+    		msgs.add(msg);
+    		msg = in.readUTF();
+    	}
+    	
+    	if (sendToAll) {
+        	BungeeCore.sendPluginMessage((String[]) msgs.toArray(), queue);
+    	}
+    	else {
+    		BungeeCore.sendPluginMessage((String[]) servers.toArray(), (String[]) msgs.toArray(), queue);
+    	}
     }
 }
