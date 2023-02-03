@@ -14,6 +14,7 @@ public class CmdSilentBroadcast extends Command {
 
 	@Override
 	public void execute(CommandSender s, String[] args) {
+		if (!s.hasPermission("mycommand.staff")) return;
 		if (args.length == 0) {
 			Util.msg(s, "&c/sbc [broadcast msg]");
 		}

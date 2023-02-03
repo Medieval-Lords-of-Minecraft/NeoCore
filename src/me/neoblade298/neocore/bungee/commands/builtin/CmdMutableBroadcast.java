@@ -1,26 +1,24 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 
-public class CmdBroadcast extends Command {
-	public CmdBroadcast() {
-		super("bc");
+public class CmdMutableBroadcast extends Command {
+	public CmdMutableBroadcast() {
+		super("mbc");
 	}
 
 	@Override
 	public void execute(CommandSender s, String[] args) {
 		if (!s.hasPermission("mycommand.staff")) return;
 		
-		if (args.length == 0) {
-			Util.msg(s, "&c/bc [broadcast msg]");
+		if (args.length < 2) {
+			Util.msg(s, "&c/mbc [tag for mute] [broadcast msg]");
 		}
 		else {
-			BungeeCore.inst().getProxy().broadcast(new TextComponent(SharedUtil.translateColors("&4[&c&lMLMC&4] &a" + SharedUtil.connectArgs(args))));
+			Util.mutableBroadcast(args[0], SharedUtil.connectArgs(args, 1));
 		}
 	}
 }

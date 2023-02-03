@@ -26,8 +26,13 @@ public class BungeeAPI {
 		p.sendPluginMessage(NeoCore.inst(), "BungeeCord", out.toByteArray());
 	}
 	
-	public static void mutableBroadcast(String msg, String tagForMute) {
-		sendPluginMessage("mutablebc", new String[] { "mutablebc", msg, tagForMute });
+	public static void mutableBroadcast(String tagForMute, String msg) {
+		mutableBroadcast(tagForMute, msg, true);
+	}
+	
+	public static void mutableBroadcast(String tagForMute, String msg, boolean hasPrefix) {
+		if (hasPrefix) msg = "&4[&c&lMLMC&4] &7" + msg;
+		sendPluginMessage("mutablebc", new String[] { tagForMute, SharedUtil.translateColors(msg) });
 	}
 	
 	public static void sendPlayer(Player p, String server) {

@@ -27,4 +27,15 @@ public class Util {
 		}
 		BungeeCore.inst().getProxy().broadcast(new TextComponent(SharedUtil.translateColors(msg)));
 	}
+	
+	public static void mutableBroadcast(String tagForMute, String msg) {
+		mutableBroadcast(tagForMute, msg, true);
+	}
+	
+	public static void mutableBroadcast(String tagForMute, String msg, boolean hasPrefix) {
+		if (hasPrefix) {
+			msg = SharedUtil.translateColors("&4[&c&lMLMC&4] &7" + msg);
+		}
+		BungeeCore.sendPluginMessage(new String[] {"mutablebc", tagForMute,  msg});
+	}
 }

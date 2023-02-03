@@ -7,12 +7,14 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
 import me.neoblade298.neocore.bungee.BungeeCore;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-public class BungeeListener implements Listener {
+public class MainListener implements Listener {
     
     @EventHandler
     public void onJoin(PostLoginEvent e) {
@@ -26,7 +28,8 @@ public class BungeeListener implements Listener {
 		ByteArrayDataInput in = ByteStreams.newDataInput(e.getData());
 		try {
 			if (in.readUTF().equals("NeoCore")) {
-				switch (in.readUTF()) {
+				String read = in.readUTF();
+				switch (read) {
 				case "cmd":
 					BungeeCore.inst().getProxy().getPluginManager().dispatchCommand(BungeeCore.inst().getProxy().getConsole(), in.readUTF());
 					break;
@@ -46,9 +49,13 @@ public class BungeeListener implements Listener {
     	ArrayList<String> servers = new ArrayList<String>();
     	String server = in.readUTF();
     	boolean sendToAll = false;
-    	while (!server.equals("end")) {
-    		if (server.equals("all")) {
+    	boolean sendToOthers = false;
+    	while (!server.equals("EOP")) {
+    		if (server.equals("ALL")) {
     			sendToAll = true;
+    		}
+    		else if (server.equals("OTHER")) {
+    			sendToOthers = true;
     		}
     		servers.add(server);
     		server = in.readUTF();
@@ -56,16 +63,40 @@ public class BungeeListener implements Listener {
     	
     	ArrayList<String> msgs = new ArrayList<String>(); // Channel is the first one
     	String msg = in.readUTF();
-    	while (!server.equals("EOP")) {
+    	while (!msg.equals("EOP")) {
     		msgs.add(msg);
     		msg = in.readUTF();
     	}
     	
     	if (sendToAll) {
-        	BungeeCore.sendPluginMessage((String[]) msgs.toArray(), queue);
+        	BungeeCore.sendPluginMessage(arrToList(msgs), queue);
+    	}
+    	else if (sendToOthers) {
+        	BungeeCore.sendPluginMessage(getAllOtherServers(from), (String[]) msgs.toArray(), queue);
     	}
     	else {
     		BungeeCore.sendPluginMessage((String[]) servers.toArray(), (String[]) msgs.toArray(), queue);
     	}
+    }
+    
+    private String[] getAllOtherServers(String except) {
+    	ProxyServer proxy = BungeeCore.inst().getProxy();
+    	String[] servers = new String[proxy.getServers().size() - 1];
+    	
+    	int count = 0;
+    	for (ServerInfo info : proxy.getServers().values()) {
+    		if (info.getName().equalsIgnoreCase(except)) continue;
+    		servers[count++] = info.getName();
+    	}
+    	return servers;
+    }
+    
+    private String[] arrToList(ArrayList<String> arr) {
+    	String[] list = new String[arr.size()];
+    	int count = 0;
+    	for (String i : arr) {
+    		list[count++] = i;
+    	}
+    	return list;
     }
 }

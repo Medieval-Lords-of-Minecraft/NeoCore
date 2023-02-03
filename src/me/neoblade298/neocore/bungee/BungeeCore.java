@@ -10,12 +10,18 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 import me.neoblade298.neocore.bungee.messaging.MessagingManager;
+import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
+import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreBroadcast;
+import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreCmd;
+import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreMutableBroadcast;
 import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
-import me.neoblade298.neocore.bungee.listeners.BungeeListener;
+import me.neoblade298.neocore.bungee.listeners.MainListener;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -35,15 +41,19 @@ public class BungeeCore extends Plugin implements Listener
 	
     @Override
     public void onEnable() {
+        inst = this;
+        
         getProxy().getPluginManager().registerCommand(this, new CmdBroadcast());
         getProxy().getPluginManager().registerCommand(this, new CmdSilentBroadcast());
+        getProxy().getPluginManager().registerCommand(this, new CmdMutableBroadcast());
+        getProxy().getPluginManager().registerCommand(this, new CmdSilentMutableBroadcast());
         getProxy().getPluginManager().registerCommand(this, new CmdHub());
         getProxy().getPluginManager().registerCommand(this, new CmdMotd());
         getProxy().getPluginManager().registerCommand(this, new CmdTp());
         getProxy().getPluginManager().registerCommand(this, new CmdTphere());
         getProxy().getPluginManager().registerCommand(this, new CmdUptime());
         getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
-        getProxy().getPluginManager().registerListener(this, new BungeeListener());
+        getProxy().getPluginManager().registerListener(this, new MainListener());
         getProxy().registerChannel("neocore:bungee");
         
         // messaging
@@ -53,7 +63,6 @@ public class BungeeCore extends Plugin implements Listener
 			e.printStackTrace();
 		}
         
-        inst = this;
         
         Configuration cfg = null;
 		try {
@@ -120,6 +129,10 @@ public class BungeeCore extends Plugin implements Listener
 	}
 	
 	// All servers
+	public static void sendPluginMessage(String[] msgs) {
+		sendPluginMessage(inst.getProxy().getServers().values(), msgs, false);
+	}
+	
 	public static void sendPluginMessage(String[] msgs, boolean queueMessage) {
 		sendPluginMessage(inst.getProxy().getServers().values(), msgs, queueMessage);
 	}

@@ -181,6 +181,8 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdBCoreCmd("cmd", "Sends a command to bungeecord", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdBCoreBroadcast("sbc", "Sends a broadcast cross-server without prefix", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdBCoreBroadcast("bc", "Sends a broadcast cross-server", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdBCoreMutableBroadcast("mbc", "Sends a mutable broadcast cross-server", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdBCoreSilentMutableBroadcast("smbc", "Sends a mutable broadcast cross-server without prefix", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdBCoreSend("send", "Sends a player to another server", null, SubcommandRunner.BOTH));
 
 		mngr = new SubcommandManager("io", "neocore.admin", ChatColor.DARK_RED, this);

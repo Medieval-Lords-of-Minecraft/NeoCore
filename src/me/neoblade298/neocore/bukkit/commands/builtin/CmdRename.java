@@ -24,7 +24,6 @@ public class CmdRename extends Subcommand {
 
 	@Override
 	public void run(CommandSender s, String[] args) {
-		System.out.println("Running");
 		Player p = (Player) s;
 		Economy econ = NeoCore.getEconomy();
 		if (econ.getBalance(p) >= RENAME_PRICE) {

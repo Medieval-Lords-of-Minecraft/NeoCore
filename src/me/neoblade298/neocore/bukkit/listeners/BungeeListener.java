@@ -1,9 +1,5 @@
 package me.neoblade298.neocore.bukkit.listeners;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -27,30 +23,15 @@ public class BungeeListener implements PluginMessageListener, Listener {
 	private static HashMap<UUID, UUID> tpCallbacks = new HashMap<UUID, UUID>();
 	@Override
 	public void onPluginMessageReceived(String channel, Player p, byte[] msg) {
-		if (channel.equals("neocore:bungee")) {
-			readBungeeCoreMessage(msg);
-			return;
-		}
-	}
-	
-	private void readBungeeCoreMessage(byte[] msg) {
+		if (!channel.equals("neocore:bungee")) return;
 		ByteArrayDataInput in = ByteStreams.newDataInput(msg);
 		String subchannel = in.readUTF();
-		UUID src, trg;
 		switch (subchannel) {
 		case "neocore-tp-instant": 
-			src = UUID.fromString(in.readUTF());
-			trg = UUID.fromString(in.readUTF());
-			Player psrc = Bukkit.getPlayer(src);
-			Player ptrg = Bukkit.getPlayer(trg);
-			if (psrc != null && ptrg != null ) {
-				psrc.teleport(ptrg);
-			}
+			handleTeleportInstant(UUID.fromString(in.readUTF()), UUID.fromString(in.readUTF()));
 			break;
 		case "neocore-tp":
-			src = UUID.fromString(in.readUTF());
-			trg = UUID.fromString(in.readUTF());
-			tpCallbacks.put(src, trg);
+			tpCallbacks.put(UUID.fromString(in.readUTF()), UUID.fromString(in.readUTF()));
 			break;
 		case "mutablebc":
 			handleMutableBroadcast(in.readUTF(), in.readUTF());
@@ -69,10 +50,18 @@ public class BungeeListener implements PluginMessageListener, Listener {
 		}
 	}
 	
-	private void handleMutableBroadcast(String msg, String tagForMute) {
+	private void handleTeleportInstant(UUID src, UUID trg) {
+		Player psrc = Bukkit.getPlayer(src);
+		Player ptrg = Bukkit.getPlayer(trg);
+		if (psrc != null && ptrg != null ) {
+			psrc.teleport(ptrg);
+		}
+	}
+	
+	private void handleMutableBroadcast(String tagForMute, String msg) {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			if (!NeoCore.getNeoCoreTags().exists(tagForMute, p.getUniqueId())) {
-				Util.msg(p, msg);
+				Util.msg(p, msg, false);
 			}
 		}
 	}
