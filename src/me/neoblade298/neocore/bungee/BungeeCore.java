@@ -4,24 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 import me.neoblade298.neocore.bungee.messaging.MessagingManager;
-import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
-import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreBroadcast;
-import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreCmd;
-import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreMutableBroadcast;
 import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.MainListener;
-import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -55,6 +48,7 @@ public class BungeeCore extends Plugin implements Listener
         getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
         getProxy().getPluginManager().registerListener(this, new MainListener());
         getProxy().registerChannel("neocore:bungee");
+        System.out.println("Loading NeoCore?");
         
         // messaging
         try {
@@ -63,10 +57,8 @@ public class BungeeCore extends Plugin implements Listener
 			e.printStackTrace();
 		}
         
-        
-        Configuration cfg = null;
 		try {
-			cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
+			Configuration cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
 	        SQLManager.load(cfg.getSection("sql"));
 	        reload();
 		} catch (IOException e) {
