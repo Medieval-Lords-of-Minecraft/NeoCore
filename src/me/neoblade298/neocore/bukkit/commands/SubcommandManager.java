@@ -1,24 +1,30 @@
 package me.neoblade298.neocore.bukkit.commands;
 
+import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-
 import me.neoblade298.neocore.shared.commands.AbstractSubcommandManager;
+import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.AbstractSubcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.md_5.bungee.api.ChatColor;
 
-public class SubcommandManager extends AbstractSubcommandManager<Subcommand> implements CommandExecutor  {
+public class SubcommandManager extends AbstractSubcommandManager<Subcommand> implements CommandExecutor, TabCompleter {
+	private boolean tabEnabled = false;
 	public SubcommandManager(String base, String perm, ChatColor color, JavaPlugin plugin) {
 		super(base, perm, color);
 		plugin.getCommand(base).setExecutor(this);
+		plugin.getCommand(base).setTabCompleter(this);
 	}
 	
 	@Override
@@ -36,7 +42,9 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		return true;
 	}
 	
-	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
+	
+	// Modular for tabcomplete to use
+	private boolean check(Subcommand cmd, CommandSender s) {
 		// If cmd permission exists, it overrides list permission
 		String activePerm = cmd.getPermission() != null ? cmd.getPermission() : perm;
 		if (activePerm != null && !s.hasPermission(activePerm)) {
@@ -49,6 +57,11 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 			s.sendMessage("§cYou are the wrong type of user for this command!");
 			return false;
 		}
+		return true;
+	}
+	
+	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
+		if (!check(cmd, s)) return false;
 		
 		CommandArguments cargs = cmd.getArgs();
 		if (args.length < cargs.getMin() && cargs.getMin() != -1) {
@@ -71,14 +84,50 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 	}
 	
 	public void registerCommandList(String key, String perm, ChatColor color) {
-		handlers.put(key.toUpperCase(), new CmdList(key, base, perm, handlers, aliases, this.color, color));
+		handlers.put(key.toLowerCase(), new CmdList(key, base, perm, handlers, aliases, this.color, color));
 	}
 	
 	public AbstractSubcommand getCommand(String key) {
-		return handlers.get(key.toUpperCase());
+		return handlers.get(key.toLowerCase());
 	}
 	
 	public Set<String> getKeys() {
 		return handlers.keySet();
+	}
+	
+	public void setTabCompletion(boolean enabled) {
+		this.tabEnabled = enabled;
+	}
+	
+	public SubcommandManager enableTabCompletion() {
+		this.tabEnabled = true;
+		return this;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender s, Command command, String label, String[] args) {
+		if (!s.hasPermission(perm)) return null;
+		
+		if (args.length == 1) {
+			// Get all commands that can be run by user
+			return handlers.values().stream()
+					.filter(cmd -> check(cmd, s))
+					.map(cmd -> cmd.getKey())
+					.toList();
+		}
+		else {
+			if (!tabEnabled || args[0].isBlank() || StringUtils.isNumeric(args[0])) return null;
+			
+			// Only look for a subcommand if the first arg is not a number and not blank
+			Subcommand cmd = handlers.get(args[0].toLowerCase());
+			if (cmd == null) return null;
+			
+			CommandArguments ca = cmd.getArgs();
+			Arg arg = CommandArguments.getCurrentArg(args, ca);
+			if (arg.getTabOptions() != null) {
+				return arg.getTabOptions();
+			}
+		}
+		return null;
 	}
 }

@@ -2,9 +2,12 @@ package me.neoblade298.neocore.bungee.commands;
 
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 
+import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.bungee.util.Util;
+import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.md_5.bungee.api.ChatColor;
@@ -12,9 +15,11 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class SubcommandManager extends Command {
+public class SubcommandManager extends Command implements TabExecutor {
 	private CommandOverhead overhead;
+	private boolean tabEnabled = false;
 	public SubcommandManager(String base, String perm, ChatColor color, Plugin plugin) {
 		super(base);
 		overhead = new CommandOverhead(base, perm, color);
@@ -32,7 +37,7 @@ public class SubcommandManager extends Command {
 		}
 	}
 	
-	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
+	private boolean check(Subcommand cmd, CommandSender s) {
 		// If cmd permission exists, it overrides list permission
 		String activePerm = cmd.getPermission() != null ? cmd.getPermission() : overhead.getPermission();
 		
@@ -46,6 +51,11 @@ public class SubcommandManager extends Command {
 			Util.msg(s, "&cYou are the wrong type of user for this command!");
 			return false;
 		}
+		return true;
+	}
+	
+	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
+		if (!check(cmd, s)) return false;
 		
 		CommandArguments cargs = cmd.getArgs();
 		if (args.length < cargs.getMin() && cargs.getMin() != -1) {
@@ -64,11 +74,11 @@ public class SubcommandManager extends Command {
 	}
 	
 	public void registerCommandList(String key, String perm, ChatColor color) {
-		overhead.getHandlers().put(key.toUpperCase(), new CmdList(key, overhead.getBase(), perm, overhead.getHandlers(), overhead.getAliases(), overhead.getColor(), color));
+		overhead.getHandlers().put(key.toLowerCase(), new CmdList(key, overhead.getBase(), perm, overhead.getHandlers(), overhead.getAliases(), overhead.getColor(), color));
 	}
 	
 	public void registerCommandList(String key) {
-		overhead.getHandlers().put(key.toUpperCase(),
+		overhead.getHandlers().put(key.toLowerCase(),
 				new CmdList(key, overhead.getBase(), overhead.getPermission(), overhead.getHandlers(), overhead.getAliases(), overhead.getColor()));
 	}
 	
@@ -77,10 +87,46 @@ public class SubcommandManager extends Command {
 	}
 	
 	public Subcommand getCommand(String key) {
-		return overhead.getHandlers().get(key.toUpperCase());
+		return overhead.getHandlers().get(key.toLowerCase());
 	}
 	
 	public Set<String> getKeys() {
 		return overhead.getHandlers().keySet();
+	}
+
+	public void setTabCompletion(boolean enabled) {
+		this.tabEnabled = enabled;
+	}
+	
+	public SubcommandManager enableTabCompletion() {
+		this.tabEnabled = true;
+		return this;
+	}
+
+	@Override
+	public Iterable<String> onTabComplete(CommandSender s, String[] args) {
+		if (!s.hasPermission(overhead.getPermission())) return null;
+		
+		if (args.length == 1) {
+			// Get all commands that can be run by user
+			return overhead.getHandlers().values().stream()
+					.filter(cmd -> check(cmd, s))
+					.map(cmd -> cmd.getKey())
+					.toList();
+		}
+		else {
+			if (!tabEnabled || args[0].isBlank() || StringUtils.isNumeric(args[0])) return null;
+			
+			// Only look for a subcommand if the first arg is not a number and not blank
+			Subcommand cmd = overhead.getHandlers().get(args[0].toLowerCase());
+			if (cmd == null) return null;
+			
+			CommandArguments ca = cmd.getArgs();
+			Arg arg = CommandArguments.getCurrentArg(args, ca);
+			if (arg.getTabOptions() != null) {
+				return arg.getTabOptions();
+			}
+		}
+		return null;
 	}
 }

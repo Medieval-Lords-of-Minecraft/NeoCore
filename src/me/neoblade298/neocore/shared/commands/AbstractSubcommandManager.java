@@ -37,11 +37,11 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 			return handlers.get("");
 		}
 		// Run command normally
-		else if (handlers.containsKey(args[0].toUpperCase())) {
-			return handlers.get(args[0].toUpperCase());
+		else if (handlers.containsKey(args[0].toLowerCase())) {
+			return handlers.get(args[0].toLowerCase());
 		}
 		// Run base command with args (like /rename [variable])
-		else if (!handlers.containsKey(args[0].toUpperCase()) && handlers.containsKey("")) {
+		else if (!handlers.containsKey(args[0].toLowerCase()) && handlers.containsKey("")) {
 			T cmd = handlers.get("");
 			CommandArguments cArgs = cmd.getArgs();
 			if ((cArgs.getMin() <= args.length || cArgs.getMin() == -1) && (cArgs.getMax() > 0 || cArgs.getMax() == -1)) {
@@ -62,12 +62,12 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 	}
 	
 	public void register(T cmd) {
-		handlers.put(cmd.getKey().toUpperCase(), cmd);
+		handlers.put(cmd.getKey().toLowerCase(), cmd);
 		
 		if (cmd.getAliases() != null) {
 			for (String alias : cmd.getAliases()) {
-				aliases.add(alias.toUpperCase());
-				handlers.put(alias.toUpperCase(), cmd);
+				aliases.add(alias.toLowerCase());
+				handlers.put(alias.toLowerCase(), cmd);
 			}
 		}
 	}
