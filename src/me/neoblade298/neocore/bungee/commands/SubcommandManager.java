@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
@@ -19,7 +18,6 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 
 public class SubcommandManager extends Command implements TabExecutor {
 	private CommandOverhead overhead;
-	private boolean tabEnabled = false;
 	public SubcommandManager(String base, String perm, ChatColor color, Plugin plugin) {
 		super(base);
 		overhead = new CommandOverhead(base, perm, color);
@@ -94,15 +92,6 @@ public class SubcommandManager extends Command implements TabExecutor {
 		return overhead.getHandlers().keySet();
 	}
 
-	public void setTabCompletion(boolean enabled) {
-		this.tabEnabled = enabled;
-	}
-	
-	public SubcommandManager enableTabCompletion() {
-		this.tabEnabled = true;
-		return this;
-	}
-
 	@Override
 	public Iterable<String> onTabComplete(CommandSender s, String[] args) {
 		if (!s.hasPermission(overhead.getPermission())) return null;
@@ -110,23 +99,20 @@ public class SubcommandManager extends Command implements TabExecutor {
 		if (args.length == 1) {
 			// Get all commands that can be run by user
 			return overhead.getHandlers().values().stream()
-					.filter(cmd -> check(cmd, s))
+					.filter(cmd -> check(cmd, s) || cmd.isHidden())
 					.map(cmd -> cmd.getKey())
 					.toList();
 		}
 		else {
-			if (!tabEnabled || args[0].isBlank() || StringUtils.isNumeric(args[0])) return null;
+			if (args[0].isBlank() || StringUtils.isNumeric(args[0])) return null;
 			
 			// Only look for a subcommand if the first arg is not a number and not blank
 			Subcommand cmd = overhead.getHandlers().get(args[0].toLowerCase());
-			if (cmd == null) return null;
+			if (cmd == null || cmd.isHidden() || !cmd.isTabEnabled()) return null;
 			
 			CommandArguments ca = cmd.getArgs();
 			Arg arg = CommandArguments.getCurrentArg(args, ca);
-			if (arg.getTabOptions() != null) {
-				return arg.getTabOptions();
-			}
+			return arg.getTabOptions();
 		}
-		return null;
 	}
 }

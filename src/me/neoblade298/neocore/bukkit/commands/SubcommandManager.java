@@ -20,7 +20,6 @@ import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.md_5.bungee.api.ChatColor;
 
 public class SubcommandManager extends AbstractSubcommandManager<Subcommand> implements CommandExecutor, TabCompleter {
-	private boolean tabEnabled = false;
 	public SubcommandManager(String base, String perm, ChatColor color, JavaPlugin plugin) {
 		super(base, perm, color);
 		plugin.getCommand(base).setExecutor(this);
@@ -94,15 +93,6 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 	public Set<String> getKeys() {
 		return handlers.keySet();
 	}
-	
-	public void setTabCompletion(boolean enabled) {
-		this.tabEnabled = enabled;
-	}
-	
-	public SubcommandManager enableTabCompletion() {
-		this.tabEnabled = true;
-		return this;
-	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender s, Command command, String label, String[] args) {
@@ -111,23 +101,20 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		if (args.length == 1) {
 			// Get all commands that can be run by user
 			return handlers.values().stream()
-					.filter(cmd -> check(cmd, s))
+					.filter(cmd -> check(cmd, s) || cmd.isHidden())
 					.map(cmd -> cmd.getKey())
 					.toList();
 		}
 		else {
-			if (!tabEnabled || args[0].isBlank() || StringUtils.isNumeric(args[0])) return null;
+			if (args[0].isBlank() || StringUtils.isNumeric(args[0])) return null;
 			
 			// Only look for a subcommand if the first arg is not a number and not blank
 			Subcommand cmd = handlers.get(args[0].toLowerCase());
-			if (cmd == null) return null;
+			if (cmd == null || cmd.isHidden() || !cmd.isTabEnabled()) return null;
 			
 			CommandArguments ca = cmd.getArgs();
 			Arg arg = CommandArguments.getCurrentArg(args, ca);
-			if (arg.getTabOptions() != null) {
-				return arg.getTabOptions();
-			}
+			return arg.getTabOptions();
 		}
-		return null;
 	}
 }

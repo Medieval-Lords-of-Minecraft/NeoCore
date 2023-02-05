@@ -10,7 +10,7 @@ public abstract class AbstractSubcommand {
 	protected String[] aliases;
 	protected ChatColor color;
 	protected CommandArguments args = new CommandArguments();
-	protected boolean hidden = false;
+	protected boolean hidden = false, tabEnabled = false;
 	
 	public AbstractSubcommand(String key, String desc, String perm, SubcommandRunner runner) {
 		this.key = key;
@@ -53,5 +53,18 @@ public abstract class AbstractSubcommand {
 	
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
+	}
+	
+	public boolean isTabEnabled() {
+		return tabEnabled;
+	}
+	
+	public void setTabEnabled(boolean enabled) {
+		this.tabEnabled = enabled;
+	}
+	
+	public AbstractSubcommand enableTabComplete() {
+		this.tabEnabled = true;
+		return this;
 	}
 }
