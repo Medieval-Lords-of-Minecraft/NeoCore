@@ -48,7 +48,6 @@ public class BungeeCore extends Plugin implements Listener
         getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
         getProxy().getPluginManager().registerListener(this, new MainListener());
         getProxy().registerChannel("neocore:bungee");
-        System.out.println("Loading NeoCore?");
         
         // messaging
         try {
