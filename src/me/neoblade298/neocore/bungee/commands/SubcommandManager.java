@@ -67,6 +67,15 @@ public class SubcommandManager extends Command {
 		overhead.getHandlers().put(key.toUpperCase(), new CmdList(key, overhead.getBase(), perm, overhead.getHandlers(), overhead.getAliases(), overhead.getColor(), color));
 	}
 	
+	public void registerCommandList(String key) {
+		overhead.getHandlers().put(key.toUpperCase(),
+				new CmdList(key, overhead.getBase(), overhead.getPermission(), overhead.getHandlers(), overhead.getAliases(), overhead.getColor()));
+	}
+	
+	public void register(Subcommand cmd) {
+		overhead.register(cmd);
+	}
+	
 	public Subcommand getCommand(String key) {
 		return overhead.getHandlers().get(key.toUpperCase());
 	}
