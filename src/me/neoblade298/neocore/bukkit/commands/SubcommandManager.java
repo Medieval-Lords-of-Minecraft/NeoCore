@@ -96,7 +96,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 
 	@Override
 	public List<String> onTabComplete(CommandSender s, Command command, String label, String[] args) {
-		if (!s.hasPermission(perm)) return null;
+		if (perm != null && !s.hasPermission(perm)) return null;
 		
 		if (args.length == 1) {
 			// Get all commands that can be run by user
