@@ -1,8 +1,9 @@
 package me.neoblade298.neocore.bungee.commands;
 
+import java.util.Collections;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.bungee.util.Util;
@@ -94,25 +95,25 @@ public class SubcommandManager extends Command implements TabExecutor {
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender s, String[] args) {
-		if (!s.hasPermission(overhead.getPermission())) return null;
+		if (overhead.getPermission() != null && !s.hasPermission(overhead.getPermission())) return Collections.emptyList();
 		
 		if (args.length == 1) {
 			// Get all commands that can be run by user
 			return overhead.getHandlers().values().stream()
-					.filter(cmd -> check(cmd, s) || cmd.isHidden())
+					.filter(cmd -> check(cmd, s) && !cmd.isHidden() && cmd.getKey().length() > 0)
 					.map(cmd -> cmd.getKey())
 					.toList();
 		}
 		else {
-			if (args[0].isBlank() || StringUtils.isNumeric(args[0])) return null;
+			if (args[0].isBlank() || StringUtils.isNumeric(args[0])) return Collections.emptyList();
 			
 			// Only look for a subcommand if the first arg is not a number and not blank
 			Subcommand cmd = overhead.getHandlers().get(args[0].toLowerCase());
-			if (cmd == null || cmd.isHidden() || !cmd.isTabEnabled()) return null;
+			if (cmd == null || cmd.isHidden() || !cmd.isTabEnabled()) return Collections.emptyList();
 			
 			CommandArguments ca = cmd.getArgs();
 			Arg arg = CommandArguments.getCurrentArg(args, ca);
-			return arg.getTabOptions();
+			return arg.getTabOptions() != null ? arg.getTabOptions() : Collections.emptyList();
 		}
 	}
 }

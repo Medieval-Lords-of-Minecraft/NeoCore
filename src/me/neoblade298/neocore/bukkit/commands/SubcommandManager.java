@@ -101,7 +101,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		if (args.length == 1) {
 			// Get all commands that can be run by user
 			return handlers.values().stream()
-					.filter(cmd -> check(cmd, s) || cmd.isHidden())
+					.filter(cmd -> check(cmd, s) && !cmd.isHidden() && cmd.getKey().length() > 0)
 					.map(cmd -> cmd.getKey())
 					.toList();
 		}

@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import me.neoblade298.neocore.bukkit.commands.CmdList;
 import net.md_5.bungee.api.ChatColor;

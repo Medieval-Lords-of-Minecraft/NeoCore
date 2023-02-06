@@ -2,9 +2,8 @@ package me.neoblade298.neocore.shared.commands;
 
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
-
-import io.lumine.mythic.bukkit.utils.lib.lang3.StringUtils;
 
 public class CommandArguments {
 	private ArrayList<Arg> args = new ArrayList<Arg>();
