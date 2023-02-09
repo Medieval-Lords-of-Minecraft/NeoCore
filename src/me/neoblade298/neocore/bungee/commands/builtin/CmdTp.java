@@ -1,4 +1,5 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import me.neoblade298.neocore.bungee.BungeeCore;
@@ -8,11 +9,12 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class CmdTp extends Command {
+public class CmdTp extends Command implements TabExecutor {
+	private static ArrayList<String> players;
 	public CmdTp() {
 		super("tp");
 	}
@@ -62,5 +64,10 @@ public class CmdTp extends Command {
 		String[] msgs = new String[] { (instant ? "neocore-tp-instant" : "neocore-tp"),
 				src.getUniqueId().toString(), trg.getUniqueId().toString()};
 		BungeeCore.sendPluginMessage(Arrays.asList(trg.getServer().getInfo()), msgs, true);
+	}
+
+	@Override
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+		return BungeeCore.players;
 	}
 }

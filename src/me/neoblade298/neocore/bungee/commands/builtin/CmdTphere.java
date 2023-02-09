@@ -1,13 +1,15 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
 
+import me.neoblade298.neocore.bungee.BungeeCore;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class CmdTphere extends Command {
+public class CmdTphere extends Command implements TabExecutor {
 	public CmdTphere() {
 		super("tphere");
 	}
@@ -23,5 +25,10 @@ public class CmdTphere extends Command {
 				CmdTp.executeTeleport(sender, src, trg);
 			}
 		}
+	}
+
+	@Override
+	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+		return BungeeCore.players;
 	}
 }
