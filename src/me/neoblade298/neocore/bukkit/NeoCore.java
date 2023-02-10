@@ -4,7 +4,6 @@ import java.io.File;
 import java.sql.Connection;
 import java.util.Random;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;

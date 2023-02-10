@@ -12,10 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.events.PlayerTagChangedEvent;
 import me.neoblade298.neocore.bukkit.events.ValueChangeType;
-import me.neoblade298.neocore.bukkit.player.PlayerDataManager;
 import me.neoblade298.neocore.bukkit.player.PlayerTags;
 
 public class BarAPI implements Listener {
