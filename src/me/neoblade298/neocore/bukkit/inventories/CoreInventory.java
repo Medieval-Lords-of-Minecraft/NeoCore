@@ -24,8 +24,7 @@ public abstract class CoreInventory {
 	public CoreInventory(Player p, Inventory inv) {
 		this.inv = inv;
 		this.p = p;
-		p.openInventory(inv);
-		InventoryListener.registerInventory(p, this);
+		openInventory();
 	}
 	public Inventory getInventory() {
 		return inv;
@@ -53,5 +52,9 @@ public abstract class CoreInventory {
 		meta.setLore(list);
 		item.setItemMeta(meta);
 		return item;
+	}
+	public void openInventory() {
+		p.openInventory(inv);
+		InventoryListener.registerInventory(p, this);
 	}
 }
