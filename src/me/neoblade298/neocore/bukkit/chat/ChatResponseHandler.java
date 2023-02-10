@@ -4,5 +4,5 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public interface ChatResponseHandler {
 	// Return false to continue listening
-	public boolean handleChat(AsyncPlayerChatEvent e);
+	public boolean handleChat(String id, AsyncPlayerChatEvent e);
 }
