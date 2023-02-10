@@ -96,6 +96,7 @@ public class NeoCore extends JavaPlugin implements Listener {
         
         // Main listener
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new MainListener(), this);
         
         // core commands
         initCommands();

@@ -13,7 +13,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
 import me.neoblade298.neocore.bukkit.util.SkullUtil;
-import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public abstract class CoreInventory {

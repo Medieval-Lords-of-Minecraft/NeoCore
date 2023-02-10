@@ -1,5 +1,4 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import me.neoblade298.neocore.bungee.BungeeCore;
@@ -14,7 +13,6 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
 public class CmdTp extends Command implements TabExecutor {
-	private static ArrayList<String> players;
 	public CmdTp() {
 		super("tp");
 	}
