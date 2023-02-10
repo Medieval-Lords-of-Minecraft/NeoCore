@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bukkit.inventories;
+package me.neoblade298.neocore.bukkit.listeners;
 
 import java.util.HashMap;
 
@@ -8,6 +8,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+
+import me.neoblade298.neocore.bukkit.inventories.CoreInventory;
 
 public class InventoryListener implements Listener {
 	private static HashMap<Player, CoreInventory> invs = new HashMap<Player, CoreInventory>();
