@@ -319,12 +319,12 @@ public class NeoCore extends JavaPlugin implements Listener {
 		PlayerIOManager.addPostIORunnable(task, type, uuid, async);
 	}
 	
-	public static void promptChatResponse(Player p, ChatResponseHandler handler) {
-		MainListener.addChatHandler(p, handler, 30);
+	public static void promptChatResponse(Player p, ChatResponseHandler... handler) {
+		MainListener.addChatHandler(p, 30, handler);
 	}
 	
-	public static void promptChatResponse(Player p, ChatResponseHandler handler, int timeoutSeconds) {
-		MainListener.addChatHandler(p, handler, timeoutSeconds);
+	public static void promptChatResponse(Player p, int timeoutSeconds, ChatResponseHandler... handler) {
+		MainListener.addChatHandler(p, timeoutSeconds, handler);
 	}
 	
 	@EventHandler
