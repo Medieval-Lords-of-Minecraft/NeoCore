@@ -15,7 +15,6 @@ public class MainListener implements Listener {
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent e) {
 		Player p = e.getPlayer();
-		System.out.println("Here " + respHandlers);
 		if (respHandlers.containsKey(p)) {
 			ChatResponseHandlerSet set = respHandlers.get(p);
 			
@@ -28,7 +27,6 @@ public class MainListener implements Listener {
 	}
 	
 	public static void addChatHandler(Player p, int timeoutSeconds, ChatResponseHandler... handler) {
-		System.out.println("Adding chat handler " + p.getName());
 		respHandlers.put(p, new ChatResponseHandlerSet(p, handler, timeoutSeconds));
 	}
 	
