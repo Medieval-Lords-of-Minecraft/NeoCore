@@ -88,7 +88,7 @@ public class SQLManager {
 	
 	public static Connection getConnection(String user) {
 		try {
-			String db = userDbs.getOrDefault(user, null);
+			String db = userDbs.getOrDefault(user.toUpperCase(), null);
 			return dataSources.get(db).getConnection();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
