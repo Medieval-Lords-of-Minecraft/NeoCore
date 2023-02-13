@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
@@ -100,5 +102,9 @@ public class SharedUtil {
 			}
 		}
 		return connected;
+	}
+	
+	public static boolean isNumeric(String in) {
+		return StringUtils.isNumeric(in);
 	}
 }

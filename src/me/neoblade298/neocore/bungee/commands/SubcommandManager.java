@@ -36,25 +36,25 @@ public class SubcommandManager extends Command implements TabExecutor {
 		}
 	}
 	
-	private boolean check(Subcommand cmd, CommandSender s) {
+	private boolean check(Subcommand cmd, CommandSender s, boolean silent) {
 		// If cmd permission exists, it overrides list permission
 		String activePerm = cmd.getPermission() != null ? cmd.getPermission() : overhead.getPermission();
 		
 		if (activePerm != null && !s.hasPermission(activePerm)) {
-			Util.msg(s, "&cYou're missing the permission: " + activePerm);
+			if (!silent) Util.msg(s, "&cYou're missing the permission: " + activePerm);
 			return false;
 		}
 
 		if ((cmd.getRunner() == SubcommandRunner.PLAYER_ONLY && !(s instanceof ProxiedPlayer)) ||
 				(cmd.getRunner() == SubcommandRunner.CONSOLE_ONLY && !(s == BungeeCore.inst().getProxy().getConsole()))) {
-			Util.msg(s, "&cYou are the wrong type of user for this command!");
+			if (!silent) Util.msg(s, "&cYou are the wrong type of user for this command!");
 			return false;
 		}
 		return true;
 	}
 	
 	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
-		if (!check(cmd, s)) return false;
+		if (!check(cmd, s, false)) return false;
 		
 		CommandArguments cargs = cmd.getArgs();
 		if (args.length < cargs.getMin() && cargs.getMin() != -1) {
@@ -100,7 +100,7 @@ public class SubcommandManager extends Command implements TabExecutor {
 		if (args.length == 1) {
 			// Get all commands that can be run by user
 			return overhead.getHandlers().values().stream()
-					.filter(cmd -> check(cmd, s) && !cmd.isHidden() && cmd.getKey().length() > 0)
+					.filter(cmd -> check(cmd, s, true) && !cmd.isHidden() && cmd.getKey().length() > 0)
 					.map(cmd -> cmd.getKey())
 					.toList();
 		}

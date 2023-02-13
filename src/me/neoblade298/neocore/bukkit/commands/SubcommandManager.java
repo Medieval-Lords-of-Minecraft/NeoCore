@@ -43,24 +43,24 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 	
 	
 	// Modular for tabcomplete to use
-	private boolean check(Subcommand cmd, CommandSender s) {
+	private boolean check(Subcommand cmd, CommandSender s, boolean silent) {
 		// If cmd permission exists, it overrides list permission
 		String activePerm = cmd.getPermission() != null ? cmd.getPermission() : perm;
 		if (activePerm != null && !s.hasPermission(activePerm)) {
-			s.sendMessage("§cYou're missing the permission: " + activePerm);
+			if (!silent) s.sendMessage("§cYou're missing the permission: " + activePerm);
 			return false;
 		}
 
 		if ((cmd.getRunner() == SubcommandRunner.PLAYER_ONLY && !(s instanceof Player)) ||
 				(cmd.getRunner() == SubcommandRunner.CONSOLE_ONLY && !(s instanceof ConsoleCommandSender))) {
-			s.sendMessage("§cYou are the wrong type of user for this command!");
+			if (!silent) s.sendMessage("§cYou are the wrong type of user for this command!");
 			return false;
 		}
 		return true;
 	}
 	
 	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
-		if (!check(cmd, s)) return false;
+		if (!check(cmd, s, false)) return false;
 		
 		CommandArguments cargs = cmd.getArgs();
 		if (args.length < cargs.getMin() && cargs.getMin() != -1) {
@@ -101,7 +101,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		if (args.length == 1) {
 			// Get all commands that can be run by user
 			return handlers.values().stream()
-					.filter(cmd -> check(cmd, s) && !cmd.isHidden() && cmd.getKey().length() > 0)
+					.filter(cmd -> check(cmd, s, true) && !cmd.isHidden() && cmd.getKey().length() > 0)
 					.map(cmd -> cmd.getKey())
 					.toList();
 		}
