@@ -66,6 +66,9 @@ public class CmdTp extends Command implements TabExecutor {
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-		return BungeeCore.players;
+		String match = args[0].toLowerCase();
+		return BungeeCore.players.stream()
+				.filter(name -> name.toLowerCase().startsWith(match))
+				.toList();
 	}
 }
