@@ -1,6 +1,7 @@
 package me.neoblade298.neocore.shared.util;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -55,8 +56,16 @@ public class PaginatedList<E> implements Iterable<E> {
 		return pages.size();
 	}
 	
+	public E get(E item, Comparator<E> c) {
+		return search(item, false, c, size() / 2, 0, size());
+	}
+	
 	public LinkedList<E> get(int page) {
 		return pages.get(page);
+	}
+	
+	public E get(int page, int idx) {
+		return pages.get(page).get(idx);
 	}
 	
 	public int getPageSize() {
@@ -74,6 +83,29 @@ public class PaginatedList<E> implements Iterable<E> {
 	
 	public E remove(int index) {
 		return remove(index / pageSize, index % pageSize);
+	}
+	
+	public E remove(E toRemove, Comparator<E> c) {
+		return search(toRemove, true, c, size() / 2, 0, size());
+	}
+	
+	private E search(E searchFor, boolean remove, Comparator<E> c, int idx, int min, int max) {
+		int page = idx / pageSize;
+		int pageIdx = idx % pageSize;
+		E item = get(page, pageIdx);
+		int comp = c.compare(searchFor, item);
+		if (comp > 0) {
+			if (idx == max) return null;
+			return search(searchFor, remove, c, (max + idx + 1) / 2, idx + 1, max);
+		}
+		else if (comp < 0) {
+			if (idx == min) return null;
+			return search(searchFor, remove, c, (max + idx + 1) / 2, min, idx - 1);
+		}
+		else {
+			if (remove) remove(page, pageIdx);
+			return item;
+		}
 	}
 	
 	public E remove(E toRemove) {
@@ -190,6 +222,5 @@ public class PaginatedList<E> implements Iterable<E> {
 			}
 			return null;
 		}
-		
 	}
 }
