@@ -117,6 +117,18 @@ public class PaginatedList<E> implements Iterable<E> {
 					idx++;
 				}
 			}
+			else {
+				Iterator<E> reverse = curr.descendingIterator();
+				int idx = pageSize - 1;
+				while (reverse.hasNext()) {
+					E item = reverse.next();
+					if (c.locate(item) == 0) {
+						if (remove) remove(page, idx);
+						return item;
+					}
+					idx--;
+				}
+			}
 		}
 		return null;
 	}
