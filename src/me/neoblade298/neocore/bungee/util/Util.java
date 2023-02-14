@@ -67,4 +67,8 @@ public class Util {
 		if (set.size() == 0) return null;
 		return set.stream().max(comp).get().getPlayerUUID();
 	}
+	
+	public static String getUsername(UUID uuid) {
+		return LastLogin.getApi().getPlayer(uuid).getName();
+	}
 }
