@@ -223,7 +223,7 @@ public class PaginatedList<E> implements Iterable<E> {
 		}
 	}
 	
-	private interface PaginatedListLocater<E> {
+	public interface PaginatedListLocater<E> {
 		public int locate(E item);
 	}
 }

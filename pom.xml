@@ -75,6 +75,10 @@
         <id>essentials-releases</id>
         <url>https://repo.essentialsx.net/releases/</url>
     </repository>
+	  <repository>
+	    <id>alessiodp-repo</id>
+	    <url>https://repo.alessiodp.com/releases/</url>
+	  </repository>
   </repositories>
 
   <dependencies>
@@ -146,5 +150,11 @@
 		    <version>3.12.0</version>
         <scope>provided</scope>
 		</dependency>
+	  <dependency>
+	    <groupId>com.alessiodp.lastloginapi</groupId>
+	    <artifactId>lastloginapi-api</artifactId>
+	    <version>1.7.4</version>
+	    <scope>provided</scope>
+	  </dependency>
   </dependencies>
 </project>
