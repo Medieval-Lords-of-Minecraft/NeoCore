@@ -56,7 +56,7 @@ public class PaginatedList<E> implements Iterable<E> {
 	}
 	
 	public E get(PaginatedListLocater<E> c) {
-		return search(false, c, size() / 2, 0, size());
+		return search(false, c, 0, pages() - 1);
 	}
 	
 	public LinkedList<E> get(int page) {
@@ -85,26 +85,40 @@ public class PaginatedList<E> implements Iterable<E> {
 	}
 	
 	public E remove(PaginatedListLocater<E> c) {
-		return search(true, c, size() / 2, 0, size());
+		return search(true, c, 0, pages() - 1);
 	}
 	
-	private E search(boolean remove, PaginatedListLocater<E> c, int idx, int min, int max) {
-		int page = idx / pageSize;
-		int pageIdx = idx % pageSize;
-		E item = get(page, pageIdx);
-		int comp = c.locate(item);
-		if (comp > 0) {
-			if (idx == max) return null;
-			return search(remove, c, (max + idx + 1) / 2, idx + 1, max);
+	private E search(boolean remove, PaginatedListLocater<E> c, int min, int max) {
+		if (size() == 0) return null;
+		
+		int page = (min + max) / 2;
+		LinkedList<E> curr = get(page);
+		int firstComp = c.locate(curr.peekFirst());
+		int lastComp = c.locate(curr.peekLast());
+		
+		if (lastComp > 0) {
+			if (page == max) return null;
+			return search(remove, c, page + 1, max);
 		}
-		else if (comp < 0) {
-			if (idx == min) return null;
-			return search(remove, c, (max + idx + 1) / 2, min, idx - 1);
+		else if (firstComp < 0) {
+			if (page == 0) return null;
+			return search(remove, c, min, page - 1);
 		}
-		else {
-			if (remove) remove(page, pageIdx);
-			return item;
+		// Within this page
+		else if (firstComp > 0 && lastComp < 0) {
+			// Closer to first item in page
+			if (Math.abs(firstComp) <= Math.abs(lastComp)) {
+				int idx = 0;
+				for (E item : curr) {
+					if (c.locate(item) == 0) {
+						if (remove) remove(page, idx);
+						return item;
+					}
+					idx++;
+				}
+			}
 		}
+		return null;
 	}
 	
 	public E remove(E toRemove) {
