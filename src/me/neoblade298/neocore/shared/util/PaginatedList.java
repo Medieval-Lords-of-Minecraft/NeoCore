@@ -119,7 +119,7 @@ public class PaginatedList<E> implements Iterable<E> {
 			}
 			else {
 				Iterator<E> reverse = curr.descendingIterator();
-				int idx = pageSize - 1;
+				int idx = curr.size() - 1;
 				while (reverse.hasNext()) {
 					E item = reverse.next();
 					if (c.locate(item) == 0) {
