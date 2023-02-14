@@ -20,7 +20,10 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class SubcommandManager extends Command implements TabExecutor {
 	private CommandOverhead overhead;
 	public SubcommandManager(String base, String perm, ChatColor color, Plugin plugin) {
-		super(base);
+		this(base, perm, color, plugin, new String[0]);
+	}
+	public SubcommandManager(String base, String perm, ChatColor color, Plugin plugin, String[] aliases) {
+		super(base, null, aliases);
 		overhead = new CommandOverhead(base, perm, color);
 		plugin.getProxy().getPluginManager().registerCommand(plugin, this);
 	}
