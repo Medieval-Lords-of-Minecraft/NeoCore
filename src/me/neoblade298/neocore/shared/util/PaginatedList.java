@@ -105,7 +105,7 @@ public class PaginatedList<E> implements Iterable<E> {
 			return search(remove, c, min, page - 1);
 		}
 		// Within this page
-		else if (firstComp > 0 && lastComp < 0) {
+		else if (firstComp >= 0 && lastComp <= 0) {
 			// Closer to first item in page
 			if (Math.abs(firstComp) <= Math.abs(lastComp)) {
 				int idx = 0;
