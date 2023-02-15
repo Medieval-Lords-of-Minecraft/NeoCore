@@ -89,7 +89,9 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 		}
 		
 		// Add args
-		line += " " + sc.getArgs().getDisplay();
+		if (sc.getArgs().getDisplay().isBlank()) {
+			line += " " + sc.getArgs().getDisplay();
+		}
 		
 		// Add description
 		if (sc.getDescription() != null) {

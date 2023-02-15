@@ -76,12 +76,12 @@ public class SubcommandManager extends Command implements TabExecutor {
 	}
 	
 	public void registerCommandList(String key, String perm, ChatColor color) {
-		overhead.getHandlers().put(key.toLowerCase(), new CmdList(key, overhead.getBase(), perm, overhead.getHandlers(), overhead.getAliases(), overhead.getColor(), color));
+		overhead.getHandlers().put(key.toLowerCase(), new CmdList(key, overhead.getBase(), perm, overhead.getPermission(), overhead.getHandlers(), overhead.getAliases(), overhead.getColor(), color));
 	}
 	
 	public void registerCommandList(String key) {
 		overhead.getHandlers().put(key.toLowerCase(),
-				new CmdList(key, overhead.getBase(), overhead.getPermission(), overhead.getHandlers(), overhead.getAliases(), overhead.getColor()));
+				new CmdList(key, overhead.getBase(), null, overhead.getPermission(), overhead.getHandlers(), overhead.getAliases(), overhead.getColor()));
 	}
 	
 	public void register(Subcommand cmd) {

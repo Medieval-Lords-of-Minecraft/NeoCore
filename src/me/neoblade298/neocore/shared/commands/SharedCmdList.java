@@ -13,21 +13,22 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
 public class SharedCmdList<T extends AbstractSubcommand> {
-	protected String base, key;
+	protected String base, key, permission;
 	protected ChatColor listColor;
 	protected TreeMap<String, T> cmds;
 	protected HashSet<String> aliases;
 	protected PaginatedList<T> pages = null;
 	
-	public SharedCmdList(String key, String base, TreeMap<String, T> cmds, HashSet<String> aliases, ChatColor listColor) {
+	public SharedCmdList(String key, String base, String permission, TreeMap<String, T> cmds, HashSet<String> aliases, ChatColor listColor) {
 		this.key = key;
 		this.base = base;
+		this.permission = permission;
 		this.listColor = listColor;
 		this.cmds = cmds;
 		this.aliases = aliases;
 	}
 
-	public ArrayList<BaseComponent[]> run(String[] args) {
+	public ArrayList<BaseComponent[]> run(String[] args, PermissionChecker checker) {
 		if (pages == null) {
 			pages = new PaginatedList<T>();
 			for (Entry<String, T> entry : cmds.entrySet()) {
@@ -37,15 +38,15 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 			}
 		}
 		
-		if (args.length == 0 || StringUtils.isNumeric(args[0])) {
-			return getPageDisplay(1);
+		if (args.length == 0 || !StringUtils.isNumeric(args[0])) {
+			return getPageDisplay(1, checker);
 		}
 		else {
-			return getPageDisplay(Integer.parseInt(args[0]));
+			return getPageDisplay(Integer.parseInt(args[0]), checker);
 		}
 	}
 	
-	private ArrayList<BaseComponent[]> getPageDisplay(int page) {
+	private ArrayList<BaseComponent[]> getPageDisplay(int page, PermissionChecker checker) {
 		ArrayList<BaseComponent[]> msgs = new ArrayList<BaseComponent[]>();
 		page = page - 1;
 		if (page >= pages.size() || page < 0) {
@@ -55,6 +56,10 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 		msgs.add(new ComponentBuilder("§7List of commands: [] = Required, {} = Optional").create());
 		for (AbstractSubcommand sc : pages.get(page)) {
 			if (sc.isHidden()) {
+				continue;
+			}
+			String perm = sc.getPermission() != null ? sc.getPermission() : permission;
+			if (perm != null && !checker.hasPermission(perm)) {
 				continue;
 			}
 			

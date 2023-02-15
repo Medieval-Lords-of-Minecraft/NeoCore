@@ -83,7 +83,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 	}
 	
 	public void registerCommandList(String key, String perm, ChatColor color) {
-		handlers.put(key.toLowerCase(), new CmdList(key, base, perm, handlers, aliases, this.color, color));
+		handlers.put(key.toLowerCase(), new CmdList(key, base, perm, super.perm, handlers, aliases, this.color, color));
 	}
 	
 	public AbstractSubcommand getCommand(String key) {
