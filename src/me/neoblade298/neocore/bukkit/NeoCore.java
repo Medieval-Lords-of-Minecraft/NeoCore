@@ -159,15 +159,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 		if (getServer().getPluginManager().isPluginEnabled("Essentials")) {
 			getServer().getPluginManager().registerEvents(new EssentialsListener(), this);
 		}
-		
-		// Server online broadcast
-		new BukkitRunnable() {
-			public void run() {
-				if (instType == InstanceType.TOWNY || instType == InstanceType.QUESTS) {
-					BungeeAPI.broadcast("Server " + instDisplay + " &7is now online!");
-				}
-			}
-		}.runTask(this);
 	}
 
 	private void initCommands() {
