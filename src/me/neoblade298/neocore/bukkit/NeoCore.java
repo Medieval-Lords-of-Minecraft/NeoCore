@@ -41,6 +41,7 @@ import me.neoblade298.neocore.bukkit.player.*;
 import me.neoblade298.neocore.bukkit.scheduler.ScheduleInterval;
 import me.neoblade298.neocore.bukkit.scheduler.SchedulerAPI;
 import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
+import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.SQLManager;
@@ -159,6 +160,15 @@ public class NeoCore extends JavaPlugin implements Listener {
 		if (getServer().getPluginManager().isPluginEnabled("Essentials")) {
 			getServer().getPluginManager().registerEvents(new EssentialsListener(), this);
 		}
+		
+		// Server online broadcast
+		new BukkitRunnable() {
+			public void run() {
+				if (instType == InstanceType.TOWNY || instType == InstanceType.QUESTS) {
+					Util.broadcast("Server " + instDisplay + " &7is now online!");
+				}
+			}
+		}.runTask(this);
 	}
 
 	private void initCommands() {
