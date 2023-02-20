@@ -218,6 +218,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		try {
 			MessagingManager.reload();
 			CommandSetManager.reload();
+	        GradientManager.load(YamlConfiguration.loadConfiguration(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
 			InfoAPI.reload();
 		} catch (NeoIOException e) {
 			e.printStackTrace();

@@ -8,13 +8,19 @@ import java.util.List;
 import net.md_5.bungee.api.ChatColor;
 
 public class Gradient {
+	private String id;
 	private ArrayList<GradientSection> sections = new ArrayList<GradientSection>(); // MUST be correct order
 	
-	public Gradient(List<String> sections) {
+	public Gradient(String id, List<String> sections) {
+		this.id = id;
 		for (String section : sections) {
 			String[] args = section.split(":");
 			this.sections.add(new GradientSection(Double.parseDouble(args[0]), Color.decode(args[1])));
 		}
+	}
+	
+	public String getId() {
+		return id;
 	}
 	
 	public String apply(String text) {
