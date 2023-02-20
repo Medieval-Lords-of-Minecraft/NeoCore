@@ -114,7 +114,8 @@ public class NeoCore extends JavaPlugin implements Listener {
     		getServer().getPluginManager().registerEvents(new PlayerIOManager(), this);
     		if (!instType.usesSkillAPI()) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
     		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
-            PlayerIOManager.register(this, new PlayerDataManager(), "PlayerDataManager");
+    		// Playerdata should save last in case other plugins edit playerdata during save
+            PlayerIOManager.register(this, new PlayerDataManager(), "PlayerDataManager", -100);
             
             ptags = PlayerDataManager.createPlayerTags("neocore", NeoCore.inst(), false);
         }
