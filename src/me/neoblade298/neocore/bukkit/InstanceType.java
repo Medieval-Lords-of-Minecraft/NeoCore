@@ -2,7 +2,7 @@ package me.neoblade298.neocore.bukkit;
 
 public enum InstanceType {
 	TOWNY(false),
-	QUESTS(true),
+	RPG(true),
 	DEV(true),
 	SESSIONS(true),
 	HUB(false),

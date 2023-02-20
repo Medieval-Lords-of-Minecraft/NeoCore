@@ -44,6 +44,7 @@ import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.SQLManager;
+import me.neoblade298.neocore.shared.util.GradientManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
@@ -132,6 +133,9 @@ public class NeoCore extends JavaPlugin implements Listener {
         
         // Info
         InfoAPI.reload();
+        
+        // Gradients
+        GradientManager.load(YamlConfiguration.loadConfiguration(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
         
         // messaging
         try {

@@ -16,6 +16,7 @@ import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.MainListener;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.SQLManager;
+import me.neoblade298.neocore.shared.util.GradientManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -58,6 +59,13 @@ public class BungeeCore extends Plugin implements Listener
         try {
 			MessagingManager.reload();
 		} catch (NeoIOException e) {
+			e.printStackTrace();
+		}
+        
+        // Gradients
+        try {
+			GradientManager.load(ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
         
