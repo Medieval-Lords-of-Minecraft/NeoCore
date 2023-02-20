@@ -13,14 +13,14 @@ public class GradientManager {
 	public static void load(ConfigurationSection cfg) {
 		gradients.clear();
 		for (String key : cfg.getKeys(false)) {
-			gradients.put(key, new Gradient(key, cfg.getStringList(key)));
+			gradients.put(key.toLowerCase(), new Gradient(key, cfg.getStringList(key)));
 		}
 	}
 	
 	public static void load(Configuration cfg) {
 		gradients.clear();
 		for (String key : cfg.getKeys()) {
-			gradients.put(key, new Gradient(key, cfg.getStringList(key)));
+			gradients.put(key.toLowerCase(), new Gradient(key, cfg.getStringList(key)));
 		}
 	}
 	
@@ -38,6 +38,6 @@ public class GradientManager {
 	}
 	
 	public static Gradient get(String id) {
-		return gradients.get(id);
+		return gradients.get(id.toLowerCase());
 	}
 }
