@@ -33,7 +33,6 @@ public class Gradient {
 			to = iter.next();
 			
 			int startPos = (int) (from.getPosition() * text.length());
-			if (!first) startPos++;
 			int endPos = (int) (to.getPosition() * text.length());
 			
 			append(text.substring(startPos, endPos), sb, from.getColor(), to.getColor(), first);
