@@ -20,7 +20,7 @@ public class CmdCoreBroadcast extends Subcommand {
 			Util.msg(s, "&cYou need a message to broadcast!");
 		}
 		else {
-			Bukkit.broadcastMessage("&4[&c&lMLMC&4] " + SharedUtil.translateColors(SharedUtil.connectArgs(args)));
+			Bukkit.broadcastMessage(SharedUtil.translateColors("&4[&c&lMLMC&4] " + SharedUtil.connectArgs(args)));
 		}
 	}
 }
