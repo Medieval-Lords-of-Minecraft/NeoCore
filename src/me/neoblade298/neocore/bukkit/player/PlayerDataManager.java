@@ -39,8 +39,18 @@ public class PlayerDataManager implements IOComponent {
 		}
 	}
 
+	// In case neocore unloads before player kick
 	@Override
-	public void cleanup(Statement insert, Statement delete) {}
+	public void cleanup(Statement insert, Statement delete) {
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			for (PlayerFields pFields : fields.values()) {
+				pFields.save(insert, delete, p.getUniqueId());
+			}
+			for (PlayerTags pTags : tags.values()) {
+				pTags.save(insert, delete, p.getUniqueId());
+			}
+		}
+	}
 	
 	public static PlayerFields getPlayerFields(String key) {
 		return fields.get(key);
