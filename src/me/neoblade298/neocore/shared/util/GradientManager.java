@@ -25,8 +25,8 @@ public class GradientManager {
 	}
 	
 	public static String applyGradient(String gradient, String text) {
-		if (gradients.containsKey(gradient)) {
-			return gradients.get(gradient).apply(text);
+		if (gradients.containsKey(gradient.toLowerCase())) {
+			return gradients.get(gradient.toLowerCase()).apply(text);
 		}
 		else {
 			return text;

@@ -360,7 +360,7 @@ public class PlayerFields {
 		changedValues.get(uuid).add(key);
 		Value removed = values.get(uuid).remove(key);
 		Bukkit.getPluginManager().callEvent(new PlayerFieldChangedEvent(Bukkit.getPlayer(uuid), this.key, key, removed, ValueChangeType.REMOVED));
-		Bukkit.getLogger().log(Level.INFO, "[NeoCore] Reset field " + this.getKey() + "." + key + " for " + uuid + ".");
+		if (NeoCore.isDebug()) Bukkit.getLogger().log(Level.INFO, "[NeoCore] Reset field " + this.getKey() + "." + key + " for " + uuid + ".");
 		return true;
 	}
 	

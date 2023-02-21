@@ -6,6 +6,7 @@ import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.neoblade298.neocore.shared.util.GradientManager;
 
 public class CmdCoreDebug extends Subcommand {
 	public CmdCoreDebug(String key, String desc, String perm, SubcommandRunner runner) {
@@ -16,6 +17,9 @@ public class CmdCoreDebug extends Subcommand {
 	public void run(CommandSender s, String[] args) {
 		if (NeoCore.toggleDebug()) {
 			Util.msg(s, "&7Successfully enabled debug mode!");
+			Util.msg(s, GradientManager.applyGradient("Ironheart", "Testing here 123"));
+			Util.msg(s, GradientManager.get("RGB").apply("RGB"));
+			Util.msg(s, GradientManager.get("Icy").apply("Icy"));
 		}
 		else {
 			Util.msg(s, "&7Successfully disabled debug mode!");
