@@ -167,7 +167,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 
 	private void initCommands() {
-		SubcommandManager mngr = new SubcommandManager("core", "neocore.admin", ChatColor.DARK_RED, this);
+		SubcommandManager mngr = new SubcommandManager("ncore", "neocore.admin", ChatColor.DARK_RED, this);
 		mngr.registerCommandList("");
 		mngr.register(new CmdCoreBroadcast("bc", "Broadcasts to only the server you're on", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreDebug("debug", "Toggles debug mode", null, SubcommandRunner.BOTH));

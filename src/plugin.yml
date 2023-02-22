@@ -5,10 +5,9 @@ softdepend: [MythicMobs, NBTAPI, Essentials, Vault, LastLoginAPI]
 version: 1.0
 api-version: 1.19
 commands:
-   core:
+   ncore:
       description: NeoCore command
-      usage: /core
-      aliases: [ncore]
+      usage: /ncore
    bcore:
       description: NeoCore bungee command
       usage: /bcore
