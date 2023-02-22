@@ -9,16 +9,19 @@ import com.google.common.io.ByteStreams;
 import me.neoblade298.neocore.bungee.BungeeCore;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class MainListener implements Listener {
-    
     @EventHandler
     public void onJoin(PostLoginEvent e) {
+    	e.
+    	e.getPlayer().hasPermission(permission)
     	BungeeCore.players.add(e.getPlayer().getName());
     	BungeeCore.inst().getProxy().getScheduler().schedule(BungeeCore.inst(), () -> {
     		BungeeCore.sendMotd(e.getPlayer());
