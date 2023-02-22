@@ -89,7 +89,7 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 		}
 		
 		// Add args
-		if (sc.getArgs().getDisplay().isBlank()) {
+		if (!sc.getArgs().getDisplay().isBlank()) {
 			line += " " + sc.getArgs().getDisplay();
 		}
 		
