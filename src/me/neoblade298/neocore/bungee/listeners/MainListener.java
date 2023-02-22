@@ -20,8 +20,6 @@ import net.md_5.bungee.event.EventHandler;
 public class MainListener implements Listener {
     @EventHandler
     public void onJoin(PostLoginEvent e) {
-    	e.
-    	e.getPlayer().hasPermission(permission)
     	BungeeCore.players.add(e.getPlayer().getName());
     	BungeeCore.inst().getProxy().getScheduler().schedule(BungeeCore.inst(), () -> {
     		BungeeCore.sendMotd(e.getPlayer());
