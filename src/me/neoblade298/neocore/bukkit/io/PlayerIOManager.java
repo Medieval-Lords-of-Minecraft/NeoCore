@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,6 +27,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.zaxxer.hikari.HikariDataSource;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.events.NeoCoreLoadCompleteEvent;
 import me.neoblade298.neocore.shared.io.SQLManager;
 
 public class PlayerIOManager implements Listener {
@@ -76,6 +78,11 @@ public class PlayerIOManager implements Listener {
 		}
 		orderedComponents.add(io);
 		return io;
+	}
+	
+	@EventHandler
+	public void onJoin(PlayerJoinEvent e) {
+		load(e.getPlayer());
 	}
 	
 	@EventHandler
@@ -332,6 +339,11 @@ public class PlayerIOManager implements Listener {
 					endIOTask(type, p.getUniqueId(), cons);
 					endIOTask(IOType.FULLLOAD, p.getUniqueId(), cons);
 					this.cancel();
+					new BukkitRunnable() {
+						public void run() {
+							Bukkit.getPluginManager().callEvent(new NeoCoreLoadCompleteEvent(p));
+						}
+					}.runTask(NeoCore.inst());
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

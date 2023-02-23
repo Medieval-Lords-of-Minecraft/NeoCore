@@ -23,15 +23,12 @@ import me.neoblade298.neocore.bukkit.chat.ChatResponseHandler;
 import me.neoblade298.neocore.bukkit.commands.*;
 import me.neoblade298.neocore.bukkit.commands.builtin.*;
 import me.neoblade298.neocore.bukkit.commandsets.CommandSetManager;
-import me.neoblade298.neocore.bukkit.events.NeoCoreInitEvent;
 import me.neoblade298.neocore.bukkit.info.InfoAPI;
-import me.neoblade298.neocore.bukkit.io.DefaultListener;
 import me.neoblade298.neocore.bukkit.io.FileLoader;
 import me.neoblade298.neocore.bukkit.io.IOComponent;
 import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
 import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
-import me.neoblade298.neocore.bukkit.io.SkillAPIListener;
 import me.neoblade298.neocore.bukkit.listeners.BungeeListener;
 import me.neoblade298.neocore.bukkit.listeners.EssentialsListener;
 import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
@@ -112,8 +109,6 @@ public class NeoCore extends JavaPlugin implements Listener {
         // io and playerdata
         if (SQLManager.isEnabled()) {
     		getServer().getPluginManager().registerEvents(new PlayerIOManager(), this);
-    		if (!instType.usesSkillAPI()) getServer().getPluginManager().registerEvents(new DefaultListener(), this);
-    		else getServer().getPluginManager().registerEvents(new SkillAPIListener(), this);
     		// Playerdata should save last in case other plugins edit playerdata during save
             PlayerIOManager.register(this, new PlayerDataManager(), "PlayerDataManager", -100);
             
@@ -144,12 +139,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 		} catch (NeoIOException e) {
 			e.printStackTrace();
 		}
-		
-		new BukkitRunnable() {
-			public void run() {
-				Bukkit.getPluginManager().callEvent(new NeoCoreInitEvent());
-			}
-		}.runTask(this);
 		
 		SchedulerAPI.initialize();
 		
