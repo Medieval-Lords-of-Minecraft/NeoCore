@@ -125,13 +125,6 @@
         <scope>provided</scope>
     </dependency>
     <dependency>
-		    <groupId>me.neoblade298</groupId>
-		    <artifactId>SkillAPI</artifactId>
-		    <version>1.0</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/resources/SkillAPI.jar</systemPath>
-		</dependency>
-    <dependency>
         <groupId>net.essentialsx</groupId>
         <artifactId>EssentialsX</artifactId>
         <version>2.19.4</version>

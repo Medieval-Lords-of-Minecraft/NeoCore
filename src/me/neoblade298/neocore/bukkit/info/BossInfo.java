@@ -3,14 +3,8 @@ package me.neoblade298.neocore.bukkit.info;
 import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-
-import com.sucy.skill.SkillAPI;
-import com.sucy.skill.api.player.PlayerAccounts;
-
 import io.lumine.mythic.api.mobs.MobManager;
 import io.lumine.mythic.bukkit.MythicBukkit;
-import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class BossInfo {
@@ -56,13 +50,7 @@ public class BossInfo {
 		return health;
 	}
 	
-	public boolean hasFought(Player p) {
-		PlayerAccounts accs = SkillAPI.getPlayerAccountData(p);
-		if (accs != null) {
-			int id = accs.getActiveId();
-			String key = "questaccount_" + id;
-			return NeoCore.getPlayerTags(key).exists(tag, p.getUniqueId());
-		}
-		return false;
+	public String getTag() {
+		return tag;
 	}
 }
