@@ -100,7 +100,7 @@ public class PlayerIOManager implements Listener {
 		preload(Bukkit.getOfflinePlayer(e.getUniqueId()));
 	}
 	
-	protected static void save(Player p) {
+	public static void save(Player p) {
 		HashSet<String> disabledKeys = disabledIO.get(IOType.SAVE);
 		if (disabledKeys.contains("*")) {
 			return;
