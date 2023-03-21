@@ -17,9 +17,6 @@ public class CmdCoreDebug extends Subcommand {
 	public void run(CommandSender s, String[] args) {
 		if (NeoCore.toggleDebug()) {
 			Util.msg(s, "&7Successfully enabled debug mode!");
-			Util.msg(s, GradientManager.applyGradient("Ironheart", "Testing here 123"));
-			Util.msg(s, GradientManager.get("RGB").apply("RGB"));
-			Util.msg(s, GradientManager.get("Icy").apply("Icy"));
 		}
 		else {
 			Util.msg(s, "&7Successfully disabled debug mode!");

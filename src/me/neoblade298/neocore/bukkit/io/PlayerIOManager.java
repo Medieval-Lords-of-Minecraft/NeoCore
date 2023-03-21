@@ -348,7 +348,7 @@ public class PlayerIOManager implements Listener {
 					ex.printStackTrace();
 				}
 			}
-		}.runTaskTimerAsynchronously(NeoCore.inst(), 0L, 20L);
+		}.runTaskTimerAsynchronously(NeoCore.inst(), 40L, 20L);
 	}
 	
 	public static void handleDisable() {
