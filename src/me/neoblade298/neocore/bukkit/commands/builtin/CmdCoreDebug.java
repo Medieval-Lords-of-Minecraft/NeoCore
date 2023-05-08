@@ -6,7 +6,6 @@ import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
-import me.neoblade298.neocore.shared.util.GradientManager;
 
 public class CmdCoreDebug extends Subcommand {
 	public CmdCoreDebug(String key, String desc, String perm, SubcommandRunner runner) {

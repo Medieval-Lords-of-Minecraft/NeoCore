@@ -2,7 +2,6 @@ package me.neoblade298.neocore.bungee.util;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
-
 import java.util.Comparator;
 import java.util.Set;
 import java.util.UUID;

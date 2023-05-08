@@ -10,6 +10,11 @@ import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class SharedUtil {
 	public static final Pattern HEX_PATTERN = Pattern.compile("&(#[A-Fa-f0-9]{6})");
@@ -106,5 +111,27 @@ public class SharedUtil {
 	
 	public static boolean isNumeric(String in) {
 		return StringUtils.isNumeric(in);
+	}
+	
+	public static ComponentBuilder createText(String text, String hover, String cmd) {
+		ComponentBuilder b = new ComponentBuilder(SharedUtil.translateColors(text));
+		if (hover != null) {
+			b.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(SharedUtil.translateColors(hover))));
+		}
+		if (cmd != null) {
+			b.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, cmd));
+		}
+		return b;
+	}
+	
+	public static ComponentBuilder appendText(ComponentBuilder b, String text, String hover, String cmd) {
+		b.append(SharedUtil.translateColors(text), FormatRetention.NONE);
+		if (hover != null) {
+			b.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(SharedUtil.translateColors(hover))));
+		}
+		if (cmd != null) {
+			b.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, cmd));
+		}
+		return b;
 	}
 }
