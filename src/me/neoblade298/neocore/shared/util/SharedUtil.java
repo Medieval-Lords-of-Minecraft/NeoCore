@@ -112,25 +112,34 @@ public class SharedUtil {
 	public static boolean isNumeric(String in) {
 		return StringUtils.isNumeric(in);
 	}
-	
+
 	public static ComponentBuilder createText(String text, String hover, String cmd) {
+		return createText(text, hover, cmd, ClickEvent.Action.RUN_COMMAND);
+	}
+	
+	public static ComponentBuilder createText(String text, String hover, String cmd, ClickEvent.Action action) {
 		ComponentBuilder b = new ComponentBuilder(SharedUtil.translateColors(text));
 		if (hover != null) {
 			b.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(SharedUtil.translateColors(hover))));
 		}
 		if (cmd != null) {
-			b.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, cmd));
+			b.event(new ClickEvent(action, cmd));
 		}
 		return b;
 	}
 	
+
 	public static ComponentBuilder appendText(ComponentBuilder b, String text, String hover, String cmd) {
+		return appendText(b, text, hover, cmd, ClickEvent.Action.RUN_COMMAND);
+	}
+	
+	public static ComponentBuilder appendText(ComponentBuilder b, String text, String hover, String cmd, ClickEvent.Action action) {
 		b.append(SharedUtil.translateColors(text), FormatRetention.NONE);
 		if (hover != null) {
 			b.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(SharedUtil.translateColors(hover))));
 		}
 		if (cmd != null) {
-			b.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, cmd));
+			b.event(new ClickEvent(action, cmd));
 		}
 		return b;
 	}
