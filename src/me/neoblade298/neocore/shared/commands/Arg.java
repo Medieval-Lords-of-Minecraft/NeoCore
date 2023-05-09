@@ -2,10 +2,18 @@ package me.neoblade298.neocore.shared.commands;
 
 import java.util.List;
 
+import org.bukkit.entity.Player;
+
+import me.neoblade298.neocore.bukkit.commands.BukkitTabResolver;
+import me.neoblade298.neocore.bungee.commands.BungeeTabResolver;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+
 public class Arg {
 	private boolean required;
 	private String display;
 	private List<String> tabOptions;
+	private BukkitTabResolver bukkitResolver;
+	private BungeeTabResolver bungeeResolver;
 	private ArgType type;
 	
 	public Arg(String display) {
@@ -30,7 +38,7 @@ public class Arg {
 		return display;
 	}
 	
-	public void setTabComplete(List<String> tabOptions) {
+	public void setTabOptions(List<String> tabOptions) {
 		this.tabOptions = tabOptions;
 	}
 	
@@ -38,6 +46,19 @@ public class Arg {
 		return tabOptions;
 	}
 	
+	public List<String> getTabOptions(Player p) {
+		if (bukkitResolver != null) {
+			return bukkitResolver.resolve(p);
+		}
+		return tabOptions;
+	}
+	
+	public List<String> getTabOptions(ProxiedPlayer p) {
+		if (bungeeResolver != null) {
+			return bungeeResolver.resolve(p);
+		}
+		return tabOptions;
+	}
 	
 	public ArgType getType() {
 		return type;

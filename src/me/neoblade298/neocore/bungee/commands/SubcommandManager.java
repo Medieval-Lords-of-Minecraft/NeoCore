@@ -98,6 +98,9 @@ public class SubcommandManager extends Command implements TabExecutor {
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender s, String[] args) {
+		if (!(s instanceof ProxiedPlayer)) return Collections.emptyList(); // Only player senders can use tab complete
+		
+		ProxiedPlayer p = (ProxiedPlayer) s;
 		if (overhead.getPermission() != null && !s.hasPermission(overhead.getPermission())) return Collections.emptyList();
 		
 		if (args.length == 1) {
@@ -116,7 +119,7 @@ public class SubcommandManager extends Command implements TabExecutor {
 			
 			CommandArguments ca = cmd.getArgs();
 			Arg arg = CommandArguments.getCurrentArg(args, ca);
-			return arg.getTabOptions() != null ? arg.getTabOptions() : Collections.emptyList();
+			return arg.getTabOptions(p) != null ? arg.getTabOptions(p) : Collections.emptyList();
 		}
 	}
 }
