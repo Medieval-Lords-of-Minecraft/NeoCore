@@ -113,6 +113,10 @@ public class SharedUtil {
 		return StringUtils.isNumeric(in);
 	}
 
+	public static ComponentBuilder createText(String text) {
+		return createText(text, null, null, ClickEvent.Action.RUN_COMMAND);
+	}
+
 	public static ComponentBuilder createText(String text, String hover, String cmd) {
 		return createText(text, hover, cmd, ClickEvent.Action.RUN_COMMAND);
 	}
@@ -127,7 +131,10 @@ public class SharedUtil {
 		}
 		return b;
 	}
-	
+
+	public static ComponentBuilder appendText(ComponentBuilder b, String text) {
+		return appendText(b, text, null, null, ClickEvent.Action.RUN_COMMAND);
+	}
 
 	public static ComponentBuilder appendText(ComponentBuilder b, String text, String hover, String cmd) {
 		return appendText(b, text, hover, cmd, ClickEvent.Action.RUN_COMMAND);
