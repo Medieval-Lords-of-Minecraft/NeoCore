@@ -11,10 +11,13 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class Util {
@@ -112,6 +115,14 @@ public class Util {
         } catch (ClassNotFoundException e) {
             throw new IOException("Unable to decode class type.", e);
         }
+    }
+    
+    public static BukkitTask runTask(Runnable runnable, long delay) {
+    	return new BukkitRunnable() {
+    		public void run() {
+    			runnable.run();
+    		}
+    	}.runTaskLater(NeoCore.inst(), delay);
     }
 	
 }
