@@ -21,6 +21,8 @@ import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class Util {
+	
+	
 	public static void msgGroup(Collection<Player> s, String msg, boolean hasPrefix) {
 		for (CommandSender sender : s) {
 			msg(sender, msg, hasPrefix);
@@ -28,9 +30,15 @@ public class Util {
 	}
 	
 	public static void msgGroup(Collection<Player> s, String msg) {
-		for (CommandSender sender : s) {
-			msg(sender, msg);
-		}
+		msgGroup(s, msg, true);
+	}
+	
+	public static void msgGroupRaw(Collection<Player> s, String msg) {
+		msgGroup(s, msg, false);
+	}
+
+	public static void msgRaw(CommandSender s, String msg) {
+		msg(s, msg, false);
 	}
 
 	public static void msg(CommandSender s, String msg) {

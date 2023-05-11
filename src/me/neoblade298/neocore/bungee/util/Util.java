@@ -28,6 +28,10 @@ public class Util {
 		}
 	};
 	
+	public static void msgRaw(CommandSender s, String msg) {
+		msg(s, msg, false);
+	}
+	
 	public static void msg(CommandSender s, String msg) {
 		msg(s, msg, true);
 	}
@@ -37,6 +41,10 @@ public class Util {
 			msg = "&4[&c&lMLMC&4] &7" + msg;
 		}
 		s.sendMessage(new TextComponent(SharedUtil.translateColors(msg)));
+	}
+	
+	public static void broadcastRaw(String msg) {
+		broadcast(msg, false);
 	}
 	
 	public static void broadcast(String msg) {
