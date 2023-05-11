@@ -2,6 +2,8 @@ package me.neoblade298.neocore.bungee.util;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
+
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.UUID;
@@ -27,6 +29,20 @@ public class Util {
 			}
 		}
 	};
+	
+	public static void msgGroup(Collection<CommandSender> s, String msg, boolean hasPrefix) {
+		for (CommandSender sender : s) {
+			msg(sender, msg, hasPrefix);
+		}
+	}
+	
+	public static void msgGroup(Collection<CommandSender> s, String msg) {
+		msgGroup(s, msg, true);
+	}
+	
+	public static void msgGroupRaw(Collection<CommandSender> s, String msg) {
+		msgGroup(s, msg, false);
+	}
 	
 	public static void msgRaw(CommandSender s, String msg) {
 		msg(s, msg, false);
