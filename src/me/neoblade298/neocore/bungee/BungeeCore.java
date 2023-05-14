@@ -7,10 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.bukkit.entity.Player;
+
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 import me.neoblade298.neocore.bungee.messaging.MessagingManager;
+import me.neoblade298.neocore.bungee.chat.ChatResponseHandler;
 import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.ChatListener;
@@ -23,6 +26,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -164,6 +168,14 @@ public class BungeeCore extends Plugin implements Listener
 	
 	public static BungeeCore inst() {
 		return inst;
+	}
+	
+	public static void promptChatResponse(ProxiedPlayer p, ChatResponseHandler... handler) {
+		ChatListener.addChatHandler(p, 30, handler);
+	}
+	
+	public static void promptChatResponse(ProxiedPlayer p, int timeoutSeconds, ChatResponseHandler... handler) {
+		ChatListener.addChatHandler(p, timeoutSeconds, handler);
 	}
 	
 	public static void loadFiles(File load, FileLoader loader) {
