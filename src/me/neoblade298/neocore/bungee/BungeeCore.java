@@ -13,6 +13,7 @@ import com.google.common.io.ByteStreams;
 import me.neoblade298.neocore.bungee.messaging.MessagingManager;
 import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
+import me.neoblade298.neocore.bungee.listeners.ChatListener;
 import me.neoblade298.neocore.bungee.listeners.MainListener;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.SQLManager;
@@ -54,6 +55,7 @@ public class BungeeCore extends Plugin implements Listener
         getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
         getProxy().getPluginManager().registerCommand(this, new CmdKickAll());
         getProxy().getPluginManager().registerListener(this, new MainListener());
+        getProxy().getPluginManager().registerListener(this, new ChatListener());
         getProxy().registerChannel("neocore:bungee");
         
         // messaging
