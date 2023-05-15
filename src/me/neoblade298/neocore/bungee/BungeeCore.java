@@ -6,9 +6,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
-
-import org.bukkit.entity.Player;
-
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -69,13 +66,14 @@ public class BungeeCore extends Plugin implements Listener
 			e.printStackTrace();
 		}
         
-        // Gradients
+        // gradients
         try {
 			GradientManager.load(ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
         
+        // sql
 		try {
 			Configuration cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
 	        SQLManager.load(cfg.getSection("sql"));
