@@ -7,11 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class ParticleUtil {
-	public static void drawLine(Player p, Location l1, Location l2, Particle part, boolean showAllPlayers, int perPoint, double offset, double speed, double blocksPerParticle) {
-		drawLine(p, l1, l2, part, showAllPlayers, perPoint, offset, speed, blocksPerParticle, null);
-	}
-
-	public static void drawLine(Player p, Location l1, Location l2, Particle part, boolean showAllPlayers, int perPoint, double offset, double speed, double blocksPerParticle, DustOptions data) { 
+	// DustOptions nullable
+	public static void drawLine(Player p, Location l1, Location l2, Particle part, boolean showAllPlayers, int perPoint, double offset,
+			double speed, double blocksPerParticle, DustOptions data) { 
 		Location start = l1.clone();
 		Location end = l2.clone();
 	    
@@ -21,7 +19,7 @@ public class ParticleUtil {
 		    v.normalize();
 		    v.multiply(i * blocksPerParticle);
 		    start.add(v);
-			spawnParticle(p, showAllPlayers, start, part, perPoint, offset, offset, offset, speed, data); // Data is nullable
+			spawnParticle(p, showAllPlayers, start, part, perPoint, offset, offset, offset, speed, data);
 			start.subtract(v);
 		}
 	}
