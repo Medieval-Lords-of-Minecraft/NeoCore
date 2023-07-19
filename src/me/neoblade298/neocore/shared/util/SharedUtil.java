@@ -163,7 +163,11 @@ public class SharedUtil {
 		int linePixels = 0;
 		for (String word : words) {
 			int pixels = getStringPixels(word);
-			if (linePixels != 0 && linePixels + pixels + FontInfo.getFontInfo(' ').getLength() > pixelsPerLine) {
+			if (linePixels == 0) {
+				curr += word;
+				linePixels += pixels;
+			}
+			else if (linePixels + pixels + FontInfo.getFontInfo(' ').getLength() > pixelsPerLine) {
 				lines.add(curr);
 				curr = color + word;
 				linePixels = pixels;
@@ -173,6 +177,7 @@ public class SharedUtil {
 				linePixels += pixels + FontInfo.getFontInfo(' ').getLength();
 			}
 		}
+		lines.add(curr);
 		return lines;
 	}
 }
