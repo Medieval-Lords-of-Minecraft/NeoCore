@@ -1,5 +1,6 @@
 package me.neoblade298.neocore.shared.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +24,20 @@ public class SharedUtil {
 	public static String center(String msg) {
 		msg = translateColors(msg);
 
+		int messagePxSize = getStringPixels(msg);
+		int halvedMessageSize = messagePxSize / 2;
+		int toCompensate = CENTER_PX - halvedMessageSize;
+		int spaceLength = FontInfo.SPACE.getLength() + 1;
+		int compensated = 0;
+		StringBuilder sb = new StringBuilder();
+		while (compensated < toCompensate) {
+			sb.append(" ");
+			compensated += spaceLength;
+		}
+		return sb.toString() + msg;
+	}
+	
+	public static int getStringPixels(String msg) {
 		int messagePxSize = 0;
 		boolean previousCode = false;
 		boolean isBold = false;
@@ -41,17 +56,7 @@ public class SharedUtil {
 				messagePxSize++;
 			}
 		}
-
-		int halvedMessageSize = messagePxSize / 2;
-		int toCompensate = CENTER_PX - halvedMessageSize;
-		int spaceLength = FontInfo.SPACE.getLength() + 1;
-		int compensated = 0;
-		StringBuilder sb = new StringBuilder();
-		while (compensated < toCompensate) {
-			sb.append(" ");
-			compensated += spaceLength;
-		}
-		return sb.toString() + msg;
+		return messagePxSize;
 	}
 
 	public static String translateColors(String textToTranslate) {
@@ -149,5 +154,25 @@ public class SharedUtil {
 			b.event(new ClickEvent(action, cmd));
 		}
 		return b;
+	}
+	
+	public static ArrayList<String> addLineBreaks(String line, int pixelsPerLine, ChatColor color) {
+		ArrayList<String> lines = new ArrayList<String>();
+		String[] words = line.split(" ");
+		String curr = color.toString();
+		int linePixels = 0;
+		for (String word : words) {
+			int pixels = getStringPixels(word);
+			if (linePixels != 0 && linePixels + pixels + FontInfo.getFontInfo(' ').getLength() > pixelsPerLine) {
+				lines.add(curr);
+				curr = color + word;
+				linePixels = pixels;
+			}
+			else {
+				curr += " " + word;
+				linePixels += pixels + FontInfo.getFontInfo(' ').getLength();
+			}
+		}
+		return lines;
 	}
 }

@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
 import me.neoblade298.neocore.bukkit.util.SkullUtil;
 import me.neoblade298.neocore.shared.util.SharedUtil;
+import net.md_5.bungee.api.ChatColor;
 
 public abstract class CoreInventory {
 	protected Inventory inv;
@@ -53,6 +54,15 @@ public abstract class CoreInventory {
 		item.setItemMeta(meta);
 		return item;
 	}
+	
+	public static ItemStack createButton(ItemStack item, String name, String lore, int pixelsPerLine, ChatColor color) {
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(SharedUtil.translateColors(name));
+		meta.setLore(SharedUtil.addLineBreaks(lore, pixelsPerLine, color));
+		item.setItemMeta(meta);
+		return item;
+	}
+	
 	public void openInventory() {
 		p.openInventory(inv);
 		InventoryListener.registerInventory(p, this);
