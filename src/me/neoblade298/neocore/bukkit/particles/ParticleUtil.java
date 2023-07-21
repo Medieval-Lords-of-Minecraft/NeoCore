@@ -32,4 +32,13 @@ public class ParticleUtil {
 			p.spawnParticle(part, loc, amount, xOff, yOff, zOff, speed, data);
 		}
 	}
+	
+	public static void spawnParticle(Player p, boolean showAllPlayers, Location loc, Particle part, int amount, double xOff, double yOff, double zOff, double speed) {
+		if (showAllPlayers) {
+			p.getWorld().spawnParticle(part, loc, amount, xOff, yOff, zOff, speed);
+		}
+		else {
+			p.spawnParticle(part, loc, amount, xOff, yOff, zOff, speed);
+		}
+	}
 }
