@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -131,6 +132,24 @@ public class Util {
     			runnable.run();
     		}
     	}.runTaskLater(NeoCore.inst(), delay);
+    }
+    
+    public static void playSound(Player p, Sound sound, float volume, float pitch, boolean showAllPlayers) {
+    	if (showAllPlayers) {
+    		p.playSound(p, sound, volume, pitch);
+    	}
+    	else {
+    		p.getWorld().playSound(p, sound, volume, pitch);
+    	}
+    }
+    
+    public static void playSound(Player p, Location loc, Sound sound, float volume, float pitch, boolean showAllPlayers) {
+    	if (showAllPlayers) {
+    		p.playSound(loc, sound, volume, pitch);
+    	}
+    	else {
+    		loc.getWorld().playSound(loc, sound, volume, pitch);
+    	}
     }
 	
 }
