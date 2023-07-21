@@ -151,5 +151,10 @@ public class Util {
     		loc.getWorld().playSound(loc, sound, volume, pitch);
     	}
     }
+
+	public static void displayError(Player p, String error) {
+		p.playSound(p, Sound.BLOCK_NOTE_BLOCK_BASS, 1F, 0.7F);
+		Util.msg(p, error);
+	}
 	
 }
