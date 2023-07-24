@@ -1,5 +1,6 @@
 package me.neoblade298.neocore.bukkit.particles;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
@@ -15,12 +16,16 @@ public class ParticleUtil {
 	    
 		Vector v = end.subtract(start).toVector();
 		int iterations = (int) (v.length() / blocksPerParticle);
+		v.normalize();
+	    v.multiply(blocksPerParticle);
+	    if (v.length() == 0) {
+	    	Bukkit.getLogger().warning("[NeoCore] Failed to draw particle line, vector length was 0");
+	    	return;
+	    }
+	    
 		for (int i = 1; i < iterations; i++) {
-		    v.normalize();
-		    v.multiply(i * blocksPerParticle);
 		    start.add(v);
 			spawnParticle(p, showAllPlayers, start, part, perPoint, offset, offset, offset, speed, data);
-			start.subtract(v);
 		}
 	}
 	
