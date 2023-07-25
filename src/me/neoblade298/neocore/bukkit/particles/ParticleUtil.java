@@ -22,11 +22,13 @@ public class ParticleUtil {
 	    	Bukkit.getLogger().warning("[NeoCore] Failed to draw particle line, vector length was 0");
 	    	return;
 	    }
-	    
-		for (int i = 1; i < iterations; i++) {
+
+		spawnParticle(p, showAllPlayers, start, part, perPoint, offset, offset, offset, speed, data);
+		for (int i = 0; i < iterations; i++) {
 		    start.add(v);
 			spawnParticle(p, showAllPlayers, start, part, perPoint, offset, offset, offset, speed, data);
 		}
+		spawnParticle(p, showAllPlayers, end, part, perPoint, offset, offset, offset, speed, data);
 	}
 	
 	public static void spawnParticle(Player p, boolean showAllPlayers, Location loc, Particle part, int amount, double xOff, double yOff, double zOff, double speed, DustOptions data) {
