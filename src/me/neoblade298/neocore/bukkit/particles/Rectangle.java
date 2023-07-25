@@ -14,7 +14,7 @@ public class Rectangle extends ParticleShape {
 	private Location bottomLeft;
 	private int heightIterations;
 	private double blocksPerParticle;
-	private Vector vWidth;
+	private Vector vWidth, vHeight;
 	
 
 	public Rectangle(Player p, double width, double height, double distanceFromPlayer) {
@@ -26,9 +26,13 @@ public class Rectangle extends ParticleShape {
 		this.heightIterations = (int) (height / blocksPerParticle);
 		this.blocksPerParticle = blocksPerParticle;
 		
-		Vector distancePlayer = p.getEyeLocation().getDirection().setY(0).normalize().multiply(distanceFromPlayer); // Set the rectangle origin 2 blocks from player
-		vWidth = distancePlayer.clone().normalize().rotateAroundY(Math.PI / 2).multiply(width / 2);
-		bottomLeft = p.getLocation().add(distancePlayer);
+		Vector localForward = p.getEyeLocation().getDirection().normalize();
+		Vector localLeft = localForward.clone().setY(0).rotateAroundY(Math.PI / 2);
+		Vector localUp = localForward.clone().rotateAroundAxis(localLeft, Math.PI / 2);
+		
+		vWidth = localLeft.clone().multiply(width / 2);
+		vHeight = localUp.multiply(height / blocksPerParticle);
+		bottomLeft = p.getLocation().add(localForward.multiply(distanceFromPlayer));
 		bottomLeft.add(vWidth);
 		vWidth.multiply(-2);
 	}
@@ -39,7 +43,7 @@ public class Rectangle extends ParticleShape {
 		for (int i = 0; i < heightIterations; i++) {
 			Location right = left.clone().add(vWidth);
 			ParticleUtil.drawLine(p, left, right, part, showAllPlayers, 1, 0, 0, blocksPerParticle, options);
-			left.add(0, blocksPerParticle, 0);
+			left.add(vHeight);
 		}
 	}
 }
