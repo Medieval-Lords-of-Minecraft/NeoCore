@@ -1,12 +1,11 @@
 package me.neoblade298.neocore.bukkit.particles;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-
-import me.neoblade298.neocore.bukkit.particles.ParticleShape;
 
 public class Rectangle extends ParticleShape {
 	private static final double PARTICLES_PER_METER = 2;
@@ -16,7 +15,6 @@ public class Rectangle extends ParticleShape {
 	private double blocksPerParticle;
 	private Vector vWidth, vHeight;
 	
-
 	public Rectangle(Player p, double width, double height, double distanceFromPlayer) {
 		this(p, width, height, distanceFromPlayer, 1 / PARTICLES_PER_METER);
 	}
@@ -28,10 +26,10 @@ public class Rectangle extends ParticleShape {
 		
 		Vector localForward = p.getEyeLocation().getDirection().normalize();
 		Vector localLeft = localForward.clone().setY(0).rotateAroundY(Math.PI / 2);
-		Vector localUp = localForward.clone().rotateAroundAxis(localLeft, Math.PI / 2);
-		
+		Vector localUp = localForward.clone().rotateAroundAxis(localLeft, -Math.PI / 2);
+
 		vWidth = localLeft.clone().multiply(width / 2);
-		vHeight = localUp.multiply(height / blocksPerParticle);
+		vHeight = localUp.multiply(blocksPerParticle);
 		bottomLeft = p.getLocation().add(localForward.multiply(distanceFromPlayer));
 		bottomLeft.add(vWidth);
 		vWidth.multiply(-2);
