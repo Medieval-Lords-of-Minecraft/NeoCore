@@ -4,6 +4,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -12,21 +13,19 @@ public class Rectangle extends ParticleShape {
 	
 	private Location bottomLeft;
 	private int heightIterations;
-	private double blocksPerParticle, width, height;
+	private double blocksPerParticle;
 	private Vector vIterWidth, vIterHeight, vWidth, vHeight;
 	
-	public Rectangle(Player p, double width, double height, double distanceFromPlayer) {
-		this(p, width, height, distanceFromPlayer, 1 / PARTICLES_PER_METER);
+	public Rectangle(LivingEntity owner, double width, double height, double forward, double forwardOffset) {
+		this(owner, width, height, forward, forwardOffset, 1 / PARTICLES_PER_METER);
 	}
 	
-	// Create a rectangle where a player is facing but stuck to the ground, primarily for shield walls
-	public Rectangle(Player p, double width, double height, double distanceFromPlayer, double blocksPerParticle) {
+	// Create a rectangle where an entity is facing but stuck to the ground, primarily for shield walls
+	public Rectangle(LivingEntity owner, double width, double height, double forward, double forwardOffset, double blocksPerParticle) {
 		this.heightIterations = (int) (height / blocksPerParticle);
 		this.blocksPerParticle = blocksPerParticle;
-		this.width = width;
-		this.height = height;
 		
-		Vector localForward = p.getEyeLocation().getDirection().normalize();
+		Vector localForward = owner.getEyeLocation().getDirection().normalize();
 		Vector localLeft = localForward.clone().setY(0).rotateAroundY(Math.PI / 2);
 		Vector localUp = localForward.clone().rotateAroundAxis(localLeft, -Math.PI / 2);
 		
@@ -35,7 +34,8 @@ public class Rectangle extends ParticleShape {
 
 		vIterWidth = localLeft.clone().multiply(width / 2);
 		vIterHeight = localUp.multiply(blocksPerParticle);
-		bottomLeft = p.getLocation().add(localForward.multiply(distanceFromPlayer));
+		bottomLeft = owner.getLocation().add(localForward.clone().multiply(forwardOffset));
+		bottomLeft.add(localForward.clone().multiply(forward));
 		bottomLeft.add(vIterWidth);
 		vIterWidth.multiply(-2);
 	}
