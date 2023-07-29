@@ -32,7 +32,7 @@ public class ParticleUtil {
 	}
 	
 	public static void spawnParticle(Player p, boolean showAllPlayers, Location loc, Particle part, int amount, double xOff, double yOff, double zOff, double speed, DustOptions data) {
-		if (showAllPlayers) {
+		if (showAllPlayers || p == null) {
 			loc.getWorld().spawnParticle(part, loc, amount, xOff, yOff, zOff, speed, data);
 		}
 		else {
@@ -41,7 +41,7 @@ public class ParticleUtil {
 	}
 	
 	public static void spawnParticle(Player p, boolean showAllPlayers, Location loc, Particle part, int amount, double xOff, double yOff, double zOff, double speed) {
-		if (showAllPlayers) {
+		if (showAllPlayers || p == null) {
 			loc.getWorld().spawnParticle(part, loc, amount, xOff, yOff, zOff, speed);
 		}
 		else {
