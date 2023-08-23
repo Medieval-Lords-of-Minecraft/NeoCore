@@ -26,4 +26,13 @@ public class DropTable<E> {
 		
 		return toReturn.get();
 	}
+	
+	public int size() {
+		return drops.size();
+	}
+	
+	@Override
+	public String toString() {
+		return drops.toString();
+	}
 }
