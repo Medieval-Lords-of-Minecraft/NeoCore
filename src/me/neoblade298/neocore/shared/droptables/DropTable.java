@@ -4,8 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
-import io.lumine.mythic.core.drops.Drop;
-
 public class DropTable<E> {
 	private LinkedList<Droppable<E>> drops = new LinkedList<Droppable<E>>();
 	private double totalWeight = 0;
