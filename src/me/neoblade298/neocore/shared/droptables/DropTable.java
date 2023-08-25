@@ -4,18 +4,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
+import io.lumine.mythic.core.drops.Drop;
+
 public class DropTable<E> {
 	private LinkedList<Droppable<E>> drops = new LinkedList<Droppable<E>>();
-	private int totalWeight = 0;
+	private double totalWeight = 0;
 	private static Random gen = new Random();
 	
-	public void add(E drop, int weight) {
+	public void add(E drop, double weight) {
 		drops.add(new Droppable<E>(drop, weight));
 		totalWeight += weight;
 	}
 	
 	public E get() {
-		int rand = gen.nextInt(totalWeight);
+		double rand = gen.nextDouble() * totalWeight;
 		
 		Iterator<Droppable<E>> iter = rand > totalWeight / 2 ? drops.descendingIterator() : drops.iterator();
 		Droppable<E> toReturn = null;
@@ -25,6 +27,34 @@ public class DropTable<E> {
 		}
 		
 		return toReturn.get();
+	}
+	
+	public DropTable<E> combine(DropTable<E>[] others) {
+		double[] multipliers = new double[others.length];
+		for (int i = 0; i < others.length; i++) {
+			multipliers[i] = 1;
+		}
+		return combine(others, multipliers);
+	}
+	
+	public DropTable<E> combine(DropTable<E>[] others, double[] multipliers) {
+		DropTable<E> combined = new DropTable<E>();
+		combined.drops.addAll(this.drops);
+		
+		for (Droppable<E> drop : this.drops) {
+			combined.add(drop.get(), drop.getWeight());
+		}
+		int i = 0;
+		for (DropTable<E> other : others) {
+			for (Droppable<E> drop : other.drops) {
+				combined.add(drop.get(), drop.getWeight() * multipliers[i++]);
+			}
+		}
+		return combined;
+	}
+	
+	public double getTotalWeight() {
+		return totalWeight;
 	}
 	
 	public int size() {
