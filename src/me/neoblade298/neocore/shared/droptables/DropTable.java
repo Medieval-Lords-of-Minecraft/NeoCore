@@ -11,6 +11,22 @@ public class DropTable<E> {
 	private double totalWeight = 0;
 	private static Random gen = new Random();
 	
+	public static DropTable<DropTable<?>> combine(DropTable<?>[] tables, double[] multipliers) {
+		DropTable<DropTable<?>> group = new DropTable<DropTable<?>>();
+		for (int i = 0; i < tables.length; i++) {
+			group.add(tables[i], tables[i].getTotalWeight() * multipliers[i]);
+		}
+		return group;
+	}
+	
+	public static DropTable<DropTable<?>> combine(DropTable<?>[] tables) {
+		DropTable<DropTable<?>> group = new DropTable<DropTable<?>>();
+		for (int i = 0; i < tables.length; i++) {
+			group.add(tables[i], tables[i].getTotalWeight());
+		}
+		return group;
+	}
+	
 	public void add(E drop, double weight) {
 		drops.add(new Droppable<E>(drop, weight));
 		totalWeight += weight;
@@ -28,7 +44,7 @@ public class DropTable<E> {
 		
 		return toReturn.get();
 	}
-	
+	/*
 	public DropTable<E> combine(DropTable<E>[] others) {
 		double[] multipliers = new double[others.length];
 		for (int i = 0; i < others.length; i++) {
@@ -51,7 +67,7 @@ public class DropTable<E> {
 			}
 		}
 		return combined;
-	}
+	}*/
 	
 	public double getTotalWeight() {
 		return totalWeight;
