@@ -1,38 +1,38 @@
 package me.neoblade298.neocore.shared.util;
 
-public class SQLQueryBuilder {
+public class SQLInsertBuilder {
 	private String str;
 	private boolean firstComma = true;
 	private boolean hasConditions = false;
-	public SQLQueryBuilder(SQLAction action, String db) {
+	public SQLInsertBuilder(SQLAction action, String db) {
 		str = action + " INTO " + db + " VALUES(";
 	}
 	
-	public SQLQueryBuilder addString(String str) {
+	public SQLInsertBuilder addString(String str) {
 		handleComma();
 		str += "'" + str + "'";
 		return this;
 	}
 	
-	public SQLQueryBuilder addValue(int i) {
+	public SQLInsertBuilder addValue(int i) {
 		handleComma();
 		str += i;
 		return this;
 	}
 	
-	public SQLQueryBuilder addValue(double d) {
+	public SQLInsertBuilder addValue(double d) {
 		handleComma();
 		str += d;
 		return this;
 	}
 	
-	public SQLQueryBuilder addValue(long l) {
+	public SQLInsertBuilder addValue(long l) {
 		handleComma();
 		str += l;
 		return this;
 	}
 	
-	public SQLQueryBuilder addInt(String s) {
+	public SQLInsertBuilder addInt(String s) {
 		handleComma();
 		str += s;
 		return this;
@@ -45,7 +45,7 @@ public class SQLQueryBuilder {
 		}
 	}
 	
-	public SQLQueryBuilder addCondition(String condition) {
+	public SQLInsertBuilder addCondition(String condition) {
 		if (!hasConditions) {
 			str += ") WHERE ";
 		}
