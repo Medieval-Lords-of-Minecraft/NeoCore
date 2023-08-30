@@ -26,6 +26,12 @@ public class SQLQueryBuilder {
 		return this;
 	}
 	
+	public SQLQueryBuilder addValue(long l) {
+		handleComma();
+		str += l;
+		return this;
+	}
+	
 	public SQLQueryBuilder addInt(String s) {
 		handleComma();
 		str += s;
