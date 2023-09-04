@@ -3,14 +3,13 @@ package me.neoblade298.neocore.shared.util;
 public class SQLInsertBuilder {
 	private String str;
 	private boolean firstValue = true;
-	private boolean hasConditions = false;
 	public SQLInsertBuilder(SQLAction action, String db) {
 		str = action + " INTO " + db + " VALUES(";
 	}
 	
 	public SQLInsertBuilder addString(String str) {
 		handleComma();
-		str += "'" + str + "'";
+		this.str += "'" + str + "'";
 		return this;
 	}
 	
@@ -45,24 +44,8 @@ public class SQLInsertBuilder {
 		firstValue = false;
 	}
 	
-	public SQLInsertBuilder addCondition(String condition) {
-		if (!hasConditions) {
-			str += ") WHERE ";
-			hasConditions = true;
-		}
-		else {
-			str += " AND ";
-		}
-		str += condition;
-		return this;
-	}
-	
 	public String build() {
-		if (!hasConditions) {
-			str += ")";
-			hasConditions = true;
-		}
-		return str + ";";
+		return str + ");";
 	}
 	
 	public enum SQLAction {
