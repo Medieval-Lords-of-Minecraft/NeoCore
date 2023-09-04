@@ -2,7 +2,7 @@ package me.neoblade298.neocore.shared.util;
 
 public class SQLInsertBuilder {
 	private String str;
-	private boolean firstComma = true;
+	private boolean firstValue = true;
 	private boolean hasConditions = false;
 	public SQLInsertBuilder(SQLAction action, String db) {
 		str = action + " INTO " + db + " VALUES(";
@@ -32,22 +32,23 @@ public class SQLInsertBuilder {
 		return this;
 	}
 	
-	public SQLInsertBuilder addInt(String s) {
+	public SQLInsertBuilder addValue(String s) {
 		handleComma();
 		str += s;
 		return this;
 	}
 	
 	private void handleComma() {
-		if (firstComma) {
+		if (!firstValue) {
 			str += ",";
-			firstComma = false;
 		}
+		firstValue = false;
 	}
 	
 	public SQLInsertBuilder addCondition(String condition) {
 		if (!hasConditions) {
 			str += ") WHERE ";
+			hasConditions = true;
 		}
 		else {
 			str += " AND ";
@@ -59,6 +60,7 @@ public class SQLInsertBuilder {
 	public String build() {
 		if (!hasConditions) {
 			str += ")";
+			hasConditions = true;
 		}
 		return str + ";";
 	}

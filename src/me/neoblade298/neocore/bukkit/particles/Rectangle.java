@@ -1,6 +1,5 @@
 package me.neoblade298.neocore.bukkit.particles;
 
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;

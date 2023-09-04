@@ -60,7 +60,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public static Random gen = new Random();
 	
-	
 	public void onEnable() {
 		inst = this;
 		
