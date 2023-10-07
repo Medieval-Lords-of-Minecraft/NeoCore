@@ -2,12 +2,20 @@ package me.neoblade298.neocore.bungee;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.logging.Logger;
+
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Dependency;
+import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.plugin.Plugin;
 
 import me.neoblade298.neocore.bungee.messaging.MessagingManager;
 import me.neoblade298.neocore.bungee.chat.ChatResponseHandler;
@@ -19,19 +27,14 @@ import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.util.GradientManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
-import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
 
-public class BungeeCore extends Plugin implements Listener
-{
+@Plugin(id = "neocore", name = "NeoCore", version = "0.1.0-SNAPSHOT",
+        authors = {"Ascheladd"})
+public class BungeeCore {
+	private static ProxyServer proxy;
+	private static Logger logger;
 	private static BungeeCore inst;
 	private static BaseComponent[] motd;
 	private static List<String> announcements = new ArrayList<String>();
@@ -40,21 +43,26 @@ public class BungeeCore extends Plugin implements Listener
 	// Used for tab complete
 	public static TreeSet<String> players = new TreeSet<String>();
 	
-    @Override
-    public void onEnable() {
+	public BungeeCore(ProxyServer server, Logger logger) {
+		BungeeCore.proxy = server;
+		BungeeCore.logger = logger;
+	}
+	
+    public void onProxyInitialization(ProxyInitializeEvent e) {
         inst = this;
+        CommandManager mngr = proxy.getCommandManager();
         
-        getProxy().getPluginManager().registerCommand(this, new CmdBroadcast());
-        getProxy().getPluginManager().registerCommand(this, new CmdSilentBroadcast());
-        getProxy().getPluginManager().registerCommand(this, new CmdMutableBroadcast());
-        getProxy().getPluginManager().registerCommand(this, new CmdSilentMutableBroadcast());
-        getProxy().getPluginManager().registerCommand(this, new CmdHub());
-        getProxy().getPluginManager().registerCommand(this, new CmdMotd());
-        getProxy().getPluginManager().registerCommand(this, new CmdTp());
-        getProxy().getPluginManager().registerCommand(this, new CmdTphere());
-        getProxy().getPluginManager().registerCommand(this, new CmdUptime());
-        getProxy().getPluginManager().registerCommand(this, new CmdSendAll());
-        getProxy().getPluginManager().registerCommand(this, new CmdKickAll());
+        mngr.register(CmdBroadcast.meta(mngr, this), new CmdBroadcast());
+        getProxy().getPluginManager().register(this, new CmdSilentBroadcast());
+        getProxy().getPluginManager().register(this, new CmdMutableBroadcast());
+        getProxy().getPluginManager().register(this, new CmdSilentMutableBroadcast());
+        getProxy().getPluginManager().register(this, new CmdHub());
+        getProxy().getPluginManager().register(this, new CmdMotd());
+        getProxy().getPluginManager().register(this, new CmdTp());
+        getProxy().getPluginManager().register(this, new CmdTphere());
+        getProxy().getPluginManager().register(this, new CmdUptime());
+        getProxy().getPluginManager().register(this, new CmdSendAll());
+        getProxy().getPluginManager().register(this, new CmdKickAll());
         getProxy().getPluginManager().registerListener(this, new MainListener());
         getProxy().getPluginManager().registerListener(this, new ChatListener());
         getProxy().registerChannel("neocore:bungee");
@@ -62,15 +70,15 @@ public class BungeeCore extends Plugin implements Listener
         // messaging
         try {
 			MessagingManager.reload();
-		} catch (NeoIOException e) {
-			e.printStackTrace();
+		} catch (NeoIOException ex) {
+			ex.printStackTrace();
 		}
         
         // gradients
         try {
 			GradientManager.load(ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
         
         // sql
@@ -81,6 +89,14 @@ public class BungeeCore extends Plugin implements Listener
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+    }
+    
+    public static ProxyServer getProxy() {
+    	return proxy;
+    }
+    
+    public static Logger getLogger() {
+    	return logger;
     }
     
     private void reload() throws IOException {

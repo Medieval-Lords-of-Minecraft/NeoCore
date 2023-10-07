@@ -1,26 +1,31 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
 
-import me.neoblade298.neocore.bungee.BungeeCore;
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
+import com.velocitypowered.api.command.SimpleCommand;
+
 import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.util.SharedUtil;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.plugin.Command;
 
-public class CmdBroadcast extends Command {
-	public CmdBroadcast() {
-		super("bc");
-	}
+public class CmdBroadcast implements SimpleCommand {
 
 	@Override
-	public void execute(CommandSender s, String[] args) {
-		if (!s.hasPermission("mycommand.staff")) return;
+	public void execute(Invocation inv) {
+		if (!inv.source().hasPermission("neocore.staff")) return;
 		
-		if (args.length == 0) {
-			Util.msg(s, "&c/bc [broadcast msg]");
+		if (inv.arguments().length == 0) {
+			Util.msg(inv.source(), "&c/bc [broadcast msg]");
 		}
 		else {
-			BungeeCore.inst().getProxy().broadcast(new TextComponent(SharedUtil.translateColors("&4[&c&lMLMC&4] &a" + SharedUtil.connectArgs(args))));
+			Util.broadcast(SharedUtil.connectArgs(inv.arguments()));
 		}
+	}
+	
+	public static CommandMeta meta(CommandManager mngr, Object plugin) {
+        CommandMeta meta = mngr.metaBuilder("bc")
+            .plugin(plugin)
+            .build();
+        
+        return meta;
 	}
 }
