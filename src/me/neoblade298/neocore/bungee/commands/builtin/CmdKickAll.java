@@ -1,20 +1,27 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
 
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
+import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.proxy.Player;
 
-public class CmdKickAll extends Command {
-	public CmdKickAll() {
-		super("kickall");
-	}
+import me.neoblade298.neocore.bungee.BungeeCore;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
-	public void execute(CommandSender sender, String[] args) {
-		if (!sender.hasPermission("mycommand.staff")) return;
-		for (ProxiedPlayer p : ProxyServer.getInstance().getServerInfo(args[0]).getPlayers()) {
-			p.disconnect(new TextComponent("§cServer is going down for maintenance!"));
+public class CmdKickAll implements SimpleCommand {
+	public void execute(Invocation inv) {
+		if (!inv.source().hasPermission("neocore.staff")) return;
+		for (Player p : BungeeCore.getProxy().getAllPlayers()) {
+			p.disconnect(Component.text("Server is going down for maintenance!").color(NamedTextColor.RED));
 		}
+	}
+	
+	public static CommandMeta meta(CommandManager mngr, Object plugin) {
+        CommandMeta meta = mngr.metaBuilder("kickall")
+            .plugin(plugin)
+            .build();
+        
+        return meta;
 	}
 }

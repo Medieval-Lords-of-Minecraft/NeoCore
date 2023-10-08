@@ -3,32 +3,42 @@ package me.neoblade298.neocore.bungee;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import org.yaml.snakeyaml.Yaml;
+
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
 
-import me.neoblade298.neocore.bungee.messaging.MessagingManager;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.*;
 import me.neoblade298.neocore.bungee.chat.ChatResponseHandler;
+import me.neoblade298.neocore.bungee.chat.MessagingManager;
 import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.ChatListener;
 import me.neoblade298.neocore.bungee.listeners.MainListener;
+
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
+import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.util.GradientManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 
 @Plugin(id = "neocore", name = "NeoCore", version = "0.1.0-SNAPSHOT",
         authors = {"Ascheladd"})
@@ -36,16 +46,18 @@ public class BungeeCore {
 	private static ProxyServer proxy;
 	private static Logger logger;
 	private static BungeeCore inst;
-	private static BaseComponent[] motd;
+	private static TextComponent motd;
 	private static List<String> announcements = new ArrayList<String>();
-	private static Configuration announceyml;
+	private static Config announceyml;
+	private static File folder;
 	
 	// Used for tab complete
 	public static TreeSet<String> players = new TreeSet<String>();
 	
-	public BungeeCore(ProxyServer server, Logger logger) {
+	public BungeeCore(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
 		BungeeCore.proxy = server;
 		BungeeCore.logger = logger;
+		folder = dataDirectory.toFile();
 	}
 	
     public void onProxyInitialization(ProxyInitializeEvent e) {
@@ -76,14 +88,14 @@ public class BungeeCore {
         
         // gradients
         try {
-			GradientManager.load(ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
+			GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
         
         // sql
 		try {
-			Configuration cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
+			Config cfg = Config.load(new File(folder, "config.yml"));
 	        SQLManager.load(cfg.getSection("sql"));
 	        reload();
 		} catch (IOException e) {
@@ -91,45 +103,48 @@ public class BungeeCore {
 		}
     }
     
-    public static ProxyServer getProxy() {
+    public static ProxyServer proxy() {
     	return proxy;
     }
     
-    public static Logger getLogger() {
+    public static Logger logger() {
     	return logger;
     }
     
+    public static File folder() {
+    	return folder;
+    }
+    
     private void reload() throws IOException {
-    	loadFiles(new File(this.getDataFolder(), "motd.yml"), (yml, cfg) -> {
+    	loadFiles(new File(folder, "motd.yml"), (yml, cfg) -> {
     		motd = MessagingManager.parseMessage(yml.getSection("motd"));
     	});
-    	announceyml = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "announcements.yml"));
+    	announceyml = Config.load(new File(folder, "announcements.yml"));
     	announcements = announceyml.getStringList("announcements");
     }
     
-    public static void sendMotd(CommandSender s) {
-		BaseComponent[] msg = new BaseComponent[motd.length + (announcements.size() > 0 ? announcements.size() : 1)];
+    public static void sendMotd(CommandSource s) {
+		String[] msg = new String[motd.length + (announcements.size() > 0 ? announcements.size() : 1)];
 		int idx = 0;
-		for (BaseComponent comp : motd) {
-			BaseComponent dupe = comp.duplicate();
-			msg[idx++] = dupe;
-			if (dupe instanceof TextComponent) {
-				TextComponent text = (TextComponent) dupe;
-				text.setText(text.getText().replaceAll("%ONLINE%", "" + inst.getProxy().getOnlineCount()));
-			}
+		for (String comp : motd) {
+			msg[idx++] = comp;
+			comp.replaceAll("%ONLINE", "" + proxy.getPlayerCount());
 		}
 		if (announcements.size() > 0) {
 			for (int i = 0; i < announcements.size(); i++) {
-				msg[idx++] = new TextComponent(SharedUtil.translateColors("§6- §e" + announcements.get(i) + (i + 1 == announcements.size() ? "" : "\n")));
+				msg[idx++] = SharedUtil.translateColors("§6- §e" + announcements.get(i) + (i + 1 == announcements.size() ? "" : "\n"));
 			}
 		}
 		else {
-			msg[idx++] = new TextComponent(SharedUtil.translateColors("&6- &eNone for now!"));
+			msg[idx++] = SharedUtil.translateColors("&6- &eNone for now!");
 		}
-		s.sendMessage(msg);
+		
+		for (String m : msg) {
+			s.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(m));
+		}
     }
     
-    public static void addMotd(CommandSender s, String msg) {
+    public static void addMotd(CommandSource s, String msg) {
     	announcements.add(msg);
     	announceyml.set("announcements", announcements);
     	try {
@@ -139,7 +154,7 @@ public class BungeeCore {
 		}
     }
     
-    public static void removeMotd(CommandSender s, int idx) {
+    public static void removeMotd(CommandSource s, int idx) {
     	announcements.remove(idx);
     	announceyml.set("announcements", announcements);
     	try {

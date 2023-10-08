@@ -5,19 +5,12 @@ import java.util.HashMap;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-import net.md_5.bungee.config.Configuration;
+import me.neoblade298.neocore.shared.io.Config;
 
 public class GradientManager {
 	private static HashMap<String, Gradient> gradients = new HashMap<String, Gradient>();
 	
-	public static void load(ConfigurationSection cfg) {
-		gradients.clear();
-		for (String key : cfg.getKeys(false)) {
-			gradients.put(key.toLowerCase(), new Gradient(key, cfg.getStringList(key)));
-		}
-	}
-	
-	public static void load(Configuration cfg) {
+	public static void load(Config cfg) {
 		gradients.clear();
 		for (String key : cfg.getKeys()) {
 			gradients.put(key.toLowerCase(), new Gradient(key, cfg.getStringList(key)));
