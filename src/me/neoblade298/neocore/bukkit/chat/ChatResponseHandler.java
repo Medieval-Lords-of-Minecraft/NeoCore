@@ -1,8 +1,8 @@
 package me.neoblade298.neocore.bukkit.chat;
 
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import io.papermc.paper.event.player.AsyncChatEvent;
 
 public interface ChatResponseHandler {
 	// Return false to continue listening
-	public boolean handle(AsyncPlayerChatEvent e);
+	public boolean handle(AsyncChatEvent e);
 }

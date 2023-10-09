@@ -5,7 +5,8 @@ import java.util.HashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import io.papermc.paper.event.player.AsyncChatEvent;
 import me.neoblade298.neocore.bukkit.chat.ChatResponseHandler;
 import me.neoblade298.neocore.bukkit.chat.ChatResponseHandlerSet;
 
@@ -13,7 +14,7 @@ public class MainListener implements Listener {
 	private static HashMap<Player, ChatResponseHandlerSet> respHandlers = new HashMap<Player, ChatResponseHandlerSet>();
 	
 	@EventHandler
-	public void onChat(AsyncPlayerChatEvent e) {
+	public void onChat(AsyncChatEvent e) {
 		Player p = e.getPlayer();
 		if (respHandlers.containsKey(p)) {
 			ChatResponseHandlerSet set = respHandlers.get(p);
