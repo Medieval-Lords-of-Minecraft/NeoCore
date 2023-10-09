@@ -6,7 +6,6 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,7 +39,9 @@ import me.neoblade298.neocore.bukkit.scheduler.SchedulerAPI;
 import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
+import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
+import me.neoblade298.neocore.shared.io.Section;
 import me.neoblade298.neocore.shared.util.GradientManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.ChatColor;
@@ -64,7 +65,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		inst = this;
 		
 		// Config
-		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "config.yml"));
+		Config cfg = Config.load(new File(this.getDataFolder(), "config.yml"));
 		
 		// Instance config
 		File instancecfg = new File(this.getDataFolder(), "instance.yml");
@@ -75,7 +76,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 			instType = InstanceType.valueOf(icfg.getString("type").toUpperCase());
 		}
 		
-		ConfigurationSection gen = cfg.getConfigurationSection("general");
+		Section gen = cfg.getSection("general");
 		if (gen != null) {
 			welcome = gen.getString("welcome", "&4[&c&lMLMC&4] &7Welcome &e%player% &7to MLMC!");
 		}
@@ -89,7 +90,7 @@ public class NeoCore extends JavaPlugin implements Listener {
         }
         
         // SQL
-		SQLManager.load(cfg.getConfigurationSection("sql"));
+		SQLManager.load(cfg.getSection("sql"));
         
         // Main listener
         getServer().getPluginManager().registerEvents(this, this);
@@ -130,7 +131,7 @@ public class NeoCore extends JavaPlugin implements Listener {
         InfoAPI.reload();
         
         // Gradients
-        GradientManager.load(YamlConfiguration.loadConfiguration(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
+        GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
         
         // messaging
         try {
@@ -208,7 +209,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		try {
 			MessagingManager.reload();
 			CommandSetManager.reload();
-	        GradientManager.load(YamlConfiguration.loadConfiguration(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
+	        GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
 			InfoAPI.reload();
 		} catch (NeoIOException e) {
 			e.printStackTrace();

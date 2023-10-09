@@ -18,14 +18,16 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.*;
 import me.neoblade298.neocore.bungee.chat.ChatResponseHandler;
-import me.neoblade298.neocore.bungee.chat.MessagingManager;
 import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.ChatListener;
@@ -43,12 +45,13 @@ import net.md_5.bungee.chat.ComponentSerializer;
 @Plugin(id = "neocore", name = "NeoCore", version = "0.1.0-SNAPSHOT",
         authors = {"Ascheladd"})
 public class BungeeCore {
+	public static final MinecraftChannelIdentifier IDENTIFIER = MinecraftChannelIdentifier.from("neocore:bungee");
 	private static ProxyServer proxy;
 	private static Logger logger;
 	private static BungeeCore inst;
 	private static TextComponent motd;
 	private static List<String> announcements = new ArrayList<String>();
-	private static Config announceyml;
+	private static Config announceCfg;
 	private static File folder;
 	
 	// Used for tab complete
@@ -77,14 +80,7 @@ public class BungeeCore {
         getProxy().getPluginManager().register(this, new CmdKickAll());
         getProxy().getPluginManager().registerListener(this, new MainListener());
         getProxy().getPluginManager().registerListener(this, new ChatListener());
-        getProxy().registerChannel("neocore:bungee");
-        
-        // messaging
-        try {
-			MessagingManager.reload();
-		} catch (NeoIOException ex) {
-			ex.printStackTrace();
-		}
+        proxy.getChannelRegistrar().register(IDENTIFIER);
         
         // gradients
         try {
@@ -98,8 +94,8 @@ public class BungeeCore {
 			Config cfg = Config.load(new File(folder, "config.yml"));
 	        SQLManager.load(cfg.getSection("sql"));
 	        reload();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
     }
     
@@ -144,24 +140,16 @@ public class BungeeCore {
 		}
     }
     
-    public static void addMotd(CommandSource s, String msg) {
+    public static void addAnnouncement(CommandSource s, String msg) {
     	announcements.add(msg);
-    	announceyml.set("announcements", announcements);
-    	try {
-			ConfigurationProvider.getProvider(YamlConfiguration.class).save(announceyml, new File(inst.getDataFolder(), "announcements.yml"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    	announceCfg.set("announcements", announcements);
+		announceCfg.save();
     }
     
-    public static void removeMotd(CommandSource s, int idx) {
+    public static void removeAnnouncement(CommandSource s, int idx) {
     	announcements.remove(idx);
-    	announceyml.set("announcements", announcements);
-    	try {
-			ConfigurationProvider.getProvider(YamlConfiguration.class).save(announceyml, new File(inst.getDataFolder(), "announcements.yml"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    	announceCfg.set("announcements", announcements);
+		announceCfg.save();
     }
 	
 	public static Connection getConnection(String user) {
@@ -170,28 +158,24 @@ public class BungeeCore {
 	
 	// All servers
 	public static void sendPluginMessage(String[] msgs) {
-		sendPluginMessage(inst.getProxy().getServers().values(), msgs, false);
+		sendPluginMessage(proxy.getAllServers(), msgs);
 	}
 	
-	public static void sendPluginMessage(String[] msgs, boolean queueMessage) {
-		sendPluginMessage(inst.getProxy().getServers().values(), msgs, queueMessage);
-	}
-	
-	public static void sendPluginMessage(String[] servers, String[] msgs, boolean queueMessage) {
-		ArrayList<ServerInfo> list = new ArrayList<ServerInfo>();
+	public static void sendPluginMessage(String[] servers, String[] msgs) {
+		ArrayList<RegisteredServer> list = new ArrayList<RegisteredServer>();
 		for (String server : servers) {
-			list.add(inst.getProxy().getServerInfo(server));
+			list.add(proxy.getServer(server).get());
 		}
-		sendPluginMessage(list, msgs, queueMessage);
+		sendPluginMessage(list, msgs);
 	}
 	
-	public static void sendPluginMessage(Iterable<ServerInfo> servers, String[] msgs, boolean queueMessage) {
+	public static void sendPluginMessage(Iterable<RegisteredServer> servers, String[] msgs) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		for (String msg : msgs) {
 			out.writeUTF(msg);
 		}
-		for (ServerInfo server : servers) {
-			server.sendData("neocore:bungee", out.toByteArray(), queueMessage);
+		for (RegisteredServer server : servers) {
+			server.sendPluginMessage(IDENTIFIER, out.toByteArray());
 		}
 	}
 	
@@ -199,17 +183,17 @@ public class BungeeCore {
 		return inst;
 	}
 	
-	public static void promptChatResponse(ProxiedPlayer p, ChatResponseHandler... handler) {
+	public static void promptChatResponse(Player p, ChatResponseHandler... handler) {
 		ChatListener.addChatHandler(p, 30, handler);
 	}
 	
-	public static void promptChatResponse(ProxiedPlayer p, int timeoutSeconds, ChatResponseHandler... handler) {
+	public static void promptChatResponse(Player p, int timeoutSeconds, ChatResponseHandler... handler) {
 		ChatListener.addChatHandler(p, timeoutSeconds, handler);
 	}
 	
 	public static void loadFiles(File load, FileLoader loader) {
 		if (!load.exists()) {
-			inst.getProxy().getLogger().warning("[BungeeCore] Failed to load file " + load.getPath() + ", file doesn't exist");
+			logger.warning("[BungeeCore] Failed to load file " + load.getPath() + ", file doesn't exist");
 			return;
 		}
 		
@@ -219,9 +203,9 @@ public class BungeeCore {
 			}
 		}
 		else {
-			Configuration cfg;
+			Config cfg;
 			try {
-				cfg = ConfigurationProvider.getProvider(YamlConfiguration.class).load(load);
+				cfg = Config.load(load);
 				loader.load(cfg, load);
 			} catch (IOException e) {
 				e.printStackTrace();

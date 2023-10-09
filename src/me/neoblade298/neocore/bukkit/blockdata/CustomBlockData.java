@@ -34,6 +34,7 @@ import org.bukkit.util.BlockVector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -378,6 +379,7 @@ public class CustomBlockData implements PersistentDataContainer {
     }
 
 	// Required for Paper users
+    @Override
     public <T,Z> boolean has(final @NotNull NamespacedKey namespacedKey) {
 		for(PersistentDataType<?, ?> type : PRIMITIVE_DATA_TYPES) {
 			if(pdc.has(namespacedKey, type)) return true;
@@ -456,5 +458,17 @@ public class CustomBlockData implements PersistentDataContainer {
             }
         };
     }
+
+	@Override
+	public byte @NotNull [] serializeToBytes() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void readFromBytes(byte @NotNull [] bytes, boolean clear) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
 }
 

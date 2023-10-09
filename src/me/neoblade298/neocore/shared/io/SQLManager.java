@@ -14,24 +14,24 @@ public class SQLManager {
     private static boolean enabled = false;
 	
     // Bukkit
-	public static void load(Config cfg) {
-		if (cfg == null) {
+	public static void load(Section sec) {
+		if (sec == null) {
 			Bukkit.getLogger().warning("[NeoCore] Failed to enable SQLManager as the sql config section doesn't exist");
 			return;
 		}
-		String connectionPrefix = "jdbc:mysql://" + cfg.getString("host") + ":" + cfg.getString("port") + "/"; 
-		String connectionSuffix = cfg.getString("flags");
+		String connectionPrefix = "jdbc:mysql://" + sec.getString("host") + ":" + sec.getString("port") + "/"; 
+		String connectionSuffix = sec.getString("flags");
 
 	    HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(connectionPrefix + cfg.getString("db") + connectionSuffix);
-        config.setUsername(cfg.getString("username"));
-        config.setPassword(cfg.getString("password"));
+        config.setJdbcUrl(connectionPrefix + sec.getString("db") + connectionSuffix);
+        config.setUsername(sec.getString("username"));
+        config.setPassword(sec.getString("password"));
         config.setMaximumPoolSize(8);
         config.setConnectionTimeout(5000);
         config.setLeakDetectionThreshold(30000);
         dataSources.put(null, new HikariDataSource(config));
 		
-		Config users = cfg.getSection("users");
+		Section users = sec.getSection("users");
 		if (users != null) {
 			for (String user : users.getKeys()) {
 				String db = users.getString(user);

@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.BukkitTabResolver;
 import me.neoblade298.neocore.bungee.commands.BungeeTabResolver;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class Arg {
 	private boolean required;
@@ -53,7 +52,7 @@ public class Arg {
 		return tabOptions;
 	}
 	
-	public List<String> getTabOptions(ProxiedPlayer p) {
+	public List<String> getTabOptions(com.velocitypowered.api.proxy.Player p) {
 		if (bungeeResolver != null) {
 			return bungeeResolver.resolve(p);
 		}

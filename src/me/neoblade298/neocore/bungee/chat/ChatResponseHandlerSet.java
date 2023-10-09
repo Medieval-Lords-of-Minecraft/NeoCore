@@ -2,17 +2,18 @@ package me.neoblade298.neocore.bungee.chat;
 
 import java.util.concurrent.TimeUnit;
 
+import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.scheduler.ScheduledTask;
+
 import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.bungee.listeners.ChatListener;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 public class ChatResponseHandlerSet {
-	private ProxiedPlayer p;
+	private Player p;
 	private ChatResponseHandler[] handlers;
 	private int idx = 0, timeoutSeconds;
 	private ScheduledTask timeout;
-	public ChatResponseHandlerSet(ProxiedPlayer p, ChatResponseHandler[] handlers, int timeoutSeconds) {
+	public ChatResponseHandlerSet(Player p, ChatResponseHandler[] handlers, int timeoutSeconds) {
 		this.p = p;
 		this.handlers = handlers;
 		this.timeoutSeconds = timeoutSeconds;
@@ -37,11 +38,11 @@ public class ChatResponseHandlerSet {
 		}
 		
 		if (timeoutSeconds != -1) {
-			BungeeCore.inst().getProxy().getScheduler().schedule(BungeeCore.inst(), () -> {
+			timeout = BungeeCore.proxy().getScheduler().buildTask(BungeeCore.inst(), () -> {
 				if (p != null) {
 					ChatListener.removeResponseHandlers(p);
 				}
-			}, timeoutSeconds, TimeUnit.SECONDS);
+			}).delay(timeoutSeconds, TimeUnit.SECONDS).schedule();
 		}
 	}
 }

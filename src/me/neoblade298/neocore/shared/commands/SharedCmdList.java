@@ -8,6 +8,9 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.StringUtils;
 
 import me.neoblade298.neocore.shared.util.PaginatedList;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -19,6 +22,8 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 	protected HashSet<String> aliases;
 	protected PaginatedList<T> pages = null;
 	
+	private static final Component OUT_OF_BOUNDS = Component.text("Page is out of bounds!").color(NamedTextColor.RED);
+	
 	public SharedCmdList(String key, String base, String permission, TreeMap<String, T> cmds, HashSet<String> aliases, ChatColor listColor) {
 		this.key = key;
 		this.base = base;
@@ -28,7 +33,7 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 		this.aliases = aliases;
 	}
 
-	public ArrayList<BaseComponent[]> run(String[] args, PermissionChecker checker) {
+	public ArrayList<Component> run(String[] args, PermissionChecker checker) {
 		if (pages == null) {
 			pages = new PaginatedList<T>();
 			for (Entry<String, T> entry : cmds.entrySet()) {
@@ -46,11 +51,11 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 		}
 	}
 	
-	private ArrayList<BaseComponent[]> getPageDisplay(int page, PermissionChecker checker) {
-		ArrayList<BaseComponent[]> msgs = new ArrayList<BaseComponent[]>();
+	private ArrayList<Component> getPageDisplay(int page, PermissionChecker checker) {
+		ArrayList<Component> msgs = new ArrayList<Component>();
 		page = page - 1;
 		if (page >= pages.size() || page < 0) {
-			msgs.add(new ComponentBuilder("&cPage is out of bounds!").create());
+			msgs.add(OUT_OF_BOUNDS);
 		}
 
 		msgs.add(new ComponentBuilder("§7List of commands: [] = Required, {} = Optional").create());

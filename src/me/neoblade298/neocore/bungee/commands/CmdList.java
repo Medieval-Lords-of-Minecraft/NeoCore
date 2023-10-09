@@ -3,9 +3,12 @@ package me.neoblade298.neocore.bungee.commands;
 import java.util.HashSet;
 import java.util.TreeMap;
 
+import com.velocitypowered.api.command.CommandSource;
+
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SharedCmdList;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -27,8 +30,8 @@ public class CmdList extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSender s, String[] args) {
-		for (BaseComponent[] comp : cmds.run(args, (perm) -> { return s.hasPermission(perm); })) {
+	public void run(CommandSource s, String[] args) {
+		for (Component comp : cmds.run(args, (perm) -> { return s.hasPermission(perm); })) {
 			s.sendMessage(comp);
 		}
 	}

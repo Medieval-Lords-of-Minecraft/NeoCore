@@ -2,8 +2,8 @@ package me.neoblade298.neocore.bungee.commands;
 
 import java.util.List;
 
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import com.velocitypowered.api.proxy.Player;
 
 public interface BungeeTabResolver {
-	public List<String> resolve(ProxiedPlayer p);
+	public List<String> resolve(Player p);
 }

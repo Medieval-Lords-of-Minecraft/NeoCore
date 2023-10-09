@@ -74,7 +74,7 @@ public class Util {
 			msg = "&4[&c&lMLMC&4] &7" + msg;
 		}
 		TextComponent cmp = LegacyComponentSerializer.legacyAmpersand().deserialize(msg);
-		for (Player p : BungeeCore.getProxy().getAllPlayers()) {
+		for (Player p : BungeeCore.proxy().getAllPlayers()) {
 			p.sendMessage(cmp);
 		}
 	}

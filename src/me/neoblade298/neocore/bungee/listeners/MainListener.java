@@ -5,31 +5,30 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 
 import me.neoblade298.neocore.bungee.BungeeCore;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PluginMessageEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.event.EventHandler;
 
-public class MainListener implements Listener {
-    @EventHandler
+public class MainListener {
+    @Subscribe
     public void onJoin(PostLoginEvent e) {
-    	BungeeCore.players.add(e.getPlayer().getName());
-    	BungeeCore.inst().getProxy().getScheduler().schedule(BungeeCore.inst(), () -> {
+    	BungeeCore.players.add(e.getPlayer().getUsername());
+    	BungeeCore.proxy().getScheduler().buildTask(BungeeCore.inst(), () -> {
     		BungeeCore.sendMotd(e.getPlayer());
-		}, 3, TimeUnit.SECONDS);
+		}).delay(3L, TimeUnit.SECONDS);
     }
     
-    @EventHandler
-    public void onLeave(PlayerDisconnectEvent e) {
-    	BungeeCore.players.remove(e.getPlayer().getName());
+    @Subscribe
+    public void onLeave(DisconnectEvent e) {
+    	BungeeCore.players.remove(e.getPlayer().getUsername());
     }
     
-    @EventHandler
+    @Subscribe
     public void onBungeeMessage(PluginMessageEvent e) {
 		ByteArrayDataInput in = ByteStreams.newDataInput(e.getData());
 		try {
@@ -37,7 +36,7 @@ public class MainListener implements Listener {
 				String read = in.readUTF();
 				switch (read) {
 				case "cmd":
-					BungeeCore.inst().getProxy().getPluginManager().dispatchCommand(BungeeCore.inst().getProxy().getConsole(), in.readUTF());
+					BungeeCore.proxy().getCommandManager().executeImmediatelyAsync(BungeeCore.proxy().getConsoleCommandSource(), in.readUTF());
 					break;
 				case "fwd":
 					handleForwardMessage(in, false);
@@ -75,24 +74,24 @@ public class MainListener implements Listener {
     	}
     	
     	if (sendToAll) {
-        	BungeeCore.sendPluginMessage(arrToList(msgs), queue);
+        	BungeeCore.sendPluginMessage(arrToList(msgs));
     	}
     	else if (sendToOthers) {
-        	BungeeCore.sendPluginMessage(getAllOtherServers(from), (String[]) msgs.toArray(), queue);
+        	BungeeCore.sendPluginMessage(getAllOtherServers(from), (String[]) msgs.toArray());
     	}
     	else {
-    		BungeeCore.sendPluginMessage((String[]) servers.toArray(), (String[]) msgs.toArray(), queue);
+    		BungeeCore.sendPluginMessage((String[]) servers.toArray(), (String[]) msgs.toArray());
     	}
     }
     
     private String[] getAllOtherServers(String except) {
-    	ProxyServer proxy = BungeeCore.inst().getProxy();
-    	String[] servers = new String[proxy.getServers().size() - 1];
+    	ProxyServer proxy = BungeeCore.proxy();
+    	String[] servers = new String[proxy.getAllServers().size() - 1];
     	
     	int count = 0;
-    	for (ServerInfo info : proxy.getServers().values()) {
-    		if (info.getName().equalsIgnoreCase(except)) continue;
-    		servers[count++] = info.getName();
+    	for (RegisteredServer server : proxy.getAllServers()) {
+    		if (server.getServerInfo().getName().equalsIgnoreCase(except)) continue;
+    		servers[count++] = server.getServerInfo().getName();
     	}
     	return servers;
     }

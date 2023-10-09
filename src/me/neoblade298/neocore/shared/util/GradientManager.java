@@ -3,8 +3,6 @@ package me.neoblade298.neocore.shared.util;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.bukkit.configuration.ConfigurationSection;
-
 import me.neoblade298.neocore.shared.io.Config;
 
 public class GradientManager {
