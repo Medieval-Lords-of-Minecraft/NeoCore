@@ -32,7 +32,7 @@ import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.ChatListener;
 import me.neoblade298.neocore.bungee.listeners.MainListener;
-
+import me.neoblade298.neocore.shared.chat.MiniMessageManager;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
@@ -112,11 +112,9 @@ public class BungeeCore {
     }
     
     private void reload() throws IOException {
-    	loadFiles(new File(folder, "motd.yml"), (yml, cfg) -> {
-    		motd = MessagingManager.parseMessage(yml.getSection("motd"));
-    	});
-    	announceyml = Config.load(new File(folder, "announcements.yml"));
-    	announcements = announceyml.getStringList("announcements");
+    	MiniMessageManager.reload();
+    	announceCfg = Config.load(new File(folder, "announcements.yml"));
+    	announcements = announceCfg.getStringList("announcements");
     }
     
     public static void sendMotd(CommandSource s) {

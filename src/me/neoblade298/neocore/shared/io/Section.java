@@ -46,6 +46,11 @@ public class Section {
 		return map.containsKey(key);
 	}
 	
+	public boolean isType(String key, Class<?> clazz) {
+		if (!map.containsKey(key)) return false;
+		return clazz.isInstance(map.get(key));
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<String> getStringList(String key) {
 		return (List<String>) map.get(key);

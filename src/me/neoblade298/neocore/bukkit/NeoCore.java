@@ -32,11 +32,11 @@ import me.neoblade298.neocore.bukkit.listeners.BungeeListener;
 import me.neoblade298.neocore.bukkit.listeners.EssentialsListener;
 import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
 import me.neoblade298.neocore.bukkit.listeners.MainListener;
-import me.neoblade298.neocore.bukkit.messaging.MessagingManager;
 import me.neoblade298.neocore.bukkit.player.*;
 import me.neoblade298.neocore.bukkit.scheduler.ScheduleInterval;
 import me.neoblade298.neocore.bukkit.scheduler.SchedulerAPI;
 import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
+import me.neoblade298.neocore.shared.chat.MiniMessageManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.Config;
@@ -135,7 +135,7 @@ public class NeoCore extends JavaPlugin implements Listener {
         
         // messaging
         try {
-			MessagingManager.reload();
+			MiniMessageManager.reload();
 		} catch (NeoIOException e) {
 			e.printStackTrace();
 		}
@@ -207,7 +207,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public static void reload() {
 		try {
-			MessagingManager.reload();
+			MiniMessageManager.reload();
 			CommandSetManager.reload();
 	        GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
 			InfoAPI.reload();
@@ -251,7 +251,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		return SQLManager.getConnection(user);
 	}
 	
-	public static void loadFiles(File load, FileLoader loader) throws NeoIOException {
+	public static void loadFiles(File load, FileLoader loader) {
 		if (!load.exists()) {
 			Bukkit.getLogger().warning("[NeoCore] Failed to load file " + load.getPath() + ", file doesn't exist");
 			return;
@@ -263,7 +263,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 			}
 		}
 		else {
-			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(load);
+			Config cfg = Config.load(load);
 			loader.load(cfg, load);
 		}
 	}

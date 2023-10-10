@@ -12,7 +12,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class CmdKickAll implements SimpleCommand {
 	public void execute(Invocation inv) {
 		if (!inv.source().hasPermission("neocore.staff")) return;
-		for (Player p : BungeeCore.getProxy().getAllPlayers()) {
+		for (Player p : BungeeCore.proxy().getAllPlayers()) {
 			p.disconnect(Component.text("Server is going down for maintenance!").color(NamedTextColor.RED));
 		}
 	}

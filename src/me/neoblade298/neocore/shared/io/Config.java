@@ -13,7 +13,7 @@ public class Config extends Section {
 	private File file;
 	
 	public Config(Map<String, Object> map, File file) {
-		super("top", map);
+		super(null, map); // Configs never have a key, only sections do
 		this.file = file;
 	}
 	

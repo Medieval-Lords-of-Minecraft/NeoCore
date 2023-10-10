@@ -15,7 +15,7 @@ public class CmdHub implements SimpleCommand {
 		if (inv.source() instanceof ConsoleCommandSource) return;
 
 		Player p = (Player) inv.source();
-		p.createConnectionRequest(BungeeCore.getProxy().getServer("hub").get());
+		p.createConnectionRequest(BungeeCore.proxy().getServer("hub").get());
 	}
 	
 	public static CommandMeta meta(CommandManager mngr, Object plugin) {
