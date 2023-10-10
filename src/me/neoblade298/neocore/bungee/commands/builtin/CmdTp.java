@@ -12,7 +12,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class CmdTp extends Command implements TabExecutor {
+public class CmdTp extends Command {
 	public CmdTp() {
 		super("tp");
 	}

@@ -1,24 +1,20 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
 
+import com.velocitypowered.api.command.SimpleCommand;
+
 import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.util.SharedUtil;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
 
-public class CmdSilentMutableBroadcast extends Command {
-	public CmdSilentMutableBroadcast() {
-		super("smbc");
-	}
-
+public class CmdSilentMutableBroadcast implements SimpleCommand {
 	@Override
-	public void execute(CommandSender s, String[] args) {
-		if (!s.hasPermission("mycommand.staff")) return;
+	public void execute(Invocation inv) {
+		if (!inv.source().hasPermission("neocore.staff")) return;
 		
-		if (args.length < 2) {
-			Util.msg(s, "&c/smbc [tag for mute] [broadcast msg]");
+		if (inv.arguments().length < 2) {
+			Util.msg(inv.source(), "&c/mbc [tag for mute] [broadcast msg]");
 		}
 		else {
-			Util.mutableBroadcast(args[0], SharedUtil.connectArgs(args, 1), false);
+			Util.mutableBroadcast(inv.arguments()[0], SharedUtil.connectArgs(inv.arguments(), 1), false);
 		}
 	}
 }

@@ -38,7 +38,6 @@ import me.neoblade298.neocore.bukkit.scheduler.SchedulerAPI;
 import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
 import me.neoblade298.neocore.shared.chat.MiniMessageManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
-import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.io.Section;
@@ -134,11 +133,7 @@ public class NeoCore extends JavaPlugin implements Listener {
         GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
         
         // messaging
-        try {
-			MiniMessageManager.reload();
-		} catch (NeoIOException e) {
-			e.printStackTrace();
-		}
+		MiniMessageManager.reload();
 		
 		SchedulerAPI.initialize();
 		
@@ -206,14 +201,10 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 	
 	public static void reload() {
-		try {
-			MiniMessageManager.reload();
-			CommandSetManager.reload();
-	        GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
-			InfoAPI.reload();
-		} catch (NeoIOException e) {
-			e.printStackTrace();
-		}
+		MiniMessageManager.reload();
+		CommandSetManager.reload();
+        GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
+		InfoAPI.reload();
 	}
 	
 	public void onDisable() {

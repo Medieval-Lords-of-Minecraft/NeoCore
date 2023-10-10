@@ -12,7 +12,7 @@ import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.md_5.bungee.api.ChatColor;
 
-public class SubcommandManager extends SimpleCommand {
+public class SubcommandManager implements SimpleCommand {
 	private CommandOverhead overhead;
 	public SubcommandManager(String base, String perm, ChatColor color, Plugin plugin) {
 		this(base, perm, color, plugin, new String[0]);
