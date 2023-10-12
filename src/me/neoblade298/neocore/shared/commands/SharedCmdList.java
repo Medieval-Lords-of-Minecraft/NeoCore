@@ -11,20 +11,21 @@ import me.neoblade298.neocore.shared.util.PaginatedList;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
 public class SharedCmdList<T extends AbstractSubcommand> {
 	protected String base, key, permission;
-	protected ChatColor listColor;
+	protected TextColor listColor;
 	protected TreeMap<String, T> cmds;
 	protected HashSet<String> aliases;
 	protected PaginatedList<T> pages = null;
 	
 	private static final Component OUT_OF_BOUNDS = Component.text("Page is out of bounds!").color(NamedTextColor.RED);
 	
-	public SharedCmdList(String key, String base, String permission, TreeMap<String, T> cmds, HashSet<String> aliases, ChatColor listColor) {
+	public SharedCmdList(String key, String base, String permission, TreeMap<String, T> cmds, HashSet<String> aliases, TextColor listColor) {
 		this.key = key;
 		this.base = base;
 		this.permission = permission;
@@ -58,7 +59,7 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 			msgs.add(OUT_OF_BOUNDS);
 		}
 
-		msgs.add(new ComponentBuilder("§7List of commands: [] = Required, {} = Optional").create());
+		msgs.add(Component.text("List of commands: [] = Required, {} = Optional").color(NamedTextColor.GRAY));
 		for (AbstractSubcommand sc : pages.get(page)) {
 			if (sc.isHidden()) {
 				continue;

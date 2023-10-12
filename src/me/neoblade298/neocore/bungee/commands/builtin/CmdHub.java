@@ -11,12 +11,17 @@ import me.neoblade298.neocore.bungee.BungeeCore;
 public class CmdHub implements SimpleCommand {
 	
 	public void execute(Invocation inv) {
-		if (!inv.source().hasPermission("neocore.staff")) return;
 		if (inv.source() instanceof ConsoleCommandSource) return;
 
 		Player p = (Player) inv.source();
-		p.createConnectionRequest(BungeeCore.proxy().getServer("hub").get());
+		p.createConnectionRequest(BungeeCore.proxy().getServer("hub").get()).fireAndForget();
 	}
+	
+    @Override
+    public boolean hasPermission(final Invocation invocation) {
+        return invocation.source().hasPermission("neocore.player");
+    }
+    
 	
 	public static CommandMeta meta(CommandManager mngr, Object plugin) {
         CommandMeta meta = mngr.metaBuilder("hub")

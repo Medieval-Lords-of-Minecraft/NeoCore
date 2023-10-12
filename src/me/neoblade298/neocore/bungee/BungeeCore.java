@@ -25,6 +25,8 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.*;
 import me.neoblade298.neocore.bungee.chat.ChatResponseHandler;
@@ -33,7 +35,6 @@ import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.ChatListener;
 import me.neoblade298.neocore.bungee.listeners.MainListener;
 import me.neoblade298.neocore.shared.chat.MiniMessageManager;
-import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.util.GradientManager;
@@ -49,7 +50,7 @@ public class BungeeCore {
 	private static ProxyServer proxy;
 	private static Logger logger;
 	private static BungeeCore inst;
-	private static TextComponent motd;
+	private static String motd;
 	private static List<String> announcements = new ArrayList<String>();
 	private static Config announceCfg;
 	private static File folder;
@@ -68,26 +69,21 @@ public class BungeeCore {
         CommandManager mngr = proxy.getCommandManager();
         
         mngr.register(CmdBroadcast.meta(mngr, this), new CmdBroadcast());
-        getProxy().getPluginManager().register(this, new CmdSilentBroadcast());
-        getProxy().getPluginManager().register(this, new CmdMutableBroadcast());
-        getProxy().getPluginManager().register(this, new CmdSilentMutableBroadcast());
-        getProxy().getPluginManager().register(this, new CmdHub());
-        getProxy().getPluginManager().register(this, new CmdMotd());
-        getProxy().getPluginManager().register(this, new CmdTp());
-        getProxy().getPluginManager().register(this, new CmdTphere());
-        getProxy().getPluginManager().register(this, new CmdUptime());
-        getProxy().getPluginManager().register(this, new CmdSendAll());
-        getProxy().getPluginManager().register(this, new CmdKickAll());
-        getProxy().getPluginManager().registerListener(this, new MainListener());
-        getProxy().getPluginManager().registerListener(this, new ChatListener());
+        mngr.register(CmdSilentBroadcast.meta(mngr, this), new CmdSilentBroadcast());
+        mngr.register(CmdMutableBroadcast.meta(mngr, this), new CmdMutableBroadcast());
+        mngr.register(CmdSilentMutableBroadcast.meta(mngr, this), new CmdSilentMutableBroadcast());
+        mngr.register(CmdHub.meta(mngr, this), new CmdHub());
+        mngr.register(CmdMotd.meta(mngr, this), new CmdMotd());
+        mngr.register(CmdTp.meta(mngr, this), new CmdTp());
+        mngr.register(CmdTphere.meta(mngr, this), new CmdTphere());
+        mngr.register(CmdUptime.meta(mngr, this), new CmdUptime());
+        mngr.register(CmdSendAll.meta(mngr, this), new CmdSendAll());
+        mngr.register(CmdKickAll.meta(mngr, this), new CmdKickAll());
+        proxy.getEventManager().register(this, new MainListener());
+        proxy.getEventManager().register(this, new ChatListener());
         proxy.getChannelRegistrar().register(IDENTIFIER);
         
-        // gradients
-        try {
-			GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+        GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
         
         // sql
 		try {
@@ -118,12 +114,9 @@ public class BungeeCore {
     }
     
     public static void sendMotd(CommandSource s) {
-		String[] msg = new String[motd.length + (announcements.size() > 0 ? announcements.size() : 1)];
-		int idx = 0;
-		for (String comp : motd) {
-			msg[idx++] = comp;
-			comp.replaceAll("%ONLINE", "" + proxy.getPlayerCount());
-		}
+    	// First send top half of MOTD (Mostly static)
+		s.sendMessage(MiniMessage.miniMessage().deserialize(motd.replaceAll("%ONLINE%", "" + proxy.getPlayerCount())));
+		
 		if (announcements.size() > 0) {
 			for (int i = 0; i < announcements.size(); i++) {
 				msg[idx++] = SharedUtil.translateColors("§6- §e" + announcements.get(i) + (i + 1 == announcements.size() ? "" : "\n"));
@@ -202,12 +195,8 @@ public class BungeeCore {
 		}
 		else {
 			Config cfg;
-			try {
-				cfg = Config.load(load);
-				loader.load(cfg, load);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			cfg = Config.load(load);
+			loader.load(cfg, load);
 		}
 	}
 }

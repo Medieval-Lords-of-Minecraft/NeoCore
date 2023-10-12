@@ -3,6 +3,7 @@ package me.neoblade298.neocore.bungee.commands.builtin;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.command.SimpleCommand.Invocation;
 import com.velocitypowered.api.proxy.Player;
 
 import me.neoblade298.neocore.bungee.BungeeCore;
@@ -11,7 +12,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class CmdKickAll implements SimpleCommand {
 	public void execute(Invocation inv) {
-		if (!inv.source().hasPermission("neocore.staff")) return;
 		for (Player p : BungeeCore.proxy().getAllPlayers()) {
 			p.disconnect(Component.text("Server is going down for maintenance!").color(NamedTextColor.RED));
 		}
@@ -24,4 +24,9 @@ public class CmdKickAll implements SimpleCommand {
         
         return meta;
 	}
+	
+	@Override
+    public boolean hasPermission(final Invocation invocation) {
+        return invocation.source().hasPermission("neocore.staff");
+    }
 }

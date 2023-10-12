@@ -1,74 +1,88 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.proxy.Player;
 
 import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.bungee.util.Util;
-import net.md_5.bungee.api.Callback;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.TabExecutor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
-public class CmdTp extends Command {
-	public CmdTp() {
-		super("tp");
-	}
-
-	public void execute(CommandSender sender, String[] args) {
-		if ((sender instanceof ProxiedPlayer)) {
-			ProxiedPlayer src = (ProxiedPlayer) sender;
-			if (args.length == 0) {
-				src.sendMessage(new ComponentBuilder("Usage: /tp [player]").color(ChatColor.RED).create());
+// Go back and make the other commands follow SimpleCommand @overrides
+public class CmdTp implements SimpleCommand {
+	@Override
+	public void execute(Invocation inv) {
+		if ((inv.source() instanceof Player)) {
+			Player src = (Player) inv.source();
+			if (inv.arguments().length == 0) {
+				src.sendMessage(Component.text("Usage: /tp [player]").color(NamedTextColor.RED));
 			}
 			else {
-				ProxiedPlayer trg = ProxyServer.getInstance().getPlayer(args[0]);
-				executeTeleport(sender, src, trg);
+				Optional<Player> trg = BungeeCore.proxy().getPlayer(inv.arguments()[0]);
+				if (trg.isEmpty()) {
+					Util.msg(src, "&cThis player is not online!");
+					return;
+				}
+				executeTeleport(inv.source(), src, trg.get());
 			}
 		}
 	}
 	
-	public static void executeTeleport(CommandSender sender, ProxiedPlayer src, ProxiedPlayer trg) {
-		if (!sender.hasPermission("mycommand.staff")) {
-			Util.msg(sender, "&cYou don't have permission to do this!");
-			return;
-		}
-		if (trg == null) {
-			Util.msg(sender, "&cThis player is not online!");
-			return;
-		}
-		
-		if (trg.getServer().getInfo().getName().equals(src.getServer().getInfo().getName())) {
+    @Override
+    public boolean hasPermission(final Invocation invocation) {
+        return invocation.source().hasPermission("neocore.staff");
+    }
+	
+	public static void executeTeleport(CommandSource sender, Player src, Player trg) {
+		if (trg.getCurrentServer().get().getServerInfo().getName().equals(src.getCurrentServer().get().getServerInfo().getName())) {
 			// Directly tp without connecting
 			sendTeleportMsg(src, trg, true);
 		}
 		else {
-			Callback<Boolean> cb = (Boolean success, Throwable throwable) -> {
-				if (success) {
+			CompletableFuture<Boolean> cf = src.createConnectionRequest(trg.getCurrentServer().get().getServer()).connectWithIndication();
+			
+			try {
+				if (cf.get()) {
 					sendTeleportMsg(src, trg, false);
 				}
 				else {
-					ProxyServer.getInstance().getLogger().warning("[NeoCore] Failed to send teleport message for " + src.getName() +
-							" to " + trg.getName() + ", connect failed");
+					BungeeCore.logger().warning("[NeoCore] Failed to send teleport message for " + src.getUsername() +
+							" to " + trg.getUsername() + ", connect failed");
 				}
-			};
-			src.connect(trg.getServer().getInfo(), cb);
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	public static void sendTeleportMsg(ProxiedPlayer src, ProxiedPlayer trg, boolean instant) {
+	public static void sendTeleportMsg(Player src, Player trg, boolean instant) {
 		String[] msgs = new String[] { (instant ? "neocore-tp-instant" : "neocore-tp"),
 				src.getUniqueId().toString(), trg.getUniqueId().toString()};
-		BungeeCore.sendPluginMessage(Arrays.asList(trg.getServer().getInfo()), msgs, true);
+		BungeeCore.sendPluginMessage(Arrays.asList(trg.getCurrentServer().get().getServer()), msgs);
 	}
-
-	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-		String match = args[0].toLowerCase();
+	
+    @Override
+    public List<String> suggest(final Invocation inv) {
+    	if (inv.arguments().length == 0) return List.of();
+		String match = inv.arguments()[0].toLowerCase();
 		return BungeeCore.players.stream()
 				.filter(name -> name.toLowerCase().startsWith(match))
 				.toList();
+    }
+    
+	public static CommandMeta meta(CommandManager mngr, Object plugin) {
+        CommandMeta meta = mngr.metaBuilder("tp")
+            .plugin(plugin)
+            .build();
+        
+        return meta;
 	}
 }

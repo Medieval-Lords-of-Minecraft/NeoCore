@@ -11,8 +11,6 @@ public class CmdBroadcast implements SimpleCommand {
 
 	@Override
 	public void execute(Invocation inv) {
-		if (!inv.source().hasPermission("neocore.staff")) return;
-		
 		if (inv.arguments().length == 0) {
 			Util.msg(inv.source(), "&c/bc [broadcast msg]");
 		}
@@ -20,6 +18,11 @@ public class CmdBroadcast implements SimpleCommand {
 			Util.broadcast(SharedUtil.connectArgs(inv.arguments()));
 		}
 	}
+	
+    @Override
+    public boolean hasPermission(final Invocation invocation) {
+        return invocation.source().hasPermission("neocore.staff");
+    }
 	
 	public static CommandMeta meta(CommandManager mngr, Object plugin) {
         CommandMeta meta = mngr.metaBuilder("bc")

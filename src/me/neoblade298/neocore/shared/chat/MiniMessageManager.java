@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 

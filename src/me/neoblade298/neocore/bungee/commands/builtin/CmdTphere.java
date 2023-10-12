@@ -1,34 +1,51 @@
 package me.neoblade298.neocore.bungee.commands.builtin;
 
+import java.util.List;
+import java.util.Optional;
+
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
+import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.proxy.Player;
+
 import me.neoblade298.neocore.bungee.BungeeCore;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.TabExecutor;
+import me.neoblade298.neocore.bungee.util.Util;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
-public class CmdTphere extends Command implements TabExecutor {
-	public CmdTphere() {
-		super("tphere");
+public class CmdTphere implements SimpleCommand {
+	public static CommandMeta meta(CommandManager mngr, Object plugin) {
+        CommandMeta meta = mngr.metaBuilder("tphere")
+            .plugin(plugin)
+            .build();
+        
+        return meta;
 	}
-
-	public void execute(CommandSender sender, String[] args) {
-		if ((sender instanceof ProxiedPlayer)) {
-			ProxiedPlayer trg = (ProxiedPlayer) sender;
-			if (args.length == 0) {
-				trg.sendMessage(new ComponentBuilder("Usage: /tphere [player]").color(ChatColor.RED).create());
+	
+	@Override
+	public void execute(Invocation inv) {
+		if ((inv.source() instanceof Player)) {
+			Player trg = (Player) inv.source();
+			if (inv.arguments().length == 0) {
+				inv.source().sendMessage(Component.text("Usage: /tphere [player]").color(NamedTextColor.RED));
 			}
 			else {
-				ProxiedPlayer src = ProxyServer.getInstance().getPlayer(args[0]);
-				CmdTp.executeTeleport(sender, src, trg);
+				Optional<Player> src = BungeeCore.proxy().getPlayer(inv.arguments()[0]);
+				if (src.isEmpty()) {
+					Util.msg(trg, "&cThis player is not online!");
+					return;
+				}
+				CmdTp.executeTeleport(inv.source(), src.get(), trg);
 			}
 		}
 	}
-
-	@Override
-	public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-		return BungeeCore.players;
-	}
+	
+    @Override
+    public List<String> suggest(final Invocation inv) {
+    	if (inv.arguments().length == 0) return List.of();
+		String match = inv.arguments()[0].toLowerCase();
+		return BungeeCore.players.stream()
+				.filter(name -> name.toLowerCase().startsWith(match))
+				.toList();
+    }
 }

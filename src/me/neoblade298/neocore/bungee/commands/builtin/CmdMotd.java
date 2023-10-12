@@ -10,6 +10,7 @@ import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class CmdMotd implements SimpleCommand {
+	@Override
 	public void execute(Invocation inv) {
 		CommandSource src = inv.source();
 		String[] args = inv.arguments();
