@@ -2,9 +2,9 @@ package me.neoblade298.neocore.bukkit.info;
 
 import java.util.List;
 
-import org.bukkit.configuration.ConfigurationSection;
 import io.lumine.mythic.api.mobs.MobManager;
 import io.lumine.mythic.bukkit.MythicBukkit;
+import me.neoblade298.neocore.shared.io.Section;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class BossInfo {
@@ -13,7 +13,7 @@ public class BossInfo {
 	private List<String> healthComponents;
 	private double health = 0;
 	
-	public BossInfo(ConfigurationSection cfg) {
+	public BossInfo(Section cfg) {
 		this.key = cfg.getName();
 		this.tag = "Killed" + this.key;
 		this.display = SharedUtil.translateColors("&c" + cfg.getString("display", "DEFAULT"));

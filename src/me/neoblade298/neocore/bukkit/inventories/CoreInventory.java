@@ -48,6 +48,7 @@ public abstract class CoreInventory {
 		return createButton(item, name, lore, pixelsPerLine, color);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static ItemStack createButton(ItemStack item, String name, String... lore) {
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(SharedUtil.translateColors(name));
@@ -60,6 +61,7 @@ public abstract class CoreInventory {
 		return item;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static ItemStack createButton(ItemStack item, String name, String lore, int pixelsPerLine, ChatColor color) {
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(SharedUtil.translateColors(name));

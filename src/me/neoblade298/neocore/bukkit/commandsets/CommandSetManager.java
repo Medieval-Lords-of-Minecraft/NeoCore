@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.io.FileLoader;
-import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 
 public class CommandSetManager {
 	private static HashMap<String, CommandSet> sets = new HashMap<String, CommandSet>();
@@ -14,19 +13,14 @@ public class CommandSetManager {
 	
 	static {
 		setLoader = (cfg, file) -> {
-			for (String key : cfg.getKeys(false)) {
-				sets.put(key.toUpperCase(), new CommandSet(key, cfg.getConfigurationSection(key)));
+			for (String key : cfg.getKeys()) {
+				sets.put(key.toUpperCase(), new CommandSet(key, cfg.getSection(key)));
 			}
 		};
 	}
 	
 	public static void reload() {
-		try {
-			NeoCore.loadFiles(new File(NeoCore.inst().getDataFolder(), "commandsets"), setLoader);
-		} catch (NeoIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		NeoCore.loadFiles(new File(NeoCore.inst().getDataFolder(), "commandsets"), setLoader);
 	}
 	
 	public static void runSet(String set, String[] args) {

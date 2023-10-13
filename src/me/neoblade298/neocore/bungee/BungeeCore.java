@@ -2,7 +2,6 @@ package me.neoblade298.neocore.bungee;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -10,14 +9,11 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import org.yaml.snakeyaml.Yaml;
-
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
-import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
@@ -26,9 +22,9 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent.Builder;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.*;
 import me.neoblade298.neocore.bungee.chat.ChatResponseHandler;
 import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
@@ -38,10 +34,6 @@ import me.neoblade298.neocore.shared.chat.MiniMessageManager;
 import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.util.GradientManager;
-import me.neoblade298.neocore.shared.util.SharedUtil;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
 
 @Plugin(id = "neocore", name = "NeoCore", version = "0.1.0-SNAPSHOT",
         authors = {"Ascheladd"})
@@ -50,9 +42,10 @@ public class BungeeCore {
 	private static ProxyServer proxy;
 	private static Logger logger;
 	private static BungeeCore inst;
-	private static String motd;
-	private static List<String> announcements = new ArrayList<String>();
+	private static List<String> announceList;
 	private static Config announceCfg;
+	private static Component announcements;
+	private static String motd;
 	private static File folder;
 	
 	// Used for tab complete
@@ -110,36 +103,38 @@ public class BungeeCore {
     private void reload() throws IOException {
     	MiniMessageManager.reload();
     	announceCfg = Config.load(new File(folder, "announcements.yml"));
-    	announcements = announceCfg.getStringList("announcements");
+    	announceList = announceCfg.getStringList("announcements");
+
+    	// Reload announcements
+		Builder b = Component.text();
+		if (announceList.size() > 0) {
+			for (int i = 0; i < announceList.size(); i++) {
+				b.append(Component.text("- ", NamedTextColor.GRAY))
+				.append(Component.text(announceList.get(i) + (i + 1 == announceList.size() ? "" : "\n"), NamedTextColor.YELLOW));
+			}
+		}
+		else {
+			b.append(Component.text("- ", NamedTextColor.GRAY))
+			.append(Component.text("None for now!", NamedTextColor.YELLOW));
+		}
+		announcements = b.build();
     }
     
     public static void sendMotd(CommandSource s) {
     	// First send top half of MOTD (Mostly static)
 		s.sendMessage(MiniMessage.miniMessage().deserialize(motd.replaceAll("%ONLINE%", "" + proxy.getPlayerCount())));
-		
-		if (announcements.size() > 0) {
-			for (int i = 0; i < announcements.size(); i++) {
-				msg[idx++] = SharedUtil.translateColors("§6- §e" + announcements.get(i) + (i + 1 == announcements.size() ? "" : "\n"));
-			}
-		}
-		else {
-			msg[idx++] = SharedUtil.translateColors("&6- &eNone for now!");
-		}
-		
-		for (String m : msg) {
-			s.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(m));
-		}
+		s.sendMessage(announcements);
     }
     
     public static void addAnnouncement(CommandSource s, String msg) {
-    	announcements.add(msg);
-    	announceCfg.set("announcements", announcements);
+    	announceList.add(msg);
+    	announceCfg.set("announcements", announceList);
 		announceCfg.save();
     }
     
     public static void removeAnnouncement(CommandSource s, int idx) {
-    	announcements.remove(idx);
-    	announceCfg.set("announcements", announcements);
+    	announceList.remove(idx);
+    	announceCfg.set("announcements", announceList);
 		announceCfg.save();
     }
 	

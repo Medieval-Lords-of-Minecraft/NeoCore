@@ -43,7 +43,7 @@ import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.io.Section;
 import me.neoblade298.neocore.shared.util.GradientManager;
 import me.neoblade298.neocore.shared.util.SharedUtil;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
 
 public class NeoCore extends JavaPlugin implements Listener {
@@ -151,7 +151,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 
 	private void initCommands() {
-		SubcommandManager mngr = new SubcommandManager("ncore", "neocore.admin", ChatColor.DARK_RED, this);
+		SubcommandManager mngr = new SubcommandManager("ncore", "neocore.admin", NamedTextColor.DARK_RED, this);
 		mngr.registerCommandList("");
 		mngr.register(new CmdCoreBroadcast("bc", "Broadcasts to only the server you're on", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreDebug("debug", "Toggles debug mode", null, SubcommandRunner.BOTH));
@@ -170,7 +170,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdCoreResetField("resetfield", "Resets a player field", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreTitle("title", "Sends a title to a player", null, SubcommandRunner.BOTH));
 
-		mngr = new SubcommandManager("bcore", "neocore.admin", ChatColor.DARK_RED, this);
+		mngr = new SubcommandManager("bcore", "neocore.admin", NamedTextColor.DARK_RED, this);
 		mngr.registerCommandList("");
 		mngr.register(new CmdBCoreCmd("cmd", "Sends a command to bungeecord", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdBCoreBroadcast("sbc", "Sends a broadcast cross-server without prefix", null, SubcommandRunner.BOTH));
@@ -179,7 +179,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdBCoreSilentMutableBroadcast("smbc", "Sends a mutable broadcast cross-server without prefix", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdBCoreSend("send", "Sends a player to another server", null, SubcommandRunner.BOTH));
 
-		mngr = new SubcommandManager("io", "neocore.admin", ChatColor.DARK_RED, this);
+		mngr = new SubcommandManager("io", "neocore.admin", NamedTextColor.DARK_RED, this);
 		mngr.registerCommandList("");
 		mngr.register(new CmdIODebug("debug", "Toggles debug to view io benchmarks", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdIOEnable("enable", "Enables an IO action: save, preload, load, cleanup, autosave", null, SubcommandRunner.BOTH));
@@ -187,16 +187,16 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdIODisabled("disabled", "Shows any disabled IO", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdIOList("list", "Lists IO Components by order of priority", null, SubcommandRunner.BOTH));
 		
-		mngr = new SubcommandManager("nbt", "neocore.admin", ChatColor.DARK_RED, this);
+		mngr = new SubcommandManager("nbt", "neocore.admin", NamedTextColor.DARK_RED, this);
 		mngr.registerCommandList("");
 		mngr.register(new CmdNBTSet("set", "Sets NBT field of item in hand", null, SubcommandRunner.PLAYER_ONLY));
 		mngr.register(new CmdNBTGet("get", "Gets NBT field of item in hand", null, SubcommandRunner.PLAYER_ONLY));
 		mngr.register(new CmdNBTKeys("keys", "Shows all NBT keys of item in hand", null, SubcommandRunner.PLAYER_ONLY));
 
-		mngr = new SubcommandManager("fix", "neocore.admin", ChatColor.DARK_RED, this);
+		mngr = new SubcommandManager("fix", "neocore.admin", NamedTextColor.DARK_RED, this);
 		mngr.register(new CmdFix("", "Fixes player's item in hand", null, SubcommandRunner.BOTH));
 
-		mngr = new SubcommandManager("rename", null, ChatColor.RED, this);
+		mngr = new SubcommandManager("rename", null, NamedTextColor.RED, this);
 		mngr.register(new CmdRename("", "Renames player's item in hand", null, SubcommandRunner.PLAYER_ONLY));
 	}
 	

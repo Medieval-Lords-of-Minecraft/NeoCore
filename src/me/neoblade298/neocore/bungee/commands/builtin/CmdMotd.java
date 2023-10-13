@@ -19,11 +19,11 @@ public class CmdMotd implements SimpleCommand {
 		}
 		else {
 			if (args[0].equalsIgnoreCase("add") && args.length > 1) {
-				BungeeCore.addMotd(src, SharedUtil.connectArgs(args, 1));
+				BungeeCore.addAnnouncement(src, SharedUtil.connectArgs(args, 1));
 				Util.msg(src, "&7Successfully added to MOTD");
 			}
 			else if (args[0].equalsIgnoreCase("remove") && args.length == 2) {
-				BungeeCore.removeMotd(src, Integer.parseInt(args[1]));
+				BungeeCore.removeAnnouncement(src, Integer.parseInt(args[1]));
 				Util.msg(src, "&7Successfully removed from MOTD");
 			}
 			else {

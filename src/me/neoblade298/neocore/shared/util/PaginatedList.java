@@ -6,12 +6,11 @@ import java.util.LinkedList;
 
 import org.bukkit.command.CommandSender;
 
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent.Builder;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class PaginatedList<E> implements Iterable<E> {
 	private static final int DEFAULT_PAGE_SIZE = 10;
@@ -192,34 +191,32 @@ public class PaginatedList<E> implements Iterable<E> {
 		pages.clear();
 	}
 	
-	public BaseComponent[] getFooter(int page, String nextCmd, String prevCmd) {
+	public Component getFooter(int page, String nextCmd, String prevCmd) {
 		// Add a previous arrow
-		ComponentBuilder b = null;
+		Builder b = null;
 		if (page > 0) {
-			b = new ComponentBuilder("§c« ")
-			.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, prevCmd))
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to go to previous page!")));
+			b = Component.text().content("« ").color(NamedTextColor.RED)
+					.clickEvent(ClickEvent.runCommand(prevCmd))
+					.hoverEvent(HoverEvent.showText(Component.text("Click to go to previous page!")));
 		}
 		
 		// Add main
-		String mainStr = "§7Page §f" + (page + 1) + " §7/ " + pages.size();
-		if (b == null) {
-			b = new ComponentBuilder(mainStr);
-		}
-		else {
-			b.append(mainStr, FormatRetention.NONE);
-		}
+		b.append(Component.text("Page ", NamedTextColor.GRAY))
+		.append(Component.text((page + 1) + " ", NamedTextColor.WHITE))
+		.append(Component.text("/ " + pages.size(), NamedTextColor.GRAY));
 		
 		if (page < pages.size() - 1) {
-			b.append(" §c»")
-			.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, nextCmd))
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to go to next page!")));
+			b = Component.text().content(" »").color(NamedTextColor.RED)
+					.clickEvent(ClickEvent.runCommand(nextCmd))
+					.hoverEvent(HoverEvent.showText(Component.text("Click to go to next page!")));
 		}
-		return b.create();
+		return b.build();
 	}
 	
-	public BaseComponent[] getFooter(CommandSender s, int page) {
-		return new ComponentBuilder("&7Page &f" + (page + 1) + " &7/ " + pages.size()).create();
+	public Component getFooter(CommandSender s, int page) {
+		return Component.text("Page ", NamedTextColor.GRAY)
+		.append(Component.text((page + 1) + " ", NamedTextColor.WHITE))
+		.append(Component.text("/ " + pages.size(), NamedTextColor.GRAY));
 	}
 
 	@Override

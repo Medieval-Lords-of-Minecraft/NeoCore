@@ -22,6 +22,7 @@ public class CmdRename extends Subcommand {
 		args.setMin(1);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run(CommandSender s, String[] args) {
 		Player p = (Player) s;

@@ -3,7 +3,6 @@ package me.neoblade298.neocore.bungee.commands.builtin;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.SimpleCommand;
-import com.velocitypowered.api.command.SimpleCommand.Invocation;
 import com.velocitypowered.api.proxy.Player;
 
 import me.neoblade298.neocore.bungee.BungeeCore;

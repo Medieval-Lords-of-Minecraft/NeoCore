@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.io.FileLoader;
-import me.neoblade298.neocore.shared.exceptions.NeoIOException;
 
 public class InfoAPI {
 	private static HashMap<String, BossInfo> bossInfo = new HashMap<String, BossInfo>();
@@ -16,8 +15,8 @@ public class InfoAPI {
 	static {
 		bossLoader = (cfg, file) -> {
 			if (!Bukkit.getPluginManager().isPluginEnabled("MythicMobs")) return;
-			for (String key : cfg.getKeys(false)) {
-				BossInfo bi = new BossInfo(cfg.getConfigurationSection(key));
+			for (String key : cfg.getKeys()) {
+				BossInfo bi = new BossInfo(cfg.getSection(key));
 				bossInfo.put(bi.getKey(), bi);
 			}
 		};
@@ -29,10 +28,6 @@ public class InfoAPI {
 	
 	public static void reload() {
 		bossInfo.clear();
-		try {
-			NeoCore.loadFiles(new File(NeoCore.inst().getDataFolder() + "/info/bosses.yml"), bossLoader);
-		} catch (NeoIOException e) {
-			e.printStackTrace();
-		}
+		NeoCore.loadFiles(new File(NeoCore.inst().getDataFolder() + "/info/bosses.yml"), bossLoader);
 	}
 }

@@ -8,15 +8,16 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.StringUtils;
 
 import me.neoblade298.neocore.bukkit.commands.CmdList;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 
 public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 	protected TreeMap<String, T> handlers = new TreeMap<String, T>();
 	protected HashSet<String> aliases = new HashSet<String>();
 	protected String base, perm;
-	protected ChatColor color = ChatColor.RED;
+	protected TextColor color = NamedTextColor.RED;
 	
-	public AbstractSubcommandManager(String base, String perm, ChatColor color) {
+	public AbstractSubcommandManager(String base, String perm, TextColor color) {
 		this.base = base;
 		this.perm = perm;
 		this.color = color;
@@ -108,7 +109,7 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 		return base;
 	}
 	
-	public ChatColor getColor() {
+	public TextColor getColor() {
 		return color;
 	}
 	

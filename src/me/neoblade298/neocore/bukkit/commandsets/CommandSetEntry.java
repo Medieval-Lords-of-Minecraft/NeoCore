@@ -5,13 +5,14 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
+
+import me.neoblade298.neocore.shared.io.Section;
 
 public class CommandSetEntry {
 	private ArrayList<String> commands;
 	private int weight;
 	
-	public CommandSetEntry(ConfigurationSection cfg) {
+	public CommandSetEntry(Section cfg) {
 		commands = (ArrayList<String>) cfg.getStringList("commands");
 		weight = cfg.getInt("weight", 1);
 	}

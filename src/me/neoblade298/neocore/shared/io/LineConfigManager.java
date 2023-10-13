@@ -4,8 +4,6 @@ import java.util.HashMap;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.neoblade298.neocore.shared.exceptions.NeoIOException;
-
 public class LineConfigManager<A> {
 	private HashMap<String, LineConfigParser<A>> parsers = new HashMap<String, LineConfigParser<A>>();
 	private String name;
@@ -18,12 +16,12 @@ public class LineConfigManager<A> {
 		parsers.put(parser.getKey(), parser);
 	}
 	
-	public A get(LineConfig cfg) throws NeoIOException {
+	public A get(LineConfig cfg) throws Exception {
 		if (parsers.containsKey(cfg.getKey())) {
 			return (A) parsers.get(cfg.getKey()).create(cfg);
 		}
 		else {
-			throw new NeoIOException(name + " Config Manager Exception: Could not find key " + cfg.getKey());
+			throw new Exception(name + " Config Manager Exception: Could not find key " + cfg.getKey());
 		}
 	}
 }

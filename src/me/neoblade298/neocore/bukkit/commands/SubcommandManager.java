@@ -17,10 +17,10 @@ import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.AbstractSubcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.format.TextColor;
 
 public class SubcommandManager extends AbstractSubcommandManager<Subcommand> implements CommandExecutor, TabCompleter {
-	public SubcommandManager(String base, String perm, ChatColor color, JavaPlugin plugin) {
+	public SubcommandManager(String base, String perm, TextColor color, JavaPlugin plugin) {
 		super(base, perm, color);
 		plugin.getCommand(base).setExecutor(this);
 		plugin.getCommand(base).setTabCompleter(this);
@@ -82,7 +82,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		registerCommandList(key, null, null);
 	}
 	
-	public void registerCommandList(String key, String perm, ChatColor color) {
+	public void registerCommandList(String key, String perm, TextColor color) {
 		handlers.put(key.toLowerCase(), new CmdList(key, base, perm, super.perm, handlers, aliases, this.color, color));
 	}
 	

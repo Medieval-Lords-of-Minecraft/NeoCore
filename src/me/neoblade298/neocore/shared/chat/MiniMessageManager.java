@@ -20,7 +20,7 @@ public class MiniMessageManager {
 		});
 	}
 	
-	public static Component getMessage(String key) {
+	public static Component get(String key) {
 		return messages.get(key);
 	}
 	

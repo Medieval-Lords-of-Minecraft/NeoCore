@@ -1,40 +1,53 @@
 package me.neoblade298.neocore.bungee.commands;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.proxy.Player;
 import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.format.TextColor;
 
 public class SubcommandManager implements SimpleCommand {
 	private CommandOverhead overhead;
-	public SubcommandManager(String base, String perm, ChatColor color, Plugin plugin) {
-		this(base, perm, color, plugin, new String[0]);
+	public static CommandMeta meta(CommandManager mngr, String base, Object plugin) {
+        CommandMeta meta = mngr.metaBuilder(base)
+            .plugin(plugin)
+            .build();
+        return meta;
 	}
-	public SubcommandManager(String base, String perm, ChatColor color, Plugin plugin, String[] aliases) {
-		super(base, null, aliases);
+	public SubcommandManager(String base, String perm, TextColor color, CommandManager mngr, Object plugin) {
+		this(base, perm, color, mngr, plugin, new String[0]);
+	}
+	public SubcommandManager(String base, String perm, TextColor color, CommandManager mngr, Object plugin, String[] aliases) {
 		overhead = new CommandOverhead(base, perm, color);
-		plugin.getProxy().getPluginManager().registerCommand(plugin, this);
+		mngr.register(meta(mngr, base, plugin), this);
 	}
 	
 	@Override
-	public void execute(CommandSender s, String[] args) {
+	public void execute(Invocation inv) {
+		String[] args = inv.arguments();
+		CommandSource s = inv.source();
 		Subcommand sc = overhead.parseForCommand(args);
 		if (sc == null) return;
-		
+
 		args = overhead.reduceArgs(args, sc);
 		if (check(sc, s, args)) {
 			sc.run(s, args);
 		}
 	}
 	
-	private boolean check(Subcommand cmd, CommandSender s, boolean silent) {
+	private boolean check(Subcommand cmd, CommandSource s, boolean silent) {
 		// If cmd permission exists, it overrides list permission
 		String activePerm = cmd.getPermission() != null ? cmd.getPermission() : overhead.getPermission();
 		
@@ -43,15 +56,15 @@ public class SubcommandManager implements SimpleCommand {
 			return false;
 		}
 
-		if ((cmd.getRunner() == SubcommandRunner.PLAYER_ONLY && !(s instanceof ProxiedPlayer)) ||
-				(cmd.getRunner() == SubcommandRunner.CONSOLE_ONLY && !(s == BungeeCore.inst().getProxy().getConsole()))) {
+		if ((cmd.getRunner() == SubcommandRunner.PLAYER_ONLY && !(s instanceof Player)) ||
+				(cmd.getRunner() == SubcommandRunner.CONSOLE_ONLY && !(s == BungeeCore.proxy().getConsoleCommandSource()))) {
 			if (!silent) Util.msg(s, "&cYou are the wrong type of user for this command!");
 			return false;
 		}
 		return true;
 	}
 	
-	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
+	private boolean check(Subcommand cmd, CommandSource s, String[] args) {
 		if (!check(cmd, s, false)) return false;
 		
 		CommandArguments cargs = cmd.getArgs();
@@ -70,7 +83,7 @@ public class SubcommandManager implements SimpleCommand {
 		return true;
 	}
 	
-	public void registerCommandList(String key, String perm, ChatColor color) {
+	public void registerCommandList(String key, String perm, TextColor color) {
 		overhead.getHandlers().put(key.toLowerCase(), new CmdList(key, overhead.getBase(), perm, overhead.getPermission(), overhead.getHandlers(), overhead.getAliases(), overhead.getColor(), color));
 	}
 	
@@ -92,8 +105,10 @@ public class SubcommandManager implements SimpleCommand {
 	}
 
 	@Override
-	public Iterable<String> onTabComplete(CommandSender s, String[] args) {
-		if (!(s instanceof ProxiedPlayer)) return Collections.emptyList(); // Only player senders can use tab complete
+    public List<String> suggest(final Invocation inv) {
+		CommandSource s = inv.source();
+		String[] args = inv.arguments();
+		if (!(s instanceof Player)) return Collections.emptyList(); // Only player senders can use tab complete
 		
 		if (overhead.getPermission() != null && !s.hasPermission(overhead.getPermission())) return Collections.emptyList();
 		

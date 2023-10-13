@@ -1,12 +1,16 @@
 package me.neoblade298.neocore.bukkit.commands.builtin;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
-import me.neoblade298.neocore.shared.util.SharedUtil;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.title.Title.Times;
 
 public class CmdCoreTitle extends Subcommand {
 
@@ -19,9 +23,10 @@ public class CmdCoreTitle extends Subcommand {
 		Player p = Bukkit.getPlayer(args[0]);
 		String title = "";
 		String subtitle = "";
-		int fadeIn = 20;
-		int stay = 60;
-		int fadeOut = 20;
+		long fadeIn = 1;
+		long stay = 3;
+		long fadeOut = 1;
+		Times times = Times.times(Duration.of(fadeIn, ChronoUnit.SECONDS), Duration.of(stay, ChronoUnit.SECONDS), Duration.of(fadeOut, ChronoUnit.SECONDS));
 		
 		for (int i = 1; i < args.length; i++) {
 			String arg = args[i];
@@ -63,7 +68,8 @@ public class CmdCoreTitle extends Subcommand {
 				fadeOut = Integer.parseInt(args[++i]);
 			}
 		}
-		
-		p.sendTitle(SharedUtil.translateColors(title), SharedUtil.translateColors(subtitle), fadeIn, stay, fadeOut);
+		MiniMessage mini = MiniMessage.miniMessage();
+		Title t = Title.title(mini.deserialize(title), mini.deserialize(subtitle), times);
+		p.showTitle(t);
 	}
 }

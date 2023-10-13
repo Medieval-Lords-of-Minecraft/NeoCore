@@ -1,6 +1,6 @@
 package me.neoblade298.neocore.shared.commands;
 
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.format.TextColor;
 
 public abstract class AbstractSubcommand {
 	protected String key;
@@ -8,7 +8,7 @@ public abstract class AbstractSubcommand {
 	protected String perm;
 	protected SubcommandRunner runner;
 	protected String[] aliases;
-	protected ChatColor color;
+	protected TextColor color;
 	protected CommandArguments args = new CommandArguments();
 	protected boolean hidden = false, tabEnabled = false;
 	
@@ -39,7 +39,7 @@ public abstract class AbstractSubcommand {
 		return aliases;
 	}
 	
-	public ChatColor getColor() {
+	public TextColor getColor() {
 		return color;
 	}
 	

@@ -9,12 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import me.neoblade298.neocore.shared.util.PaginatedList;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 
 public class SharedCmdList<T extends AbstractSubcommand> {
 	protected String base, key, permission;
@@ -69,13 +66,9 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 				continue;
 			}
 			
-			String line = "";
-			if (sc.getColor() == null) {
-				line += listColor + "/" + base;
-			}
-			else {
-				line += sc.getColor() + "/" + base;
-			}
+			Builder b = Component.text();
+			String line = "/" + base;
+			TextColor color = sc.getColor() == null ? listColor : sc.getColor();
 			
 			// Add subcommand name
 			if (sc.getKey().length() != 0) {
@@ -84,12 +77,13 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 			
 			// Add args
 			line += " " + sc.getArgs().getDisplay();
+			b.append(Component.text(line, color));
 			
 			// Add description
 			if (sc.getDescription() != null) {
-				if (!line.endsWith(" ")) line += " ";
-				line += "§7- " + sc.getDescription();
-				msgs.add(new ComponentBuilder(line).create());
+				line = !line.endsWith(" ") ? " " : "";
+				line += "- " + sc.getDescription();
+				msgs.add(b.append(Component.text(line, NamedTextColor.GRAY)).build());
 			}
 		}
 		
