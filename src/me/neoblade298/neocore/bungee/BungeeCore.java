@@ -11,8 +11,10 @@ import java.util.logging.Logger;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -36,7 +38,7 @@ import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.util.GradientManager;
 
 @Plugin(id = "neocore", name = "NeoCore", version = "0.1.0-SNAPSHOT",
-        authors = {"Ascheladd"})
+        url = "https://ml-mc.com", description = "Neo's core plugin for his suite of plugins", authors = {"Ascheladd"})
 public class BungeeCore {
 	public static final MinecraftChannelIdentifier IDENTIFIER = MinecraftChannelIdentifier.from("neocore:bungee");
 	private static ProxyServer proxy;
@@ -51,14 +53,16 @@ public class BungeeCore {
 	// Used for tab complete
 	public static TreeSet<String> players = new TreeSet<String>();
 	
+	@Inject
 	public BungeeCore(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
+        inst = this;
 		BungeeCore.proxy = server;
 		BungeeCore.logger = logger;
 		folder = dataDirectory.toFile();
 	}
 	
+	@Subscribe
     public void onProxyInitialization(ProxyInitializeEvent e) {
-        inst = this;
         CommandManager mngr = proxy.getCommandManager();
         
         mngr.register(CmdBroadcast.meta(mngr, this), new CmdBroadcast());
@@ -77,10 +81,10 @@ public class BungeeCore {
         proxy.getChannelRegistrar().register(IDENTIFIER);
         
         GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
-        
+
+		Config cfg = Config.load(new File(folder, "config.yml"));
         // sql
 		try {
-			Config cfg = Config.load(new File(folder, "config.yml"));
 	        SQLManager.load(cfg.getSection("sql"));
 	        reload();
 		} catch (IOException ex) {
@@ -101,7 +105,7 @@ public class BungeeCore {
     }
     
     private void reload() throws IOException {
-    	MiniMessageManager.reload();
+    	MiniMessageManager.reloadBungee();
     	announceCfg = Config.load(new File(folder, "announcements.yml"));
     	announceList = announceCfg.getStringList("announcements");
 

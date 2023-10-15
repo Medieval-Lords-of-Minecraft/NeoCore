@@ -1,5 +1,7 @@
 package me.neoblade298.neocore.shared.io;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,49 +17,60 @@ public class Section {
 	}
 	
 	public Set<String> getKeys() {
+		if (map == null) return Collections.emptySet();
 		return map.keySet();
 	}
 	
 	public int getInt(String key) {
+		if (map == null) return 0;
 		return (int) map.get(key);
 	}
 	
 	public int getInt(String key, int def) {
-		return (int) map.get(key);
+		if (map == null) return 0;
+		return (int) map.getOrDefault(key, def);
 	}
 	
 	public double getDouble(String key) {
+		if (map == null) return 0;
 		return (double) map.get(key);
 	}
 	
 	public double getDouble(String key, double def) {
-		return (double) map.get(key);
-	}
-	
-	public String getString(String key, String def) {
-		return (String) map.get(key);
+		if (map == null) return 0;
+		return (double) map.getOrDefault(key, def);
 	}
 	
 	public String getString(String key) {
+		if (map == null) return null;
 		return (String) map.get(key);
 	}
 	
+	public String getString(String key, String def) {
+		if (map == null) return null;
+		return (String) map.getOrDefault(key, def);
+	}
+	
 	public boolean contains(String key) {
+		if (map == null) return false;
 		return map.containsKey(key);
 	}
 	
 	public boolean isType(String key, Class<?> clazz) {
+		if (map == null) return false;
 		if (!map.containsKey(key)) return false;
 		return clazz.isInstance(map.get(key));
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<String> getStringList(String key) {
+		if (map == null) return null;
 		return (List<String>) map.get(key);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public Section getSection(String key) {
+		if (map == null) return null;
 		return new Section(key, (Map<String, Object>) map.get(key));
 	}
 	
@@ -66,6 +79,9 @@ public class Section {
 	}
 	
 	public void set(String key, Object obj) {
+		if (map == null) {
+			map = new HashMap<String, Object>();
+		}
 		map.put(key, obj);
 	}
 	

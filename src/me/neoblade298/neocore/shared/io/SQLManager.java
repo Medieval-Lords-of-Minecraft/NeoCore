@@ -23,6 +23,7 @@ public class SQLManager {
 		String connectionSuffix = sec.getString("flags");
 
 	    HikariConfig config = new HikariConfig();
+	    config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         config.setJdbcUrl(connectionPrefix + sec.getString("db") + connectionSuffix);
         config.setUsername(sec.getString("username"));
         config.setPassword(sec.getString("password"));

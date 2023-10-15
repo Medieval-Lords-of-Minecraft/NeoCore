@@ -1,0 +1,9 @@
+{
+	"id":"neocore",
+	"name":"NeoCore",
+	"version":"0.1.0-SNAPSHOT",
+	"description":"Neo's core plugin for his suite!",
+	"authors":["Ascheladd"],
+	"dependencies":[],
+	"main":"me.neoblade298.neocore.bungee.BungeeCore"
+}

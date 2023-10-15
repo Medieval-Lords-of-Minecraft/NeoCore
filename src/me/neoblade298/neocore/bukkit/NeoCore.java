@@ -133,7 +133,7 @@ public class NeoCore extends JavaPlugin implements Listener {
         GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
         
         // messaging
-		MiniMessageManager.reload();
+		MiniMessageManager.reloadBukkit();
 		
 		SchedulerAPI.initialize();
 		
@@ -201,7 +201,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 	
 	public static void reload() {
-		MiniMessageManager.reload();
+		MiniMessageManager.reloadBukkit();
 		CommandSetManager.reload();
         GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
 		InfoAPI.reload();
