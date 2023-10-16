@@ -22,7 +22,6 @@ import me.neoblade298.neocore.bukkit.chat.ChatResponseHandler;
 import me.neoblade298.neocore.bukkit.commands.*;
 import me.neoblade298.neocore.bukkit.commands.builtin.*;
 import me.neoblade298.neocore.bukkit.commandsets.CommandSetManager;
-import me.neoblade298.neocore.bukkit.info.InfoAPI;
 import me.neoblade298.neocore.bukkit.io.FileLoader;
 import me.neoblade298.neocore.bukkit.io.IOComponent;
 import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
@@ -126,9 +125,6 @@ public class NeoCore extends JavaPlugin implements Listener {
         // CommandSets
         CommandSetManager.reload();
         
-        // Info
-        InfoAPI.reload();
-        
         // Gradients
         GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
         
@@ -204,7 +200,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 		MiniMessageManager.reloadBukkit();
 		CommandSetManager.reload();
         GradientManager.load(Config.load(new File("/home/MLMC/Resources/shared/NeoCore/gradients.yml")));
-		InfoAPI.reload();
 	}
 	
 	public void onDisable() {
