@@ -1,6 +1,6 @@
 name: NeoCore
 main: me.neoblade298.neocore.bukkit.NeoCore
-author: [Neoblade298]
+author: [Ascheladd]
 softdepend: [MythicMobs, NBTAPI, Essentials, Vault, LastLoginAPI]
 version: 1.0
 api-version: 1.19

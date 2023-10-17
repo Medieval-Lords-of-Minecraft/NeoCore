@@ -62,8 +62,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 	public void onEnable() {
 		inst = this;
 		
-		// Config
-		Config cfg = Config.load(new File(this.getDataFolder(), "config.yml"));
 		
 		// Instance config
 		File instancecfg = new File(this.getDataFolder(), "instance.yml");
@@ -74,11 +72,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 			instType = InstanceType.valueOf(icfg.getString("type").toUpperCase());
 		}
 		
-		Section gen = cfg.getSection("general");
-		if (gen != null) {
-			welcome = gen.getString("welcome", "&4[&c&lMLMC&4] &7Welcome &e%player% &7to MLMC!");
-		}
-		
 		// economy
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
@@ -86,9 +79,14 @@ public class NeoCore extends JavaPlugin implements Listener {
                 econ = rsp.getProvider();
             }
         }
-        
-        // SQL
+
+		// Config
+		Config cfg = Config.load(new File(this.getDataFolder(), "config.yml"));
 		SQLManager.load(cfg.getSection("sql"));
+		Section gen = cfg.getSection("general");
+		if (gen != null) {
+			welcome = gen.getString("welcome", "&4[&c&lMLMC&4] &7Welcome &e%player% &7to MLMC!");
+		}
         
         // Main listener
         getServer().getPluginManager().registerEvents(this, this);

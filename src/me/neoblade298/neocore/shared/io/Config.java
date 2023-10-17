@@ -6,23 +6,28 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 public class Config extends Section {
 	private File file;
 	
-	public Config(Map<String, Object> map, File file) {
-		super(null, map); // Configs never have a key, only sections do
+	public Config(Map<Object, Object> temp, File file) {
+		super(null, temp); // Configs never have a key, only sections do
+		this.parent = this;
 		this.file = file;
 	}
 	
 	public static Config load(File file) {
 		Yaml yaml = new Yaml();
-		InputStream inputStream;
 		try {
-			inputStream = new FileInputStream(file);
-			return new Config(yaml.load(inputStream), file);
+			InputStream inputStream = new FileInputStream(file);
+			Map<Object, Object> map = yaml.load(inputStream);
+			if (map == null) {
+				map = new HashMap<Object, Object>();
+			}
+			return new Config(map, file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -38,5 +43,9 @@ public class Config extends Section {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public File getFile() {
+		return file;
 	}
 }

@@ -9,11 +9,19 @@ import java.util.Set;
 public class Section {
 	protected String key;
 	protected Map<String, Object> map;
-	private Config parent;
+	protected Config parent;
 	
-	public Section(String key, Map<String, Object> map) {
+	public Section(String key, Map<Object, Object> temp, Config parent) {
+		this(key, temp);
+		this.parent = parent;
+	}
+	
+	public Section(String key, Map<Object, Object> temp) {
 		this.key = key;
-		this.map = map;
+		this.map = new HashMap<String, Object>();
+		
+		// Annoying, but no way for snakeyaml to read all keys as strings; it detects ints
+		temp.forEach((k, v) -> map.put(k.toString(), v));
 	}
 	
 	public Set<String> getKeys() {
@@ -23,31 +31,49 @@ public class Section {
 	
 	public int getInt(String key) {
 		if (map == null) return 0;
+		if (!map.containsKey(key)) {
+			return 0;
+		}
 		return (int) map.get(key);
 	}
 	
 	public int getInt(String key, int def) {
 		if (map == null) return 0;
+		if (!map.containsKey(key)) {
+			return 0;
+		}
 		return (int) map.getOrDefault(key, def);
 	}
 	
 	public double getDouble(String key) {
 		if (map == null) return 0;
+		if (!map.containsKey(key)) {
+			return 0;
+		}
 		return (double) map.get(key);
 	}
 	
 	public double getDouble(String key, double def) {
 		if (map == null) return 0;
+		if (!map.containsKey(key)) {
+			return 0;
+		}
 		return (double) map.getOrDefault(key, def);
 	}
 	
 	public String getString(String key) {
 		if (map == null) return null;
+		if (!map.containsKey(key)) {
+			return null;
+		}
 		return (String) map.get(key);
 	}
 	
 	public String getString(String key, String def) {
 		if (map == null) return null;
+		if (!map.containsKey(key)) {
+			return null;
+		}
 		return (String) map.getOrDefault(key, def);
 	}
 	
@@ -65,13 +91,19 @@ public class Section {
 	@SuppressWarnings("unchecked")
 	public List<String> getStringList(String key) {
 		if (map == null) return null;
+		if (!map.containsKey(key)) {
+			return null;
+		}
 		return (List<String>) map.get(key);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public Section getSection(String key) {
 		if (map == null) return null;
-		return new Section(key, (Map<String, Object>) map.get(key));
+		if (map.get(key) == null) {
+			return null;
+		}
+		return new Section(key, (Map<Object, Object>) map.get(key), this.parent);
 	}
 	
 	public String getName() {
@@ -87,5 +119,14 @@ public class Section {
 	
 	public Config getConfig() {
 		return parent;
+	}
+	
+	public Object get(String key) {
+		return map.get(key);
+	}
+	
+	@Override
+	public String toString() {
+		return map.toString();
 	}
 }
