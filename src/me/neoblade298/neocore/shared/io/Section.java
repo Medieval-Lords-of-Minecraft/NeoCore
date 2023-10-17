@@ -40,7 +40,7 @@ public class Section {
 	public int getInt(String key, int def) {
 		if (map == null) return 0;
 		if (!map.containsKey(key)) {
-			return 0;
+			return def;
 		}
 		return (int) map.getOrDefault(key, def);
 	}
@@ -56,7 +56,7 @@ public class Section {
 	public double getDouble(String key, double def) {
 		if (map == null) return 0;
 		if (!map.containsKey(key)) {
-			return 0;
+			return def;
 		}
 		return (double) map.getOrDefault(key, def);
 	}
@@ -72,7 +72,7 @@ public class Section {
 	public String getString(String key, String def) {
 		if (map == null) return null;
 		if (!map.containsKey(key)) {
-			return null;
+			return def;
 		}
 		return (String) map.getOrDefault(key, def);
 	}
