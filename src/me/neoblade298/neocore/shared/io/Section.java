@@ -34,7 +34,7 @@ public class Section {
 		if (!map.containsKey(key)) {
 			return 0;
 		}
-		return (int) map.get(key);
+		return map.get(key) instanceof Integer ? (int) map.get(key) : ((Double) map.get(key)).intValue();
 	}
 	
 	public int getInt(String key, int def) {
@@ -42,7 +42,7 @@ public class Section {
 		if (!map.containsKey(key)) {
 			return def;
 		}
-		return (int) map.getOrDefault(key, def);
+		return map.get(key) instanceof Integer ? (int) map.get(key) : ((Double) map.get(key)).intValue();
 	}
 	
 	public double getDouble(String key) {
@@ -50,7 +50,7 @@ public class Section {
 		if (!map.containsKey(key)) {
 			return 0;
 		}
-		return (double) map.get(key);
+		return map.get(key) instanceof Double ? (double) map.get(key) : ((Integer) map.get(key)).doubleValue();
 	}
 	
 	public double getDouble(String key, double def) {
@@ -58,7 +58,7 @@ public class Section {
 		if (!map.containsKey(key)) {
 			return def;
 		}
-		return (double) map.getOrDefault(key, def);
+		return map.get(key) instanceof Double ? (double) map.get(key) : ((Integer) map.get(key)).doubleValue();
 	}
 	
 	public String getString(String key) {
