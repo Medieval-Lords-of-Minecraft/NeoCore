@@ -193,9 +193,9 @@ public class PaginatedList<E> implements Iterable<E> {
 	
 	public Component getFooter(int page, String nextCmd, String prevCmd) {
 		// Add a previous arrow
-		Builder b = null;
+		Builder b = Component.text();
 		if (page > 0) {
-			b = Component.text().content("« ").color(NamedTextColor.RED)
+			b = b.content("« ").color(NamedTextColor.RED)
 					.clickEvent(ClickEvent.runCommand(prevCmd))
 					.hoverEvent(HoverEvent.showText(Component.text("Click to go to previous page!")));
 		}
