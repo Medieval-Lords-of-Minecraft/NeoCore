@@ -1,6 +1,9 @@
 package me.neoblade298.neocore.bungee.util;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.Collection;
@@ -17,6 +20,14 @@ import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class Util {
+	private static Component prefix;
+	
+	static {
+		prefix = Component.text("[", NamedTextColor.RED)
+				.append(Component.text("MLMC", NamedTextColor.DARK_RED, TextDecoration.BOLD))
+				.append(Component.text("]", NamedTextColor.RED));
+	}
+	
 	private static Comparator<LastLoginPlayer> comp = new Comparator<LastLoginPlayer>() {
 		@Override
 		public int compare(LastLoginPlayer p1, LastLoginPlayer p2) {
@@ -67,6 +78,12 @@ public class Util {
 	
 	public static void broadcast(String msg) {
 		broadcast(msg, true);
+	}
+	
+	public static void broadcast(Component cmp, boolean hasPrefix) {
+		for (Player p : BungeeCore.proxy().getAllPlayers()) {
+			p.sendMessage(hasPrefix ? prefix.append(cmp) : cmp);
+		}
 	}
 	
 	public static void broadcast(String msg, boolean hasPrefix) {

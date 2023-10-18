@@ -15,6 +15,8 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -32,6 +34,7 @@ import me.neoblade298.neocore.bungee.commands.builtin.*;
 import me.neoblade298.neocore.bungee.io.FileLoader;
 import me.neoblade298.neocore.bungee.listeners.ChatListener;
 import me.neoblade298.neocore.bungee.listeners.MainListener;
+import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.chat.MiniMessageManager;
 import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
@@ -49,6 +52,8 @@ public class BungeeCore {
 	private static Component announcements;
 	private static String motd;
 	private static File folder;
+	
+	private static Component joinPrefix, leavePrefix;
 	
 	// Used for tab complete
 	public static TreeSet<String> players = new TreeSet<String>();
@@ -90,6 +95,9 @@ public class BungeeCore {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+		
+		joinPrefix = MiniMessage.miniMessage().deserialize("<dark_gray>[<green>+</green>] ");
+		leavePrefix = MiniMessage.miniMessage().deserialize("<dark_gray>[<red>-</red>] ");
     }
     
     public static ProxyServer proxy() {
@@ -197,5 +205,15 @@ public class BungeeCore {
 			cfg = Config.load(load);
 			loader.load(cfg, load);
 		}
+	}
+	
+	@Subscribe
+	public void onLogin(PostLoginEvent e) {
+		Util.broadcast(joinPrefix.append(Component.text(e.getPlayer().getUsername(), NamedTextColor.GRAY)), false);
+	}
+	
+	@Subscribe
+	public void onLogout(DisconnectEvent e) {
+		Util.broadcast(leavePrefix.append(Component.text(e.getPlayer().getUsername(), NamedTextColor.GRAY)), false);
 	}
 }
