@@ -52,6 +52,7 @@ public class BungeeCore {
 	private static Component announcements;
 	private static String motd;
 	private static File folder;
+	private static MiniMessage mini;
 	
 	private static Component joinPrefix, leavePrefix;
 	
@@ -96,8 +97,9 @@ public class BungeeCore {
 			ex.printStackTrace();
 		}
 		
-		joinPrefix = MiniMessage.miniMessage().deserialize("<dark_gray>[<green>+</green>] ");
-		leavePrefix = MiniMessage.miniMessage().deserialize("<dark_gray>[<red>-</red>] ");
+		mini = MiniMessage.miniMessage();
+		joinPrefix = mini.deserialize("<dark_gray>[<green>+</green>] ");
+		leavePrefix = mini.deserialize("<dark_gray>[<red>-</red>] ");
     }
     
     public static ProxyServer proxy() {
@@ -134,7 +136,7 @@ public class BungeeCore {
     
     public static void sendMotd(CommandSource s) {
     	// First send top half of MOTD (Mostly static)
-		s.sendMessage(MiniMessage.miniMessage().deserialize(motd.replaceAll("%ONLINE%", "" + proxy.getPlayerCount())));
+		s.sendMessage(mini.deserialize(motd.replaceAll("%ONLINE%", "" + proxy.getPlayerCount())));
 		s.sendMessage(announcements);
     }
     
@@ -215,5 +217,9 @@ public class BungeeCore {
 	@Subscribe
 	public void onLogout(DisconnectEvent e) {
 		Util.broadcast(leavePrefix.append(Component.text(e.getPlayer().getUsername(), NamedTextColor.GRAY)), false);
+	}
+	
+	public static MiniMessage miniMessage() {
+		return mini;
 	}
 }

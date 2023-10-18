@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -68,7 +69,7 @@ public class CmdCoreTitle extends Subcommand {
 				fadeOut = Integer.parseInt(args[++i]);
 			}
 		}
-		MiniMessage mini = MiniMessage.miniMessage();
+		MiniMessage mini = NeoCore.miniMessage();
 		Title t = Title.title(mini.deserialize(title), mini.deserialize(subtitle), times);
 		p.showTitle(t);
 	}

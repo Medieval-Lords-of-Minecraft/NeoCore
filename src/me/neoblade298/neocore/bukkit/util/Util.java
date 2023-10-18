@@ -19,42 +19,50 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.shared.util.SharedUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 public class Util {
+	private static Component prefix;
 	
+	static {
+		prefix = Component.text("[", NamedTextColor.RED)
+				.append(Component.text("MLMC", NamedTextColor.DARK_RED, TextDecoration.BOLD))
+				.append(Component.text("]", NamedTextColor.RED));
+	}
 	
-	public static void msgGroup(Collection<Player> s, String msg, boolean hasPrefix) {
+	public static void msgGroup(Collection<Player> s, Component msg, boolean hasPrefix) {
 		for (CommandSender sender : s) {
 			msg(sender, msg, hasPrefix);
 		}
 	}
 	
-	public static void msgGroup(Collection<Player> s, String msg) {
+	public static void msgGroup(Collection<Player> s, Component msg) {
 		msgGroup(s, msg, true);
 	}
 	
-	public static void msgGroupRaw(Collection<Player> s, String msg) {
+	public static void msgGroupRaw(Collection<Player> s, Component msg) {
 		msgGroup(s, msg, false);
 	}
 
-	public static void msgRaw(CommandSender s, String msg) {
+	public static void msgRaw(CommandSender s, Component msg) {
 		msg(s, msg, false);
 	}
 
-	public static void msg(CommandSender s, String msg) {
+	public static void msg(CommandSender s, Component msg) {
 		msg(s, msg, true);
 	}
 
-	public static void msg(CommandSender s, String msg, boolean hasPrefix) {
-		if (hasPrefix) {
-			msg = "&4[&c&lMLMC&4] &7" + msg;
-		}
-		s.sendMessage(SharedUtil.translateColors(msg));
+	public static void msg(CommandSender s, Component msg, boolean hasPrefix) {
+		s.sendMessage(hasPrefix ? prefix.append(msg.colorIfAbsent(NamedTextColor.GRAY)) : msg.colorIfAbsent(NamedTextColor.GRAY));
 	}
-
-	public static void msgCentered(CommandSender s, String msg) {
-		s.sendMessage(SharedUtil.center(msg));
+	
+	public static void broadcast(Component msg, boolean hasPrefix) {
+		msg = hasPrefix ? prefix.append(msg.colorIfAbsent(NamedTextColor.GRAY)) : msg.colorIfAbsent(NamedTextColor.GRAY);
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			p.sendMessage(msg);
+		}
 	}
 
 	public static Location stringToLoc(String loc) {
@@ -152,7 +160,7 @@ public class Util {
     	}
     }
 
-	public static void displayError(Player p, String error) {
+	public static void displayError(Player p, Component error) {
 		p.playSound(p, Sound.BLOCK_NOTE_BLOCK_BASS, 1F, 0.7F);
 		Util.msgRaw(p, error);
 	}

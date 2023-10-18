@@ -22,7 +22,6 @@ public class CmdRename extends Subcommand {
 		args.setMin(1);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void run(CommandSender s, String[] args) {
 		Player p = (Player) s;
@@ -34,15 +33,13 @@ public class CmdRename extends Subcommand {
 
 				// Put together rename string
 				String rename = SharedUtil.connectArgs(args);
-
-				rename = SharedUtil.translateColors(rename);
 				
 				if (ChatColor.stripColor(rename).length() > 30 && !p.hasPermission("mycommand.staff")) {
 					p.sendMessage("§4[§c§lMLMC§4] §cName must be less than 30 characters!");
 					return;
 				}
 				
-				meta.setDisplayName(rename);
+				meta.displayName(NeoCore.miniMessage().deserialize(rename));
 				item.setItemMeta(meta);
 				econ.withdrawPlayer(p, RENAME_PRICE);
 				p.sendMessage("§4[§c§lMLMC§4] §7Successfully renamed item!");

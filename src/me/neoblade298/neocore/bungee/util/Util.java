@@ -1,11 +1,9 @@
 package me.neoblade298.neocore.bungee.util;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
@@ -17,7 +15,6 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 
 import me.neoblade298.neocore.bungee.BungeeCore;
-import me.neoblade298.neocore.shared.util.SharedUtil;
 
 public class Util {
 	private static Component prefix;
@@ -43,68 +40,54 @@ public class Util {
 		}
 	};
 	
-	public static void msgGroup(Collection<CommandSource> s, String msg, boolean hasPrefix) {
+	public static void msgGroup(Collection<CommandSource> s, Component msg, boolean hasPrefix) {
 		for (CommandSource sender : s) {
 			msg(sender, msg, hasPrefix);
 		}
 	}
 	
-	public static void msgGroup(Collection<CommandSource> s, String msg) {
+	public static void msgGroup(Collection<CommandSource> s, Component msg) {
 		msgGroup(s, msg, true);
 	}
 	
-	public static void msgGroupRaw(Collection<CommandSource> s, String msg) {
+	public static void msgGroupRaw(Collection<CommandSource> s, Component msg) {
 		msgGroup(s, msg, false);
 	}
 	
-	public static void msgRaw(CommandSource s, String msg) {
+	public static void msgRaw(CommandSource s, Component msg) {
 		msg(s, msg, false);
 	}
 	
-	public static void msg(CommandSource s, String msg) {
+	public static void msg(CommandSource s, Component msg) {
 		msg(s, msg, true);
 	}
 	
-	public static void msg(CommandSource s, String msg, boolean hasPrefix) {
-		if (hasPrefix) {
-			msg = "&4[&c&lMLMC&4] &7" + msg;
-		}
-		s.sendMessage((LegacyComponentSerializer.legacyAmpersand().deserialize(msg)));
+	public static void msg(CommandSource s, Component msg, boolean hasPrefix) {
+		s.sendMessage(hasPrefix ? prefix.append(msg.colorIfAbsent(NamedTextColor.GRAY)) : msg.colorIfAbsent(NamedTextColor.GRAY));
 	}
 	
-	public static void broadcastRaw(String msg) {
+	public static void broadcastRaw(Component msg) {
 		broadcast(msg, false);
 	}
 	
-	public static void broadcast(String msg) {
+	public static void broadcast(Component msg) {
 		broadcast(msg, true);
 	}
 	
-	public static void broadcast(Component cmp, boolean hasPrefix) {
+	public static void broadcast(Component msg, boolean hasPrefix) {
+		msg = hasPrefix ? prefix.append(msg.colorIfAbsent(NamedTextColor.GRAY)) : msg.colorIfAbsent(NamedTextColor.GRAY);
 		for (Player p : BungeeCore.proxy().getAllPlayers()) {
-			p.sendMessage(hasPrefix ? prefix.append(cmp) : cmp);
+			p.sendMessage(msg);
 		}
 	}
 	
-	public static void broadcast(String msg, boolean hasPrefix) {
-		if (hasPrefix) {
-			msg = "&4[&c&lMLMC&4] &7" + msg;
-		}
-		TextComponent cmp = LegacyComponentSerializer.legacyAmpersand().deserialize(msg);
-		for (Player p : BungeeCore.proxy().getAllPlayers()) {
-			p.sendMessage(cmp);
-		}
-	}
-	
-	public static void mutableBroadcast(String tagForMute, String msg) {
+	public static void mutableBroadcast(String tagForMute, Component msg) {
 		mutableBroadcast(tagForMute, msg, true);
 	}
 	
-	public static void mutableBroadcast(String tagForMute, String msg, boolean hasPrefix) {
-		if (hasPrefix) {
-			msg = SharedUtil.translateColors("&4[&c&lMLMC&4] &7" + msg);
-		}
-		BungeeCore.sendPluginMessage(new String[] {"mutablebc", tagForMute,  msg});
+	public static void mutableBroadcast(String tagForMute, Component msg, boolean hasPrefix) {
+		msg = hasPrefix ? prefix.append(msg.colorIfAbsent(NamedTextColor.GRAY)) : msg.colorIfAbsent(NamedTextColor.GRAY);
+		BungeeCore.sendPluginMessage(new String[] {"mutablebc", tagForMute, JSONComponentSerializer.json().serialize(msg)});
 	}
 	
 	public static UUID getUniqueId(String name) {

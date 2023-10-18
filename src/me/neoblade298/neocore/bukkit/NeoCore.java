@@ -41,8 +41,9 @@ import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.io.Section;
 import me.neoblade298.neocore.shared.util.GradientManager;
-import me.neoblade298.neocore.shared.util.SharedUtil;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 
 public class NeoCore extends JavaPlugin implements Listener {
@@ -50,10 +51,12 @@ public class NeoCore extends JavaPlugin implements Listener {
 	private static Economy econ;
 	private static boolean debug;
 	private static PlayerTags ptags;
+	private static MiniMessage mini;
 	
 	// Instance information
 	private static InstanceType instType = InstanceType.TOWNY;
-	private static String instKey, instDisplay;
+	private static String instKey;
+	private static Component instDisplay;
 	
 	private static String welcome;
 	
@@ -61,14 +64,14 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public void onEnable() {
 		inst = this;
-		
+		mini = MiniMessage.miniMessage();
 		
 		// Instance config
 		File instancecfg = new File(this.getDataFolder(), "instance.yml");
 		if (instancecfg.exists()) {
 			YamlConfiguration icfg = YamlConfiguration.loadConfiguration(instancecfg);
 			instKey = icfg.getString("key");
-			instDisplay = SharedUtil.translateColors(icfg.getString("display"));
+			instDisplay = mini.deserialize(icfg.getString("display"));
 			instType = InstanceType.valueOf(icfg.getString("type").toUpperCase());
 		}
 		
@@ -219,7 +222,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		return instKey;
 	}
 	
-	public static String getInstanceDisplay() {
+	public static Component getInstanceDisplay() {
 		return instDisplay;
 	}
 	
@@ -318,5 +321,9 @@ public class NeoCore extends JavaPlugin implements Listener {
 				}
 			}.runTaskLaterAsynchronously(this, 60L);
 		}
+	}
+	
+	public static MiniMessage miniMessage() {
+		return mini;
 	}
 }

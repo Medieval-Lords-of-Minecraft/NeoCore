@@ -10,6 +10,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class MiniMessageManager {
 	private static HashMap<String, Component> messages = new HashMap<String, Component>();
+	private static MiniMessage mini = MiniMessage.miniMessage();
 	
 	public static void reloadBukkit() {
 		messages.clear();
@@ -44,6 +45,6 @@ public class MiniMessageManager {
 	}
 	
 	public static Component parse(String msg) {
-		return MiniMessage.miniMessage().deserialize(msg);
+		return mini.deserialize(msg);
 	}
 }

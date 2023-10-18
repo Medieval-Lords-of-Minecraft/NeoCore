@@ -7,6 +7,9 @@ import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent.Builder;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class CmdIOList extends Subcommand {
 	public CmdIOList(String key, String desc, String perm, SubcommandRunner runner) {
@@ -16,7 +19,12 @@ public class CmdIOList extends Subcommand {
 	@Override
 	public void run(CommandSender s, String[] args) {
 		for (IOComponentWrapper io : PlayerIOManager.getComponents()) {
-			Util.msg(s, "&7- &6" + io.getKey() + " (&e" + io.getPriority() + "&6)", false);
+			Builder b = Component.text();
+			b.content("- ").color(NamedTextColor.GRAY)
+			.append(Component.text(io.getKey() + " (", NamedTextColor.GOLD))
+			.append(Component.text(io.getPriority(), NamedTextColor.YELLOW))
+			.append(Component.text(")", NamedTextColor.GOLD));
+			Util.msg(s, b.build(), false);
 		}
 	}
 }

@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
 import me.neoblade298.neocore.bukkit.util.SkullUtil;
 import me.neoblade298.neocore.shared.util.SharedUtil;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 
 public abstract class CoreInventory {
@@ -49,22 +50,22 @@ public abstract class CoreInventory {
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static ItemStack createButton(ItemStack item, String name, String... lore) {
+	public static ItemStack createButton(ItemStack item, Component name, Component... lore) {
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(SharedUtil.translateColors(name));
-		ArrayList<String> list = new ArrayList<String>();
-		for (String line : lore) {
-			list.add(SharedUtil.translateColors(line));
+		meta.displayName(name);
+		ArrayList<Component> list = new ArrayList<Component>();
+		for (Component line : lore) {
+			list.add(line);
 		}
-		meta.setLore(list);
+		meta.lore(list);
 		item.setItemMeta(meta);
 		return item;
 	}
 	
 	@SuppressWarnings("deprecation")
-	public static ItemStack createButton(ItemStack item, String name, String lore, int pixelsPerLine, ChatColor color) {
+	public static ItemStack createButton(ItemStack item, Component name, Component lore, int pixelsPerLine, ChatColor color) {
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(SharedUtil.translateColors(name));
+		meta.displayName(SharedUtil.translateColors(name));
 		meta.setLore(SharedUtil.addLineBreaks(SharedUtil.translateColors(lore), pixelsPerLine, color));
 		item.setItemMeta(meta);
 		return item;

@@ -18,6 +18,7 @@ import com.google.common.io.ByteStreams;
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.bungee.PluginMessageEvent;
 import me.neoblade298.neocore.bukkit.util.Util;
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 
 public class BungeeListener implements PluginMessageListener, Listener {
 	private static HashMap<UUID, UUID> tpCallbacks = new HashMap<UUID, UUID>();
@@ -61,7 +62,7 @@ public class BungeeListener implements PluginMessageListener, Listener {
 	private void handleMutableBroadcast(String tagForMute, String msg) {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			if (!NeoCore.getNeoCoreTags().exists(tagForMute, p.getUniqueId())) {
-				Util.msg(p, msg, false);
+				Util.msg(p, JSONComponentSerializer.json().deserialize(msg), false);
 			}
 		}
 	}

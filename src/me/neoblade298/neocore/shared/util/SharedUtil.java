@@ -2,7 +2,6 @@ package me.neoblade298.neocore.shared.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,19 +10,12 @@ import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
-import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class SharedUtil {
 	public static final Pattern HEX_PATTERN = Pattern.compile("&(#[A-Fa-f0-9]{6})");
 	private final static int CENTER_PX = 154;
 	
 	public static String center(String msg) {
-		msg = translateColors(msg);
-
 		int messagePxSize = getStringPixels(msg);
 		int halvedMessageSize = messagePxSize / 2;
 		int toCompensate = CENTER_PX - halvedMessageSize;
@@ -57,18 +49,6 @@ public class SharedUtil {
 			}
 		}
 		return messagePxSize;
-	}
-
-	public static String translateColors(String textToTranslate) {
-
-		Matcher matcher = HEX_PATTERN.matcher(textToTranslate);
-		StringBuffer buffer = new StringBuffer();
-
-		while (matcher.find()) {
-			matcher.appendReplacement(buffer, ChatColor.of(matcher.group(1)).toString());
-		}
-
-		return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
 	}
 
 	public static <T extends Comparable<T>> SortedMultiset<T> getTop(Collection<T> list, int num, boolean descending) {
@@ -116,44 +96,6 @@ public class SharedUtil {
 	
 	public static boolean isNumeric(String in) {
 		return StringUtils.isNumeric(in);
-	}
-
-	public static ComponentBuilder createText(String text) {
-		return createText(text, null, null, ClickEvent.Action.RUN_COMMAND);
-	}
-
-	public static ComponentBuilder createText(String text, String hover, String cmd) {
-		return createText(text, hover, cmd, ClickEvent.Action.RUN_COMMAND);
-	}
-	
-	public static ComponentBuilder createText(String text, String hover, String cmd, ClickEvent.Action action) {
-		ComponentBuilder b = new ComponentBuilder(SharedUtil.translateColors(text));
-		if (hover != null) {
-			b.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(SharedUtil.translateColors(hover))));
-		}
-		if (cmd != null) {
-			b.event(new ClickEvent(action, cmd));
-		}
-		return b;
-	}
-
-	public static ComponentBuilder appendText(ComponentBuilder b, String text) {
-		return appendText(b, text, null, null, ClickEvent.Action.RUN_COMMAND);
-	}
-
-	public static ComponentBuilder appendText(ComponentBuilder b, String text, String hover, String cmd) {
-		return appendText(b, text, hover, cmd, ClickEvent.Action.RUN_COMMAND);
-	}
-	
-	public static ComponentBuilder appendText(ComponentBuilder b, String text, String hover, String cmd, ClickEvent.Action action) {
-		b.append(SharedUtil.translateColors(text), FormatRetention.NONE);
-		if (hover != null) {
-			b.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(SharedUtil.translateColors(hover))));
-		}
-		if (cmd != null) {
-			b.event(new ClickEvent(action, cmd));
-		}
-		return b;
 	}
 	
 	public static ArrayList<String> addLineBreaks(String line, int pixelsPerLine, ChatColor color) {

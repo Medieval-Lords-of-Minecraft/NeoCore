@@ -8,6 +8,8 @@ import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class CmdIOEnable extends Subcommand {
 	public CmdIOEnable(String key, String desc, String perm, SubcommandRunner runner) {
@@ -20,11 +22,11 @@ public class CmdIOEnable extends Subcommand {
 		IOType type = IOType.valueOf(args[0].toUpperCase());
 		if (args.length == 1) {
 			PlayerIOManager.enableIO(type);
-			Util.msg(s, "Successfully set " + type + " to enabled.");
+			Util.msg(s, Component.text("Successfully set " + type + " to enabled.", NamedTextColor.GRAY));
 		}
 		else {
 			PlayerIOManager.enableIO(type, args[1]);
-			Util.msg(s, "Successfully set " + type + " to enabled for manager " + args[1] + ".");
+			Util.msg(s, Component.text("Successfully set " + type + " to enabled for manager " + args[1] + ".", NamedTextColor.GRAY));
 		}
 	}
 }

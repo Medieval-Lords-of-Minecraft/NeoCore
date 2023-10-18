@@ -9,13 +9,25 @@ import com.google.common.io.ByteStreams;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.shared.util.SharedUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 
 public class BungeeAPI {
+	private static Component prefix;
+	
+	static {
+		prefix = Component.text("[", NamedTextColor.RED)
+				.append(Component.text("MLMC", NamedTextColor.DARK_RED, TextDecoration.BOLD))
+				.append(Component.text("]", NamedTextColor.RED));
+	}
+	
 	public static void broadcast(String msg) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("Message");
 		out.writeUTF("ALL");
-		out.writeUTF(SharedUtil.translateColors(msg));
+		out.writeUTF(msg);
 
 		Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
 		if (p == null) {
@@ -26,13 +38,13 @@ public class BungeeAPI {
 		p.sendPluginMessage(NeoCore.inst(), "BungeeCord", out.toByteArray());
 	}
 	
-	public static void mutableBroadcast(String tagForMute, String msg) {
+	public static void mutableBroadcast(String tagForMute, Component msg) {
 		mutableBroadcast(tagForMute, msg, true);
 	}
 	
-	public static void mutableBroadcast(String tagForMute, String msg, boolean hasPrefix) {
-		if (hasPrefix) msg = "&4[&c&lMLMC&4] &7" + msg;
-		sendPluginMessage("mutablebc", new String[] { tagForMute, SharedUtil.translateColors(msg) });
+	public static void mutableBroadcast(String tagForMute, Component msg, boolean hasPrefix) {
+		msg = hasPrefix ? prefix.append(msg) : msg;
+		sendPluginMessage("mutablebc", new String[] { tagForMute, JSONComponentSerializer.json().serialize(msg) });
 	}
 	
 	public static void sendPlayer(Player p, String server) {
