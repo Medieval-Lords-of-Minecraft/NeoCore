@@ -15,7 +15,8 @@ import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
 import me.neoblade298.neocore.bukkit.util.SkullUtil;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
 
 public abstract class CoreInventory {
 	protected Inventory inv;
@@ -34,23 +35,23 @@ public abstract class CoreInventory {
 	public Player getPlayer() {
 		return p;
 	}
-	public static ItemStack createButton(String b64, String name, String... lore) {
+	
+	public static ItemStack createButton(String b64, TextComponent name, TextComponent... lore) {
 		ItemStack item = SkullUtil.itemFromBase64(b64);
 		return createButton(item, name, lore);
 	}
 	
-	public static ItemStack createButton(Material mat, String name, String... lore) {
+	public static ItemStack createButton(Material mat, TextComponent name, TextComponent... lore) {
 		ItemStack item = new ItemStack(mat);
 		return createButton(item, name, lore);
 	}
 	
-	public static ItemStack createButton(Material mat, String name, String lore, int pixelsPerLine, ChatColor color) {
+	public static ItemStack createButton(Material mat, TextComponent name, TextComponent lore, int pixelsPerLine, TextColor color) {
 		ItemStack item = new ItemStack(mat);
 		return createButton(item, name, lore, pixelsPerLine, color);
 	}
 	
-	@SuppressWarnings("deprecation")
-	public static ItemStack createButton(ItemStack item, Component name, Component... lore) {
+	public static ItemStack createButton(ItemStack item, TextComponent name, TextComponent... lore) {
 		ItemMeta meta = item.getItemMeta();
 		meta.displayName(name);
 		ArrayList<Component> list = new ArrayList<Component>();
@@ -62,11 +63,10 @@ public abstract class CoreInventory {
 		return item;
 	}
 	
-	@SuppressWarnings("deprecation")
-	public static ItemStack createButton(ItemStack item, Component name, Component lore, int pixelsPerLine, ChatColor color) {
+	public static ItemStack createButton(ItemStack item, TextComponent name, TextComponent lore, int pixelsPerLine, TextColor color) {
 		ItemMeta meta = item.getItemMeta();
-		meta.displayName(SharedUtil.translateColors(name));
-		meta.setLore(SharedUtil.addLineBreaks(SharedUtil.translateColors(lore), pixelsPerLine, color));
+		meta.displayName(name);
+		meta.lore(SharedUtil.addLineBreaks(lore, pixelsPerLine));
 		item.setItemMeta(meta);
 		return item;
 	}

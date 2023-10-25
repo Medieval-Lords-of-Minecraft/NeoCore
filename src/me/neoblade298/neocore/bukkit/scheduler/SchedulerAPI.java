@@ -15,6 +15,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.util.Util;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent.Builder;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class SchedulerAPI {
 	private static final int DAYS_AVAILABLE_IN_SCHEDULER = 3;
@@ -290,48 +293,63 @@ public class SchedulerAPI {
 	public static void display(CommandSender s) {
 		int diff = getDaysFromStartup(Calendar.getInstance());
 		
-		Util.msg(s, "&6-- Scheduled Runnables --");
+		Util.msg(s, Component.text("-- Scheduled Runnables --", NamedTextColor.GOLD));
 		for (Entry<Integer, ArrayList<CoreRunnable>> e : schedule.get(diff).entrySet()) {
 			ArrayList<CoreRunnable> crs = e.getValue();
-			String msg = "&e" + e.getKey() + "&f: &6" + crs.get(0).getKey();
+			Builder b = Component.text().content(e.getKey().toString()).color(NamedTextColor.YELLOW)
+					.append(Component.text(": ", NamedTextColor.WHITE))
+					.append(Component.text(crs.get(0).getKey(), NamedTextColor.GOLD));
 			for (int i = 1; i < crs.size(); i++) {
-				msg += "&7, &6" + crs.get(i).getKey();
+				b.append(Component.text(", ", NamedTextColor.GRAY))
+				.append(Component.text(crs.get(i).getKey(), NamedTextColor.GOLD));
 			}
-			Util.msg(s, msg);
+			Util.msg(s, b.build());
 		}
 
-		Util.msg(s, "&6-- Repeating Runnables --");
+		Util.msg(s, Component.text("&-- Repeating Runnables --", NamedTextColor.GOLD));
 		ArrayList<CoreRunnable> list = repeaters.get(ScheduleInterval.DAILY);
 		if (list.size() != 0) {
-			String msg = "&eDaily&f: &6" + list.get(0).getKey();
+			Builder b = Component.text().content("Daily").color(NamedTextColor.YELLOW)
+					.append(Component.text(": ", NamedTextColor.WHITE))
+					.append(Component.text(list.get(0).getKey(), NamedTextColor.GOLD));
 			for (int i = 1; i < list.size(); i++) {
-				msg += "&7, &6" + list.get(i).getKey();
+				b.append(Component.text(", ", NamedTextColor.GRAY))
+				.append(Component.text(list.get(i).getKey(), NamedTextColor.GOLD));
 			}
-			Util.msg(s, msg);
+			Util.msg(s, b.build());
 		}
 		list = repeaters.get(ScheduleInterval.HOUR);
 		if (list.size() != 0) {
-			String msg = "&eHour&f: &6" + list.get(0).getKey();
+			Builder b = Component.text().content("Hour").color(NamedTextColor.YELLOW)
+					.append(Component.text(": ", NamedTextColor.WHITE))
+					.append(Component.text(list.get(0).getKey(), NamedTextColor.GOLD));
 			for (int i = 1; i < list.size(); i++) {
-				msg += "&7, &6" + list.get(i).getKey();
+				b.append(Component.text(", ", NamedTextColor.GRAY))
+				.append(Component.text(list.get(i).getKey(), NamedTextColor.GOLD));
 			}
-			Util.msg(s, msg);
+			Util.msg(s, b.build());
 		}
 		list = repeaters.get(ScheduleInterval.HALF_HOUR);
 		if (list.size() != 0) {
-			String msg = "&eHalf Hour&f: &6" + list.get(0).getKey();
+			Builder b = Component.text().content("Half Hour").color(NamedTextColor.YELLOW)
+					.append(Component.text(": ", NamedTextColor.WHITE))
+					.append(Component.text(list.get(0).getKey(), NamedTextColor.GOLD));
 			for (int i = 1; i < list.size(); i++) {
-				msg += "&7, &6" + list.get(i).getKey();
+				b.append(Component.text(", ", NamedTextColor.GRAY))
+				.append(Component.text(list.get(i).getKey(), NamedTextColor.GOLD));
 			}
-			Util.msg(s, msg);
+			Util.msg(s, b.build());
 		}
 		list = repeaters.get(ScheduleInterval.FIFTEEN_MINUTES);
 		if (list.size() != 0) {
-			String msg = "&eFifteen Minutes&f: &6" + list.get(0).getKey();
+			Builder b = Component.text().content("Fifteen Minutes").color(NamedTextColor.YELLOW)
+					.append(Component.text(": ", NamedTextColor.WHITE))
+					.append(Component.text(list.get(0).getKey(), NamedTextColor.GOLD));
 			for (int i = 1; i < list.size(); i++) {
-				msg += "&7, &6" + list.get(i).getKey();
+				b.append(Component.text(", ", NamedTextColor.GRAY))
+				.append(Component.text(list.get(i).getKey(), NamedTextColor.GOLD));
 			}
-			Util.msg(s, msg);
+			Util.msg(s, b.build());
 		}
 	}
 	

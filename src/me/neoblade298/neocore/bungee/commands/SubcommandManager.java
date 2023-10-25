@@ -16,10 +16,14 @@ import me.neoblade298.neocore.bungee.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
 public class SubcommandManager implements SimpleCommand {
 	private CommandOverhead overhead;
+	private static Component wrongUser = Component.text("You are the wrong type of user for this command!", NamedTextColor.RED);
+	
 	public static CommandMeta meta(CommandManager mngr, String base, Object plugin) {
         CommandMeta meta = mngr.metaBuilder(base)
             .plugin(plugin)
@@ -52,13 +56,13 @@ public class SubcommandManager implements SimpleCommand {
 		String activePerm = cmd.getPermission() != null ? cmd.getPermission() : overhead.getPermission();
 		
 		if (activePerm != null && !s.hasPermission(activePerm)) {
-			if (!silent) Util.msg(s, "&cYou're missing the permission: " + activePerm);
+			if (!silent) Util.msg(s, Component.text("You're missing the permission: " + activePerm, NamedTextColor.RED));
 			return false;
 		}
 
 		if ((cmd.getRunner() == SubcommandRunner.PLAYER_ONLY && !(s instanceof Player)) ||
 				(cmd.getRunner() == SubcommandRunner.CONSOLE_ONLY && !(s == BungeeCore.proxy().getConsoleCommandSource()))) {
-			if (!silent) Util.msg(s, "&cYou are the wrong type of user for this command!");
+			if (!silent) Util.msg(s, wrongUser);
 			return false;
 		}
 		return true;
@@ -69,14 +73,14 @@ public class SubcommandManager implements SimpleCommand {
 		
 		CommandArguments cargs = cmd.getArgs();
 		if (args.length < cargs.getMin() && cargs.getMin() != -1) {
-			Util.msg(s, "&cThis command requires at least " + cargs.getMin() + " args but received " + args.length + ".");
-			Util.msg(s, "&c" + overhead.getCommandLine(cmd));
+			Util.msg(s, Component.text("This command requires at least " + cargs.getMin() + " args but received " + args.length + ".", NamedTextColor.RED));
+			Util.msg(s, overhead.getCommandLine(cmd));
 			return false;
 		}
 
 		if (args.length > cargs.getMax() && cargs.getMax() != -1) {
-			Util.msg(s, "&cThis command requires at most " + cargs.getMax() + " args but received " + args.length + ".");
-			Util.msg(s, "&c" + overhead.getCommandLine(cmd));
+			Util.msg(s, Component.text("This command requires at most " + cargs.getMax() + " args but received " + args.length + ".", NamedTextColor.RED));
+			Util.msg(s, overhead.getCommandLine(cmd));
 			return false;
 		}
 		

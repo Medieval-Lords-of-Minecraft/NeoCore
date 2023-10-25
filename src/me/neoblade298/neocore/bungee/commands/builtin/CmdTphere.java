@@ -14,6 +14,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class CmdTphere implements SimpleCommand {
+	private static final Component usage = Component.text("Usage: /tphere [player]", NamedTextColor.RED);
+	private static final Component notOnline = Component.text("This player is not online!", NamedTextColor.RED);
 	public static CommandMeta meta(CommandManager mngr, Object plugin) {
         CommandMeta meta = mngr.metaBuilder("tphere")
             .plugin(plugin)
@@ -27,12 +29,12 @@ public class CmdTphere implements SimpleCommand {
 		if ((inv.source() instanceof Player)) {
 			Player trg = (Player) inv.source();
 			if (inv.arguments().length == 0) {
-				inv.source().sendMessage(Component.text("Usage: /tphere [player]").color(NamedTextColor.RED));
+				inv.source().sendMessage(usage);
 			}
 			else {
 				Optional<Player> src = BungeeCore.proxy().getPlayer(inv.arguments()[0]);
 				if (src.isEmpty()) {
-					Util.msg(trg, "&cThis player is not online!");
+					Util.msg(trg, notOnline);
 					return;
 				}
 				CmdTp.executeTeleport(inv.source(), src.get(), trg);

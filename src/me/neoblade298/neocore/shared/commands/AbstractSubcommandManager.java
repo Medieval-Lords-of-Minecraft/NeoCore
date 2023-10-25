@@ -8,6 +8,9 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.StringUtils;
 
 import me.neoblade298.neocore.bukkit.commands.CmdList;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
@@ -81,8 +84,8 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 		return handlers.keySet();
 	}
 	
-	public String getCommandLine(T sc) {
-		String line = (sc.getColor() == null ? "" : sc.getColor()) + "/" + base;
+	public TextComponent getCommandLine(T sc) {
+		String line = "/" + base;
 		
 		// Add subcommand name
 		if (sc.getKey().length() != 0) {
@@ -93,12 +96,17 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 		if (!sc.getArgs().getDisplay().isBlank()) {
 			line += " " + sc.getArgs().getDisplay();
 		}
+
+		Builder b = Component.text().content(line);
+		if (sc.getColor() != null) {
+			b.color(sc.getColor());
+		}
 		
 		// Add description
 		if (sc.getDescription() != null) {
-			line += "§7 - " + sc.getDescription();
+			b.append(Component.text(" - " + sc.getDescription(), NamedTextColor.GRAY));
 		}
-		return line;
+		return b.build();
 	}
 	
 	public String getPermission() {

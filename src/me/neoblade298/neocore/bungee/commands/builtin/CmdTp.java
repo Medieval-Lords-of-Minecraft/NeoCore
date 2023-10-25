@@ -18,17 +18,19 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 // Go back and make the other commands follow SimpleCommand @overrides
 public class CmdTp implements SimpleCommand {
+	private static final Component usage = Component.text("Usage: /tp [player]", NamedTextColor.RED);
+	private static final Component notOnline = Component.text("This player is not online!", NamedTextColor.RED);
 	@Override
 	public void execute(Invocation inv) {
 		if ((inv.source() instanceof Player)) {
 			Player src = (Player) inv.source();
 			if (inv.arguments().length == 0) {
-				src.sendMessage(Component.text("Usage: /tp [player]").color(NamedTextColor.RED));
+				src.sendMessage(usage);
 			}
 			else {
 				Optional<Player> trg = BungeeCore.proxy().getPlayer(inv.arguments()[0]);
 				if (trg.isEmpty()) {
-					Util.msg(src, "&cThis player is not online!");
+					Util.msg(src, notOnline);
 					return;
 				}
 				executeTeleport(inv.source(), src, trg.get());

@@ -12,24 +12,29 @@ import org.bukkit.scheduler.BukkitTask;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.util.Util;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class TeleportAPI implements Listener {
 	private static final int TELEPORT_DELAY = 4; // 4 seconds
 	private static HashMap<Player, ArrayList<BukkitTask>> teleports = new HashMap<Player, ArrayList<BukkitTask>>();
+	private static Component tookDamage = Component.text("Teleport cancelled, you took damage!", NamedTextColor.RED),
+			noMove = Component.text("Teleporting! Don't move for 4s...", NamedTextColor.GRAY),
+			moveError = Component.text("Teleport cancelled, you moved!", NamedTextColor.RED);
 	
 	public void onDamage(EntityDamageEvent e) {
 		if (!(e.getEntity() instanceof Player)) return;
 		Player p = (Player) e.getEntity();
 		
 		if (!teleports.containsKey(p)) return;
-		Util.msg(p, "&cTeleport cancelled, you took damage!");
+		Util.msg(p, tookDamage);
 		cancelTeleport(p);
 	}
 	
 	public static void teleportPlayer(Player p, Location loc) {
 		final Location formerLoc = p.getLocation();
 		ArrayList<BukkitTask> tasks = new ArrayList<BukkitTask>(TELEPORT_DELAY + 1);
-		Util.msg(p, "&7Teleporting! Don't move for 4s...");
+		Util.msg(p, noMove);
 		BukkitTask teleport = new BukkitRunnable() {
 			public void run() {
 				p.teleport(loc);
@@ -48,7 +53,7 @@ public class TeleportAPI implements Listener {
 						if (Math.abs(loc.getX() - formerLoc.getX()) > 1 ||
 								Math.abs(loc.getY() - formerLoc.getY()) > 1 ||
 								Math.abs(loc.getZ() - formerLoc.getZ()) > 1) {
-							Util.msg(p, "&cTeleport cancelled, you moved!");
+							Util.msg(p, moveError);
 							cancelTeleport(p);
 						}
 					}
