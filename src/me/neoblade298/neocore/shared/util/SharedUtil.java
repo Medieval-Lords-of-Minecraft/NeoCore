@@ -11,6 +11,7 @@ import com.google.common.collect.TreeMultiset;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
 
@@ -117,44 +118,57 @@ public class SharedUtil {
 	
 	public static ArrayList<TextComponent> addLineBreaks(TextComponent text, int pixelsPerLine) {
 		ArrayList<TextComponent> list = new ArrayList<TextComponent>();
-		addLineBreaksComponent(text, list, 250, new LineMetadata());
+		LineMetadata data = addLineBreaksComponent(text, list, 250, new LineMetadata());
+		
+		// Put the last item into the line
+		buildString(data.lastWord, data.lastBold, data, list, pixelsPerLine);
+		list.add(Component.text(data.getString(), data.lastColor, data.lastDecor));
 		return list;
 	}
 	
-	private static void addLineBreaksComponent(TextComponent tc, ArrayList<TextComponent> list, int pixelsPerLine, LineMetadata data) {
+	private static LineMetadata addLineBreaksComponent(TextComponent tc, ArrayList<TextComponent> list, int pixelsPerLine, LineMetadata data) {
 		// Get list of text decorations in the component
 		ArrayList<TextDecoration> temp = new ArrayList<TextDecoration>();
 		for (Entry<TextDecoration, State> e : tc.decorations().entrySet()) {
 			if (e.getValue() == State.TRUE) temp.add(e.getKey());
 		}
-		TextDecoration[] decor = new TextDecoration[temp.size()];
+		data.lastDecor = new TextDecoration[temp.size()];
+		data.lastColor = tc.color();
 		int idx = 0;
 		for (TextDecoration d : temp) {
-			decor[idx++] = d;
+			data.lastDecor[idx++] = d;
 		}
 		
 		boolean bold = tc.decoration(TextDecoration.BOLD) == State.TRUE;
-		System.out.println("New component content: " + tc.content());
-		System.out.println("===" + pixelsPerLine);
+		boolean endSpace = tc.content().endsWith(" ");
+		boolean startSpace = tc.content().startsWith(" ");
 		
 		if (!tc.content().isEmpty()) {
-			for (String word : tc.content().split(" ")) {
-				System.out.println("Word: " + word);
-				int pixels = getStringPixels(word, bold);
+			String[] words = tc.content().trim().split(" ");
+			int last = words.length - 1;
+			for (int i = 0; i < words.length; i++) {
+				String word = words[i];
 				
-				if (data.linePixels == 0) {
-					data.b.append(word);
-					data.linePixels += pixels;
-					System.out.println("Word 1: " + data.b.toString() + " " + data.linePixels);
+				if (i == 0 && data.lastWord != null) {
+					if (startSpace) {
+						buildString(data.lastWord, data.lastBold, data, list, pixelsPerLine);
+					}
+					else {
+						word = data.lastWord + word;
+					}
+					data.lastWord = null;
 				}
-				else if (data.linePixels + pixels + FontInfo.getFontInfo(' ').getLength() > pixelsPerLine) {
-					list.add(Component.text(data.getString(), tc.color()));
-					System.out.println("Add line: " + list.get(list.size() - 1));
-					data.linePixels = pixels;
+				
+				if (i == last && !endSpace) {
+					data.lastWord = word;
+					data.lastBold = tc.hasDecoration(TextDecoration.BOLD);
+					break;
 				}
-				else {
-					data.b.append(' ').append(word);
-					data.linePixels += pixels + FontInfo.getFontInfo(' ').getLength();
+
+				buildString(word, bold, data, list, pixelsPerLine);
+				
+				if (i == last) {
+					data.lastWord = word;
 				}
 			}
 		}
@@ -162,11 +176,33 @@ public class SharedUtil {
 		for (Component child : tc.children()) {
 			addLineBreaksComponent((TextComponent) child, list, pixelsPerLine, data);
 		}
+		return data;
+	}
+	
+	private static void buildString(String word, boolean bold, LineMetadata data, ArrayList<TextComponent> list, int pixelsPerLine) {
+		int pixels = getStringPixels(word, bold);
+		if (data.linePixels == 0) {
+			data.linePixels += pixels;
+		}
+		else if (data.linePixels + pixels + FontInfo.getFontInfo(' ').getLength() > pixelsPerLine) {
+			list.add(Component.text(data.getString(), data.lastColor, data.lastDecor));
+			data.linePixels = pixels;
+		}
+		else {
+			data.b.append(' ');
+			data.linePixels += pixels + FontInfo.getFontInfo(' ').getLength();
+		}
+		
+		data.b.append(word);
 	}
 	
 	public static class LineMetadata {
 		private StringBuilder b = new StringBuilder();
 		private int linePixels = 0;
+		private TextDecoration[] lastDecor;
+		private TextColor lastColor;
+		private String lastWord;
+		private boolean lastBold;
 		
 		public LineMetadata() {}
 		
