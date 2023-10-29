@@ -45,6 +45,10 @@ public class Util {
 	public static void msgGroupRaw(Collection<Player> s, Component msg) {
 		msgGroup(s, msg, false);
 	}
+	
+	public static void msgRaw(CommandSender s, String msg) {
+		msg(s, Component.text(msg));
+	}
 
 	public static void msgRaw(CommandSender s, Component msg) {
 		msg(s, msg, false);
@@ -54,8 +58,16 @@ public class Util {
 		msg(s, msg, true);
 	}
 
+	public static void msg(CommandSender s, String msg) {
+		msg(s, Component.text(msg), true);
+	}
+
 	public static void msg(CommandSender s, Component msg, boolean hasPrefix) {
 		s.sendMessage(hasPrefix ? prefix.append(msg.colorIfAbsent(NamedTextColor.GRAY)) : msg.colorIfAbsent(NamedTextColor.GRAY));
+	}
+	
+	public static void broadcast(String msg, boolean hasPrefix) {
+		broadcast(Component.text(msg), hasPrefix);
 	}
 	
 	public static void broadcast(Component msg, boolean hasPrefix) {
