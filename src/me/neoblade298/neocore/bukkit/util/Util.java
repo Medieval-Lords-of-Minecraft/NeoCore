@@ -160,9 +160,9 @@ public class Util {
     	}
     }
 
-	public static void displayError(Player p, Component error) {
+	public static void displayError(Player p, String error) {
 		p.playSound(p, Sound.BLOCK_NOTE_BLOCK_BASS, 1F, 0.7F);
-		Util.msgRaw(p, error);
+		Util.msgRaw(p, Component.text(error, NamedTextColor.RED));
 	}
 	
 }

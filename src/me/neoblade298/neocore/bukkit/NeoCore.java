@@ -41,9 +41,7 @@ import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.io.Section;
 import me.neoblade298.neocore.shared.util.GradientManager;
-import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
@@ -63,14 +61,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 	private static String welcome;
 	
 	public static Random gen = new Random();
-	
-	public static void main(String[] args) {
-		TextComponent tc = (TextComponent) MiniMessage.miniMessage().deserialize("<color:#75ff4f>Lorem ipsum dolor sit amet,<b> consectetur adipi<color:#a8ff66>scing elit. Fusce congue enim vitae diam m</b>ollis volutpat. Duis</color> sed felis a lacus congue laoreet at vitae felis. Donec<b> v<i>estibulum molestie nunc sed hendrerit. Donec a dignissim est. Phasellus sit amet sem nec risus tincidunt pretium vitae malesuad<color:#52ff5a>a nisi. Sed interdum nunc e<color:#ff69c5>u magna po<color:#ff461c>rttitor pellentes</color>que. Nullam c</color>onvallis metus vitae sodales fini</color>bus. Etiam semper eu nulla vitae imperdiet. Done<b>c consectetur, ipsum n</b>ec ornare in</b>terdum");
-		
-		for (TextComponent c : SharedUtil.addLineBreaks(tc, 200)) {
-			System.out.println("Line: " + c.content());
-		}
-	}
 	
 	public void onEnable() {
 		inst = this;
