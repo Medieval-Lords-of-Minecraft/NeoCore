@@ -46,6 +46,11 @@ public abstract class CoreInventory {
 		return createButton(item, name, lore);
 	}
 	
+	public static ItemStack createButton(Material mat, TextComponent name, String lore, int pixelsPerLine, TextColor color) {
+		ItemStack item = new ItemStack(mat);
+		return createButton(item, name, Component.text(lore), pixelsPerLine, color);
+	}
+	
 	public static ItemStack createButton(Material mat, TextComponent name, TextComponent lore, int pixelsPerLine, TextColor color) {
 		ItemStack item = new ItemStack(mat);
 		return createButton(item, name, lore, pixelsPerLine, color);
@@ -66,7 +71,7 @@ public abstract class CoreInventory {
 	public static ItemStack createButton(ItemStack item, TextComponent name, TextComponent lore, int pixelsPerLine, TextColor color) {
 		ItemMeta meta = item.getItemMeta();
 		meta.displayName(name);
-		meta.lore(SharedUtil.addLineBreaks(lore, pixelsPerLine));
+		meta.lore(SharedUtil.addLineBreaks(lore.colorIfAbsent(color), pixelsPerLine));
 		item.setItemMeta(meta);
 		return item;
 	}
