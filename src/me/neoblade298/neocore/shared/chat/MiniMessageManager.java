@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bungee.BungeeCore;
+import me.neoblade298.neocore.shared.io.Config;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -34,6 +35,15 @@ public class MiniMessageManager {
 	
 	public static Component get(String key) {
 		return messages.get(key);
+	}
+	
+	public static Component parseFromYaml(Config cfg, String key) {
+		if (cfg.isType(key, String.class)) {
+			return parse(cfg.getString(key));
+		}
+		else {
+			return parse(cfg.getStringList(key));
+		}
 	}
 	
 	public static Component parse(List<String> msgs) {

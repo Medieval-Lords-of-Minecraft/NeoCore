@@ -176,5 +176,4 @@ public class Util {
 		p.playSound(p, Sound.BLOCK_NOTE_BLOCK_BASS, 1F, 0.7F);
 		Util.msgRaw(p, Component.text(error, NamedTextColor.RED));
 	}
-	
 }

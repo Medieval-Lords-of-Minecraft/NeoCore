@@ -1,5 +1,7 @@
 package me.neoblade298.neocore.bungee.util;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -13,11 +15,12 @@ import com.alessiodp.lastloginapi.api.LastLogin;
 import com.alessiodp.lastloginapi.api.interfaces.LastLoginPlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-
 import me.neoblade298.neocore.bungee.BungeeCore;
 
 public class Util {
 	private static Component prefix;
+	private static final Sound errorSound = 
+			Sound.sound(Key.key("block.note_block.bass"), Sound.Source.MUSIC, 1f, 0.7f);
 	
 	static {
 		prefix = Component.text("[", NamedTextColor.RED)
@@ -98,5 +101,10 @@ public class Util {
 	
 	public static String getUsername(UUID uuid) {
 		return LastLogin.getApi().getPlayer(uuid).getName();
+	}
+
+	public static void displayError(Player p, String error) {
+		p.playSound(errorSound);
+		Util.msgRaw(p, Component.text(error, NamedTextColor.RED));
 	}
 }
