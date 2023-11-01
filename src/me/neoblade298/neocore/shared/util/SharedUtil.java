@@ -14,10 +14,12 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class SharedUtil {
 	public static final Pattern HEX_PATTERN = Pattern.compile("&(#[A-Fa-f0-9]{6})");
 	private final static int CENTER_PX = 154;
+	private static final MiniMessage mini = MiniMessage.miniMessage();
 	
 	public static String center(String msg) {
 		int messagePxSize = getStringPixels(msg, false);
@@ -211,5 +213,9 @@ public class SharedUtil {
 			b = new StringBuilder();
 			return str;
 		}
+	}
+	
+	public static Component color(String msg) {
+		return mini.deserialize(msg);
 	}
 }
