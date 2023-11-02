@@ -38,7 +38,7 @@ public class Section {
 	}
 	
 	public int getInt(String key, int def) {
-		if (map == null) return 0;
+		if (map == null) return def;
 		if (!map.containsKey(key)) {
 			return def;
 		}
@@ -54,11 +54,27 @@ public class Section {
 	}
 	
 	public double getDouble(String key, double def) {
-		if (map == null) return 0;
+		if (map == null) return def;
 		if (!map.containsKey(key)) {
 			return def;
 		}
 		return map.get(key) instanceof Double ? (double) map.get(key) : ((Integer) map.get(key)).doubleValue();
+	}
+	
+	public boolean getBoolean(String key) {
+		if (map == null) return false;
+		if (!map.containsKey(key)) {
+			return false;
+		}
+		return (boolean) map.get(key);
+	}
+	
+	public boolean getBoolean(String key, boolean def) {
+		if (map == null) return def;
+		if (!map.containsKey(key)) {
+			return def;
+		}
+		return (boolean) map.get(key);
 	}
 	
 	public String getString(String key) {
@@ -70,7 +86,7 @@ public class Section {
 	}
 	
 	public String getString(String key, String def) {
-		if (map == null) return null;
+		if (map == null) return def;
 		if (!map.containsKey(key)) {
 			return def;
 		}
