@@ -11,6 +11,8 @@ import com.google.common.collect.TreeMultiset;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
@@ -217,5 +219,16 @@ public class SharedUtil {
 	
 	public static Component color(String msg) {
 		return mini.deserialize(msg);
+	}
+	
+	public static Component createText(String text, String hover, ClickEvent click) {
+		Component c = SharedUtil.color(text);
+		if (hover != null) {
+			c = c.hoverEvent(HoverEvent.showText(SharedUtil.color(hover)));
+		}
+		if (click != null) {
+			c = c.clickEvent(click);
+		}
+		return c;
 	}
 }
