@@ -57,8 +57,16 @@ public class Util {
 		msgGroup(s, msg, false);
 	}
 	
+	public static void msgRaw(CommandSource s, String msg) {
+		msg(s, BungeeCore.miniMessage().deserialize(msg), false);
+	}
+	
 	public static void msgRaw(CommandSource s, Component msg) {
 		msg(s, msg, false);
+	}
+	
+	public static void msg(CommandSource s, String msg) {
+		msg(s, BungeeCore.miniMessage().deserialize(msg), true);
 	}
 	
 	public static void msg(CommandSource s, Component msg) {

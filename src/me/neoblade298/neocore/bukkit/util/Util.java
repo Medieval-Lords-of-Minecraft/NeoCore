@@ -47,7 +47,7 @@ public class Util {
 	}
 	
 	public static void msgRaw(CommandSender s, String msg) {
-		msg(s, Component.text(msg));
+		msg(s, NeoCore.miniMessage().deserialize(msg), false);
 	}
 
 	public static void msgRaw(CommandSender s, Component msg) {
@@ -59,7 +59,7 @@ public class Util {
 	}
 
 	public static void msg(CommandSender s, String msg) {
-		msg(s, Component.text(msg), true);
+		msg(s, NeoCore.miniMessage().deserialize(msg), true);
 	}
 
 	public static void msg(CommandSender s, Component msg, boolean hasPrefix) {
