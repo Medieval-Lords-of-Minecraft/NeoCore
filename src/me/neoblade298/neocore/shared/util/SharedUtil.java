@@ -231,4 +231,15 @@ public class SharedUtil {
 		}
 		return c;
 	}
+	
+	public static Component createText(String text, Component hover, ClickEvent click) {
+		Component c = SharedUtil.color(text);
+		if (hover != null) {
+			c = c.hoverEvent(HoverEvent.showText(hover));
+		}
+		if (click != null) {
+			c = c.clickEvent(click);
+		}
+		return c;
+	}
 }
