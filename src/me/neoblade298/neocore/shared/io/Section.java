@@ -114,6 +114,15 @@ public class Section {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<Integer> getIntList(String key) {
+		if (map == null) return null;
+		if (!map.containsKey(key)) {
+			return null;
+		}
+		return (List<Integer>) map.get(key);
+	}
+	
+	@SuppressWarnings("unchecked")
 	public Section getSection(String key) {
 		if (map == null) return null;
 		if (map.get(key) == null) {
