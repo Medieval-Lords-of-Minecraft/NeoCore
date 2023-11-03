@@ -7,6 +7,7 @@ import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.shared.io.Config;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class MiniMessageManager {
@@ -47,11 +48,11 @@ public class MiniMessageManager {
 	}
 	
 	public static Component parse(List<String> msgs) {
-		String msg = "";
+		Builder b = Component.text();
 		for (String m : msgs) {
-			msg += m;
+			b.append(parse(m));
 		}
-		return parse(msg);
+		return b.build();
 	}
 	
 	public static Component parse(String msg) {
