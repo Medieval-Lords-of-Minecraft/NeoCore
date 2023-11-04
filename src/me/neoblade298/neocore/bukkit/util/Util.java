@@ -27,9 +27,9 @@ public class Util {
 	private static Component prefix;
 	
 	static {
-		prefix = Component.text("[", NamedTextColor.RED)
-				.append(Component.text("MLMC", NamedTextColor.DARK_RED, TextDecoration.BOLD))
-				.append(Component.text("]", NamedTextColor.RED));
+		prefix = Component.text("[", NamedTextColor.DARK_RED)
+				.append(Component.text("MLMC", NamedTextColor.RED, TextDecoration.BOLD))
+				.append(Component.text("]")).appendSpace();
 	}
 	
 	public static void msgGroup(Collection<Player> s, Component msg, boolean hasPrefix) {

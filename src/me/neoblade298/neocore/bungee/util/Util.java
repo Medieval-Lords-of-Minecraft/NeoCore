@@ -23,9 +23,9 @@ public class Util {
 			Sound.sound(Key.key("block.note_block.bass"), Sound.Source.MUSIC, 1f, 0.7f);
 	
 	static {
-		prefix = Component.text("[", NamedTextColor.RED)
-				.append(Component.text("MLMC", NamedTextColor.DARK_RED, TextDecoration.BOLD))
-				.append(Component.text("]", NamedTextColor.RED));
+		prefix = Component.text("[", NamedTextColor.DARK_RED)
+				.append(Component.text("MLMC", NamedTextColor.RED, TextDecoration.BOLD))
+				.append(Component.text("]")).appendSpace();
 	}
 	
 	private static Comparator<LastLoginPlayer> comp = new Comparator<LastLoginPlayer>() {
