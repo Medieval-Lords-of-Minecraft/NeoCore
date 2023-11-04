@@ -113,7 +113,7 @@ public class SubcommandManager implements SimpleCommand {
 		CommandSource s = inv.source();
 		String[] args = inv.arguments();
 		if (!(s instanceof Player)) return Collections.emptyList(); // Only player senders can use tab complete
-		
+		if (args.length == 0) return Collections.emptyList();
 		if (overhead.getPermission() != null && !s.hasPermission(overhead.getPermission())) return Collections.emptyList();
 		
 		if (args.length == 1) {
