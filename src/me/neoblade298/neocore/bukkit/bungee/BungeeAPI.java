@@ -12,6 +12,7 @@ import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 
 public class BungeeAPI {
@@ -25,9 +26,9 @@ public class BungeeAPI {
 	
 	public static void broadcast(String msg) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("Message");
+		out.writeUTF("MessageRaw");
 		out.writeUTF("ALL");
-		out.writeUTF(msg);
+		out.writeUTF(GsonComponentSerializer.gson().serialize(NeoCore.miniMessage().deserialize(msg)));
 
 		Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
 		if (p == null) {

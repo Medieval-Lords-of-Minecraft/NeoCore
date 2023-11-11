@@ -10,6 +10,6 @@ public class EssentialsListener implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onAfkChange(AfkStatusChangeEvent e) {
-		BungeeAPI.broadcast("&7* " + e.getAffected().getName() + (e.getValue() ? " is now AFK" : " is no longer AFK"));
+		BungeeAPI.broadcast("<gray>* " + e.getAffected().getName() + (e.getValue() ? " is now AFK" : " is no longer AFK"));
 	}
 }

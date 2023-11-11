@@ -2,6 +2,7 @@ package me.neoblade298.neocore.bukkit;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
@@ -41,8 +42,12 @@ import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
 import me.neoblade298.neocore.shared.io.Section;
 import me.neoblade298.neocore.shared.util.GradientManager;
+import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 
@@ -61,6 +66,17 @@ public class NeoCore extends JavaPlugin implements Listener {
 	private static String welcome;
 	
 	public static Random gen = new Random();
+	public static void main(String[] args) {
+		Style s = Style.empty();
+		TextComponent a = Component.text("a").style(s);
+		TextComponent b = Component.text("b", NamedTextColor.BLUE);
+		System.out.println(a.style().merge(b.style()));
+		/*TextComponent c = (TextComponent) MiniMessage.miniMessage().deserialize("<gray>5<i>0% </i>chance to arrive at a campfire, <yellow>50% </yellow>chance to encounter a fight");
+		System.out.println(c);
+		for (Component child : c.children()) {
+			System.out.println(child);
+		}*/
+	}
 	
 	public void onEnable() {
 		inst = this;

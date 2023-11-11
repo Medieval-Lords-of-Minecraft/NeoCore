@@ -3,6 +3,7 @@ package me.neoblade298.neocore.shared.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,8 +12,11 @@ import com.google.common.collect.TreeMultiset;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.Style.Merge.Strategy;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
@@ -38,6 +42,7 @@ public class SharedUtil {
 	}
 	
 	public static int getStringPixels(String msg, boolean isBold) {
+		if (msg == null) return 0;
 		int messagePxSize = 0;
 
 		for (char c : msg.toCharArray()) {
@@ -95,7 +100,7 @@ public class SharedUtil {
 		return StringUtils.isNumeric(in);
 	}
 	
-	public static ArrayList<String> addLineBreaks(String line, int pixelsPerLine) {
+	private static ArrayList<String> addLineBreaks(String line, int pixelsPerLine) {
 		ArrayList<String> lines = new ArrayList<String>();
 		String[] words = line.split(" ");
 		String curr = "";
@@ -121,99 +126,98 @@ public class SharedUtil {
 	}
 	
 	public static ArrayList<TextComponent> addLineBreaks(TextComponent text, int pixelsPerLine) {
-		ArrayList<TextComponent> list = new ArrayList<TextComponent>();
-		LineMetadata data = addLineBreaksComponent(text, list, 250, new LineMetadata());
-		
-		// Put the last item into the line
-		buildString(data.lastWord, data.lastBold, data, list, pixelsPerLine);
-		list.add(Component.text(data.getString(), data.lastColor, data.lastDecor));
-		return list;
+		LoreBuilder b = new LoreBuilder(pixelsPerLine);
 	}
 	
-	private static LineMetadata addLineBreaksComponent(TextComponent tc, ArrayList<TextComponent> list, int pixelsPerLine, LineMetadata data) {
-		// Get list of text decorations in the component
-		ArrayList<TextDecoration> temp = new ArrayList<TextDecoration>();
-		for (Entry<TextDecoration, State> e : tc.decorations().entrySet()) {
-			if (e.getValue() == State.TRUE) temp.add(e.getKey());
+	private static void addLineBreaksHelper(TextComponent text, LoreBuilder b) {
+		b.addStyleLayer(textye
+			);
+		addContent(text.content(), b);
+	}
+	
+	private static void addContent(String content, LoreBuilder b) {
+		for (char c : content.toCharArray()) {
+			b.addChar(c);
 		}
-		data.lastDecor = new TextDecoration[temp.size()];
-		data.lastColor = tc.color();
-		int idx = 0;
-		for (TextDecoration d : temp) {
-			data.lastDecor[idx++] = d;
+	}
+	
+	protected static class LoreBuilder {
+		private StringBuilder b = new StringBuilder();
+		private Stack<Style> parents = new Stack<Style>();
+		private ArrayList<TextComponent> list = new ArrayList<TextComponent>();
+		private Style currStyle;
+		private TextComponent lineComponent;
+		private int pixelsPerLine, linePixels = 0;
+		private boolean isBold;
+		
+		protected LoreBuilder(int pixelsPerLine) {
+			this.pixelsPerLine = pixelsPerLine;
+			startNewComponent();
 		}
 		
-		boolean bold = tc.decoration(TextDecoration.BOLD) == State.TRUE;
-		boolean endSpace = tc.content().endsWith(" ");
-		boolean startSpace = tc.content().startsWith(" ");
+		public void addStyleLayer(Component c) {
+			parents.push(c.style());
+			updateStyle();
+		}
 		
-		if (!tc.content().isEmpty()) {
-			String[] words = tc.content().trim().split(" ");
-			int last = words.length - 1;
-			for (int i = 0; i < words.length; i++) {
-				String word = words[i];
-				
-				if (i == 0 && data.lastWord != null) {
-					if (startSpace) {
-						buildString(data.lastWord, data.lastBold, data, list, pixelsPerLine);
-					}
-					else {
-						word = data.lastWord + word;
-					}
-					data.lastWord = null;
-				}
-				
-				if (i == last && !endSpace) {
-					data.lastWord = word;
-					data.lastBold = tc.hasDecoration(TextDecoration.BOLD);
-					break;
-				}
-
-				buildString(word, bold, data, list, pixelsPerLine);
-				
-				if (i == last) {
-					data.lastWord = word;
-				}
+		public void removeStyleLayer() {
+			parents.pop();
+			updateStyle();
+		}
+		
+		public ArrayList<TextComponent> finish() {
+			endCurrentComponent();
+			list.add(lineComponent);
+			return list;
+		}
+		
+		private void updateStyle() {
+			currStyle = Style.empty();
+			for (Style s : parents) {
+				currStyle = currStyle.merge(s);
 			}
 		}
 		
-		for (Component child : tc.children()) {
-			addLineBreaksComponent((TextComponent) child, list, pixelsPerLine, data);
-		}
-		return data;
-	}
-	
-	private static void buildString(String word, boolean bold, LineMetadata data, ArrayList<TextComponent> list, int pixelsPerLine) {
-		int pixels = getStringPixels(word, bold);
-		if (data.linePixels == 0) {
-			data.linePixels += pixels;
-		}
-		else if (data.linePixels + pixels + FontInfo.getFontInfo(' ').getLength() > pixelsPerLine) {
-			list.add(Component.text(data.getString(), data.lastColor, data.lastDecor));
-			data.linePixels = pixels;
-		}
-		else {
-			data.b.append(' ');
-			data.linePixels += pixels + FontInfo.getFontInfo(' ').getLength();
+		public void replaceTopStyleLayer(Style s) {
+			parents.pop();
+			parents.push(s);
+			updateStyle();
+
+			startNewComponent();
 		}
 		
-		data.b.append(word);
-	}
-	
-	public static class LineMetadata {
-		private StringBuilder b = new StringBuilder();
-		private int linePixels = 0;
-		private TextDecoration[] lastDecor;
-		private TextColor lastColor;
-		private String lastWord;
-		private boolean lastBold;
+		public void addChar(char c) {
+			FontInfo info = FontInfo.getFontInfo(c);
+			linePixels += isBold ? info.getBoldLength() : info.getLength();
+			
+			if (c == ' ') {
+				// If we need a new line now
+				if (linePixels > pixelsPerLine) {
+					startNewLine();
+				}
+				return;
+			}
+			
+			b.append(c);
+		}
 		
-		public LineMetadata() {}
+		private void startNewComponent() {
+			if (b.isEmpty()) return;
+			endCurrentComponent();
+			Builder b = Component.text();
+			lineComponent = b.build();
+		}
 		
-		public String getString() {
-			String str = b.toString();
-			b = new StringBuilder();
-			return str;
+		private void startNewLine() {
+			endCurrentComponent();
+			list.add(lineComponent);
+			startNewComponent();
+			linePixels = 0;
+		}
+		
+		private void endCurrentComponent() {
+			TextComponent txt = Component.text().content(b.toString()).style(currStyle).build();
+			lineComponent.append(txt);
 		}
 	}
 	
