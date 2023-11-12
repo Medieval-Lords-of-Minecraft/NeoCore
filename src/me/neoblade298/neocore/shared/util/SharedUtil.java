@@ -2,7 +2,6 @@ package me.neoblade298.neocore.shared.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
@@ -12,14 +11,9 @@ import com.google.common.collect.TreeMultiset;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.Style.Merge.Strategy;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.format.TextDecoration.State;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class SharedUtil {
@@ -100,45 +94,25 @@ public class SharedUtil {
 		return StringUtils.isNumeric(in);
 	}
 	
-	private static ArrayList<String> addLineBreaks(String line, int pixelsPerLine) {
-		ArrayList<String> lines = new ArrayList<String>();
-		String[] words = line.split(" ");
-		String curr = "";
-		int linePixels = 0;
-		for (String word : words) {
-			int pixels = getStringPixels(word, false); // Doesn't support bold
-			if (linePixels == 0) {
-				curr += word;
-				linePixels += pixels;
-			}
-			else if (linePixels + pixels + FontInfo.getFontInfo(' ').getLength() > pixelsPerLine) {
-				lines.add(curr);
-				curr = word;
-				linePixels = pixels;
-			}
-			else {
-				curr += " " + word;
-				linePixels += pixels + FontInfo.getFontInfo(' ').getLength();
-			}
-		}
-		lines.add(curr);
-		return lines;
-	}
-	
 	public static ArrayList<TextComponent> addLineBreaks(TextComponent text, int pixelsPerLine) {
 		LoreBuilder b = new LoreBuilder(pixelsPerLine);
+		addLineBreaksHelper(text, b);
+		return b.finish();
 	}
 	
 	private static void addLineBreaksHelper(TextComponent text, LoreBuilder b) {
-		b.addStyleLayer(textye
-			);
-		addContent(text.content(), b);
-	}
-	
-	private static void addContent(String content, LoreBuilder b) {
-		for (char c : content.toCharArray()) {
+		b.pushStyle(text);
+		
+		b.startNewComponent(text);
+		for (char c : text.content().toCharArray()) {
 			b.addChar(c);
 		}
+		b.endCurrentComponent();
+		
+		for (Component c : text.children()) {
+			addLineBreaksHelper((TextComponent) c, b);
+		}
+		b.popStyle(text);
 	}
 	
 	protected static class LoreBuilder {
@@ -152,22 +126,13 @@ public class SharedUtil {
 		
 		protected LoreBuilder(int pixelsPerLine) {
 			this.pixelsPerLine = pixelsPerLine;
-			startNewComponent();
-		}
-		
-		public void addStyleLayer(Component c) {
-			parents.push(c.style());
-			updateStyle();
-		}
-		
-		public void removeStyleLayer() {
-			parents.pop();
-			updateStyle();
+			lineComponent = Component.text().build();
 		}
 		
 		public ArrayList<TextComponent> finish() {
-			endCurrentComponent();
-			list.add(lineComponent);
+			if (linePixels == 0) return list;
+
+			endLine();
 			return list;
 		}
 		
@@ -178,14 +143,6 @@ public class SharedUtil {
 			}
 		}
 		
-		public void replaceTopStyleLayer(Style s) {
-			parents.pop();
-			parents.push(s);
-			updateStyle();
-
-			startNewComponent();
-		}
-		
 		public void addChar(char c) {
 			FontInfo info = FontInfo.getFontInfo(c);
 			linePixels += isBold ? info.getBoldLength() : info.getLength();
@@ -193,31 +150,46 @@ public class SharedUtil {
 			if (c == ' ') {
 				// If we need a new line now
 				if (linePixels > pixelsPerLine) {
-					startNewLine();
+					endLine();
+					return;
 				}
-				return;
 			}
 			
 			b.append(c);
 		}
 		
-		private void startNewComponent() {
-			if (b.isEmpty()) return;
-			endCurrentComponent();
-			Builder b = Component.text();
-			lineComponent = b.build();
+		public void pushStyle(Component c) {
+			parents.push(c.style());
+			updateStyle();
 		}
 		
-		private void startNewLine() {
-			endCurrentComponent();
-			list.add(lineComponent);
-			startNewComponent();
-			linePixels = 0;
+		public void popStyle(Component c) {
+			parents.pop();
+			updateStyle();
+		}
+		
+		public void startNewComponent(Component c) {
+			b = new StringBuilder();
 		}
 		
 		private void endCurrentComponent() {
 			TextComponent txt = Component.text().content(b.toString()).style(currStyle).build();
-			lineComponent.append(txt);
+			b = new StringBuilder();
+			lineComponent = lineComponent.append(txt);
+		}
+		
+		private void endLine() {
+			// Append last line in builder
+			TextComponent txt = Component.text().content(b.toString()).build();
+			lineComponent = lineComponent.append(txt);
+			
+			// Create new line in list
+			list.add(lineComponent);
+			
+			// Restart builder
+			b = new StringBuilder();
+			lineComponent = Component.text().build();
+			linePixels = 0;
 		}
 	}
 	
