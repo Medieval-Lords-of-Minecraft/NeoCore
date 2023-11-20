@@ -65,13 +65,13 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		CommandArguments cargs = cmd.getArgs();
 		if (args.length < cargs.getMin() && cargs.getMin() != -1) {
 			s.sendMessage("§cThis command requires at least " + cargs.getMin() + " args but received " + args.length + ".");
-			s.sendMessage("§c" + getCommandLine(cmd));
+			s.sendMessage(getCommandLine(cmd));
 			return false;
 		}
 		
 		if (args.length > cargs.getMax() && cargs.getMax() != -1) {
 			s.sendMessage("§cThis command requires at most " + cargs.getMax() + " args but received " + args.length + ".");
-			s.sendMessage("§c" + getCommandLine(cmd));
+			s.sendMessage(getCommandLine(cmd));
 			return false;
 		}
 		
