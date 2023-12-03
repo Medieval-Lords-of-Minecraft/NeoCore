@@ -1,10 +1,7 @@
 package me.neoblade298.neocore.bukkit.particles;
 
 import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class Rectangle extends ParticleShape {
@@ -40,24 +37,24 @@ public class Rectangle extends ParticleShape {
 	}
 	
 	@Override
-	public void draw(Player p, boolean showAllPlayers, Particle part, DustOptions options) {
+	public void draw(ParticleContainer container) {
 		Location left = bottomLeft.clone();
 		for (int i = 0; i < heightIterations; i++) {
 			Location right = left.clone().add(vIterWidth);
-			ParticleUtil.drawLine(p, left, right, part, showAllPlayers, 1, 0, 0, blocksPerParticle, options);
+			ParticleUtil.drawLine(container, left, right, blocksPerParticle);
 			left.add(vIterHeight);
 		}
 	}
 	
 	@Override
-	public void drawEdges(Player p, boolean showAllPlayers, Particle part, DustOptions options) {
+	public void drawEdges(ParticleContainer container) {
 		Location bl = bottomLeft.clone();
 		Location br = bl.clone().add(vWidth);
 		Location tl = bl.clone().add(vHeight);
 		Location tr = tl.clone().add(vWidth);
-		ParticleUtil.drawLine(p, bl, br, part, showAllPlayers, 1, 0, 0, blocksPerParticle, options);
-		ParticleUtil.drawLine(p, br, tr, part, showAllPlayers, 1, 0, 0, blocksPerParticle, options);
-		ParticleUtil.drawLine(p, tr, tl, part, showAllPlayers, 1, 0, 0, blocksPerParticle, options);
-		ParticleUtil.drawLine(p, tl, bl, part, showAllPlayers, 1, 0, 0, blocksPerParticle, options);
+		ParticleUtil.drawLine(container, bl, br, blocksPerParticle);
+		ParticleUtil.drawLine(container, br, tr, blocksPerParticle);
+		ParticleUtil.drawLine(container, tr, tl, blocksPerParticle);
+		ParticleUtil.drawLine(container, tl, bl, blocksPerParticle);
 	}
 }

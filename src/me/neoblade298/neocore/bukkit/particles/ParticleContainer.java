@@ -11,32 +11,44 @@ public class ParticleContainer {
 	private Particle particle;
 	private boolean showAllPlayers;
 	private int count;
-	private double offsetX, offsetY, offsetZ, speed;
+	private double offsetXZ, offsetY, speed;
 	private BlockData blockData;
 	private DustOptions dustOptions;
 	
-	public ParticleContainer(Particle particle, Player audience, boolean showAllPlayers, int count) {
+	public ParticleContainer(Particle particle, Player audience, boolean showAllPlayers) {
 		this.particle = particle;
 		this.audience = audience;
 		this.showAllPlayers = showAllPlayers;
+	}
+	
+	public ParticleContainer clone() {
+		ParticleContainer pc = new ParticleContainer(particle, audience, showAllPlayers);
+		pc.setCount(count);
+		pc.setOffset(offsetXZ, offsetY);
+		pc.setSpeed(speed);
+		pc.setBlockData(blockData);
+		pc.setDustOptions(dustOptions);
+		return pc;
+	}
+	
+	public void setCount(int count) {
 		this.count = count;
 	}
 	
-	public void setup(double offsetX, double offsetY, double offsetZ) {
-		this.offsetX = offsetX;
+	public void setOffset(double offsetXZ, double offsetY) {
+		this.offsetXZ = offsetXZ;
 		this.offsetY = offsetY;
-		this.offsetZ = offsetZ;
 	}
 	
-	public void setup(double speed) {
+	public void setSpeed(double speed) {
 		this.speed = speed;
 	}
 	
-	public void setup(BlockData blockData) {
+	public void setBlockData(BlockData blockData) {
 		this.blockData = blockData;
 	}
 	
-	public void setup(DustOptions dustOptions) {
+	public void setDustOptions(DustOptions dustOptions) {
 		this.dustOptions = dustOptions;
 	}
 	
@@ -44,12 +56,12 @@ public class ParticleContainer {
 		spawn(p.getLocation());
 	}
 	
-	private void spawn(Location loc) {
+	public void spawn(Location loc) {
 		if (showAllPlayers) {
-			loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, blockData != null ? blockData : dustOptions);
+			loc.getWorld().spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
 		}
 		else {
-			audience.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, blockData != null ? blockData : dustOptions);
+			audience.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
 		}
 	}
 }

@@ -2,16 +2,10 @@ package me.neoblade298.neocore.bukkit.particles;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Particle.DustOptions;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class ParticleUtil {
-	// DustOptions nullable
-	public static void drawLine(Player p, Location l1, Location l2, Particle part, boolean showAllPlayers, int perPoint, double offset,
-			double speed, double blocksPerParticle, DustOptions data) { 
+	public static void drawLine(ParticleContainer particle, Location l1, Location l2, double blocksPerParticle) {
 		Location start = l1.clone();
 		Location end = l2.clone();
 	    
@@ -24,38 +18,11 @@ public class ParticleUtil {
 	    	return;
 	    }
 
-		spawnParticle(p, showAllPlayers, start, part, perPoint, offset, offset, offset, speed, data);
+	    particle.spawn(start);
 		for (int i = 0; i < iterations; i++) {
 		    start.add(v);
-			spawnParticle(p, showAllPlayers, start, part, perPoint, offset, offset, offset, speed, data);
+		    particle.spawn(start);
 		}
-		spawnParticle(p, showAllPlayers, end, part, perPoint, offset, offset, offset, speed, data);
-	}
-	
-	public static void spawnParticle(Player p, boolean showAllPlayers, Location loc, Particle part, int amount, double xOff, double yOff, double zOff, double speed, DustOptions data) {
-		if (showAllPlayers || p == null) {
-			loc.getWorld().spawnParticle(part, loc, amount, xOff, yOff, zOff, speed, data);
-		}
-		else {
-			p.spawnParticle(part, loc, amount, xOff, yOff, zOff, speed, data);
-		}
-	}
-	
-	public static void spawnParticle(Player p, boolean showAllPlayers, Location loc, Particle part, int amount, double xOff, double yOff, double zOff, double speed, BlockData data) {
-		if (showAllPlayers || p == null) {
-			loc.getWorld().spawnParticle(part, loc, amount, xOff, yOff, zOff, speed, data);
-		}
-		else {
-			p.spawnParticle(part, loc, amount, xOff, yOff, zOff, speed, data);
-		}
-	}
-	
-	public static void spawnParticle(Player p, boolean showAllPlayers, Location loc, Particle part, int amount, double xOff, double yOff, double zOff, double speed) {
-		if (showAllPlayers || p == null) {
-			loc.getWorld().spawnParticle(part, loc, amount, xOff, yOff, zOff, speed);
-		}
-		else {
-			p.spawnParticle(part, loc, amount, xOff, yOff, zOff, speed);
-		}
+		particle.spawn(end);
 	}
 }
