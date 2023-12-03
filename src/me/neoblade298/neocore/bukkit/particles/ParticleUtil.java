@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -32,6 +33,15 @@ public class ParticleUtil {
 	}
 	
 	public static void spawnParticle(Player p, boolean showAllPlayers, Location loc, Particle part, int amount, double xOff, double yOff, double zOff, double speed, DustOptions data) {
+		if (showAllPlayers || p == null) {
+			loc.getWorld().spawnParticle(part, loc, amount, xOff, yOff, zOff, speed, data);
+		}
+		else {
+			p.spawnParticle(part, loc, amount, xOff, yOff, zOff, speed, data);
+		}
+	}
+	
+	public static void spawnParticle(Player p, boolean showAllPlayers, Location loc, Particle part, int amount, double xOff, double yOff, double zOff, double speed, BlockData data) {
 		if (showAllPlayers || p == null) {
 			loc.getWorld().spawnParticle(part, loc, amount, xOff, yOff, zOff, speed, data);
 		}
