@@ -7,22 +7,18 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 public class ParticleContainer {
-	private Player audience;
-	private Particle particle;
-	private boolean showAllPlayers;
-	private int count;
-	private double offsetXZ, offsetY, speed;
-	private BlockData blockData;
-	private DustOptions dustOptions;
+	protected Particle particle;
+	protected int count;
+	protected double offsetXZ, offsetY, speed;
+	protected BlockData blockData;
+	protected DustOptions dustOptions;
 	
-	public ParticleContainer(Particle particle, Player audience, boolean showAllPlayers) {
+	public ParticleContainer(Particle particle) {
 		this.particle = particle;
-		this.audience = audience;
-		this.showAllPlayers = showAllPlayers;
 	}
 	
 	public ParticleContainer clone() {
-		ParticleContainer pc = new ParticleContainer(particle, audience, showAllPlayers);
+		ParticleContainer pc = new ParticleContainer(particle);
 		pc.setCount(count);
 		pc.setOffset(offsetXZ, offsetY);
 		pc.setSpeed(speed);
@@ -31,37 +27,41 @@ public class ParticleContainer {
 		return pc;
 	}
 	
-	public void setCount(int count) {
+	public ParticleContainer setCount(int count) {
 		this.count = count;
+		return this;
 	}
 	
-	public void setOffset(double offsetXZ, double offsetY) {
+	public ParticleContainer setOffset(double offsetXZ, double offsetY) {
 		this.offsetXZ = offsetXZ;
 		this.offsetY = offsetY;
+		return this;
 	}
 	
-	public void setSpeed(double speed) {
+	public ParticleContainer setSpeed(double speed) {
 		this.speed = speed;
+		return this;
 	}
 	
-	public void setBlockData(BlockData blockData) {
+	public ParticleContainer setBlockData(BlockData blockData) {
 		this.blockData = blockData;
+		return this;
 	}
 	
-	public void setDustOptions(DustOptions dustOptions) {
+	public ParticleContainer setDustOptions(DustOptions dustOptions) {
 		this.dustOptions = dustOptions;
+		return this;
 	}
 	
 	public void spawn(Player p) {
 		spawn(p.getLocation());
 	}
 	
+	public PrivateParticleContainer setAudience(Player audience) {
+		return new PrivateParticleContainer(this, audience);
+	}
+	
 	public void spawn(Location loc) {
-		if (showAllPlayers) {
-			loc.getWorld().spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
-		}
-		else {
-			audience.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
-		}
+		loc.getWorld().spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
 	}
 }
