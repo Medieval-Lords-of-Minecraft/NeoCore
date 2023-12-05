@@ -1,7 +1,10 @@
 package me.neoblade298.neocore.bukkit.particles;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class Rectangle extends ParticleShape {
@@ -39,9 +42,10 @@ public class Rectangle extends ParticleShape {
 	@Override
 	public void draw(ParticleContainer container) {
 		Location left = bottomLeft.clone();
+		ArrayList<Player> cache = ParticleUtil.calculateCache(left);
 		for (int i = 0; i < heightIterations; i++) {
 			Location right = left.clone().add(vIterWidth);
-			ParticleUtil.drawLine(container, left, right, blocksPerParticle);
+			ParticleUtil.drawLineWithCache(cache, container, left, right, blocksPerParticle);
 			left.add(vIterHeight);
 		}
 	}
@@ -49,12 +53,13 @@ public class Rectangle extends ParticleShape {
 	@Override
 	public void drawEdges(ParticleContainer container) {
 		Location bl = bottomLeft.clone();
+		ArrayList<Player> cache = ParticleUtil.calculateCache(bl);
 		Location br = bl.clone().add(vWidth);
 		Location tl = bl.clone().add(vHeight);
 		Location tr = tl.clone().add(vWidth);
-		ParticleUtil.drawLine(container, bl, br, blocksPerParticle);
-		ParticleUtil.drawLine(container, br, tr, blocksPerParticle);
-		ParticleUtil.drawLine(container, tr, tl, blocksPerParticle);
-		ParticleUtil.drawLine(container, tl, bl, blocksPerParticle);
+		ParticleUtil.drawLineWithCache(cache, container, bl, br, blocksPerParticle);
+		ParticleUtil.drawLineWithCache(cache, container, br, tr, blocksPerParticle);
+		ParticleUtil.drawLineWithCache(cache, container, tr, tl, blocksPerParticle);
+		ParticleUtil.drawLineWithCache(cache, container, tl, bl, blocksPerParticle);
 	}
 }

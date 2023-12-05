@@ -8,9 +8,6 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.bukkit.player.PlayerTags;
-
 public class ParticleContainer {
 	protected Player origin;
 	protected Particle particle;
@@ -19,12 +16,6 @@ public class ParticleContainer {
 	protected BlockData blockData;
 	protected DustOptions dustOptions;
 	
-	private static final int MAX_VIEW_DISTANCE = 32;
-	private static final PlayerTags tags;
-	
-	static {
-		tags = NeoCore.getNeoCoreTags();
-	}
 	
 	public ParticleContainer(Particle particle) {
 		this.particle = particle;
@@ -73,20 +64,23 @@ public class ParticleContainer {
 		return this;
 	}
 	
-	// Returns the list of players it sent the particles to
-	public ArrayList<Player> spawn(Location loc) {
-		ArrayList<Player> list = new ArrayList<Player>();
-		for (Player p : loc.getNearbyPlayers(MAX_VIEW_DISTANCE)) {
-			if (tags.exists("hide-particles", p.getUniqueId())) continue;
-
-			p.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
-			list.add(p);
-		}
-		return list;
+	public void forceSpawn(Player p) {
+		forceSpawn(p.getLocation());
 	}
 	
-	public ArrayList<Player> spawn(Player loc) {
-		return spawn(loc.getLocation());
+	// Ignore player settings
+	public void forceSpawn(Location loc) {
+		loc.getWorld().spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+	}
+	
+	public void spawn(Location loc) {
+		for (Player p : ParticleUtil.calculateCache(loc)) {
+			p.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+		}
+	}
+	
+	public void spawn(Player loc) {
+		spawn(loc.getLocation());
 	}
 	
 	// Skips calculating the players to target, useful for particle shapes
