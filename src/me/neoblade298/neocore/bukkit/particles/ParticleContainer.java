@@ -1,5 +1,7 @@
 package me.neoblade298.neocore.bukkit.particles;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
@@ -17,7 +19,7 @@ public class ParticleContainer {
 	protected BlockData blockData;
 	protected DustOptions dustOptions;
 	
-	private static final int MAX_VIEW_DISTANCE = 1024;
+	private static final int MAX_VIEW_DISTANCE = 32;
 	private static final PlayerTags tags;
 	
 	static {
@@ -71,16 +73,26 @@ public class ParticleContainer {
 		return this;
 	}
 	
-	public void spawn(Location loc) {
-		for (Player p : loc.getWorld().getPlayers()) {
-			if (loc.distanceSquared(p.getLocation()) > MAX_VIEW_DISTANCE) continue;
+	// Returns the list of players it sent the particles to
+	public ArrayList<Player> spawn(Location loc) {
+		ArrayList<Player> list = new ArrayList<Player>();
+		for (Player p : loc.getNearbyPlayers(MAX_VIEW_DISTANCE)) {
 			if (tags.exists("hide-particles", p.getUniqueId())) continue;
 
 			p.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+			list.add(p);
 		}
+		return list;
 	}
 	
-	public void spawn(Player loc) {
-		spawn(loc.getLocation());
+	public ArrayList<Player> spawn(Player loc) {
+		return spawn(loc.getLocation());
+	}
+	
+	// Skips calculating the players to target, useful for particle shapes
+	public void spawnWithCache(ArrayList<Player> cache, Location loc) {
+		for (Player p : cache) {
+			p.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+		}
 	}
 }
