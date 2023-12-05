@@ -6,12 +6,23 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.player.PlayerTags;
+
 public class ParticleContainer {
+	protected Player origin;
 	protected Particle particle;
 	protected int count;
 	protected double offsetXZ, offsetY, speed;
 	protected BlockData blockData;
 	protected DustOptions dustOptions;
+	
+	private static final int MAX_VIEW_DISTANCE = 1024;
+	private static final PlayerTags tags;
+	
+	static {
+		tags = NeoCore.getNeoCoreTags();
+	}
 	
 	public ParticleContainer(Particle particle) {
 		this.particle = particle;
@@ -44,24 +55,32 @@ public class ParticleContainer {
 	}
 	
 	public ParticleContainer setBlockData(BlockData blockData) {
+		this.dustOptions = null;
 		this.blockData = blockData;
 		return this;
 	}
 	
 	public ParticleContainer setDustOptions(DustOptions dustOptions) {
+		this.blockData = null;
 		this.dustOptions = dustOptions;
 		return this;
 	}
 	
-	public void spawn(Player p) {
-		spawn(p.getLocation());
-	}
-	
-	public PrivateParticleContainer setAudience(Player audience) {
-		return new PrivateParticleContainer(this, audience);
+	public ParticleContainer setOrigin(Player origin) {
+		this.origin = origin;
+		return this;
 	}
 	
 	public void spawn(Location loc) {
-		loc.getWorld().spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+		for (Player p : loc.getWorld().getPlayers()) {
+			if (loc.distanceSquared(p.getLocation()) > MAX_VIEW_DISTANCE) continue;
+			if (tags.exists("hide-particles", p.getUniqueId())) continue;
+
+			p.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+		}
+	}
+	
+	public void spawn(Player loc) {
+		spawn(loc.getLocation());
 	}
 }
