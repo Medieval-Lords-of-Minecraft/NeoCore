@@ -6,15 +6,17 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class ParticleContainer {
 	protected Player origin;
 	protected Particle particle;
-	protected int count;
+	protected int count = 1;
 	protected double offsetXZ, offsetY, speed;
 	protected BlockData blockData;
 	protected DustOptions dustOptions;
+	protected boolean ignoreSettings;
 	
 	
 	public ParticleContainer(Particle particle) {
@@ -23,63 +25,64 @@ public class ParticleContainer {
 	
 	public ParticleContainer clone() {
 		ParticleContainer pc = new ParticleContainer(particle);
-		pc.setCount(count);
-		pc.setOffset(offsetXZ, offsetY);
-		pc.setSpeed(speed);
-		pc.setBlockData(blockData);
-		pc.setDustOptions(dustOptions);
+		pc.count(count);
+		pc.offset(offsetXZ, offsetY);
+		pc.speed(speed);
+		pc.blockData(blockData);
+		pc.dustOptions(dustOptions);
 		return pc;
 	}
 	
-	public ParticleContainer setCount(int count) {
+	public ParticleContainer count(int count) {
 		this.count = count;
 		return this;
 	}
 	
-	public ParticleContainer setOffset(double offsetXZ, double offsetY) {
+	public ParticleContainer ignoreSettings(boolean ignoreSettings) {
+		this.ignoreSettings = ignoreSettings;
+		return this;
+	}
+	
+	public ParticleContainer offset(double offsetXZ, double offsetY) {
 		this.offsetXZ = offsetXZ;
 		this.offsetY = offsetY;
 		return this;
 	}
 	
-	public ParticleContainer setSpeed(double speed) {
+	public ParticleContainer speed(double speed) {
 		this.speed = speed;
 		return this;
 	}
 	
-	public ParticleContainer setBlockData(BlockData blockData) {
+	public ParticleContainer blockData(BlockData blockData) {
 		this.dustOptions = null;
 		this.blockData = blockData;
 		return this;
 	}
 	
-	public ParticleContainer setDustOptions(DustOptions dustOptions) {
+	public ParticleContainer dustOptions(DustOptions dustOptions) {
 		this.blockData = null;
 		this.dustOptions = dustOptions;
 		return this;
 	}
 	
-	public ParticleContainer setOrigin(Player origin) {
+	public ParticleContainer origin(Player origin) {
 		this.origin = origin;
 		return this;
 	}
 	
-	public void forceSpawn(Player p) {
-		forceSpawn(p.getLocation());
-	}
-	
-	// Ignore player settings
-	public void forceSpawn(Location loc) {
-		loc.getWorld().spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
-	}
-	
 	public void spawn(Location loc) {
-		for (Player p : ParticleUtil.calculateCache(loc)) {
-			p.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+		if (ignoreSettings) {
+			loc.getWorld().spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+		}
+		else {
+			for (Player p : ParticleUtil.calculateCache(loc)) {
+				p.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+			}
 		}
 	}
 	
-	public void spawn(Player loc) {
+	public void spawn(Entity loc) {
 		spawn(loc.getLocation());
 	}
 	

@@ -163,6 +163,10 @@ public class Util {
     	}
     }
     
+    public static void playSound(Player p, Sound sound, boolean showAllPlayers) {
+    	playSound(p, sound, 1F, 1F, showAllPlayers);
+    }
+    
     public static void playSound(Player p, Location loc, Sound sound, float volume, float pitch, boolean showAllPlayers) {
     	if (showAllPlayers) {
     		p.playSound(loc, sound, volume, pitch);
@@ -170,6 +174,10 @@ public class Util {
     	else {
     		loc.getWorld().playSound(loc, sound, volume, pitch);
     	}
+    }
+    
+    public static void playSound(Player p, Location loc, Sound sound, boolean showAllPlayers) {
+    	playSound(p, loc, sound, 1F, 1F, showAllPlayers);
     }
 
 	public static void displayError(Player p, String error) {
