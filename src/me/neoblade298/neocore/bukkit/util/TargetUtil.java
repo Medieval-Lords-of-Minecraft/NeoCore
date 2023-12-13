@@ -11,6 +11,31 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
 
 public class TargetUtil {
+	
+	public static List<LivingEntity> getEntitiesInRadius(LivingEntity source, double range, double tolerance, Predicate<LivingEntity> filter) {
+		return getEntitiesInSight(source, range, tolerance, null);
+	}
+
+	// Gets all entities around source
+	// Sorted by nearest to furthest
+	public static List<LivingEntity> getEntitiesInRadius(LivingEntity source, double radius, double tolerance) {
+		List<Entity> nearby = source.getNearbyEntities(radius, radius, radius);
+		TreeSet<DistanceObject<LivingEntity>> sorted = new TreeSet<DistanceObject<LivingEntity>>();
+
+		for (Entity entity : nearby) {
+			if (!(entity instanceof LivingEntity)) continue;
+			LivingEntity le = (LivingEntity) entity;
+			Vector relative = entity.getLocation().subtract(source.getLocation()).toVector();
+			sorted.add(new DistanceObject<LivingEntity>(le, relative.lengthSquared()));
+		}
+
+		List<LivingEntity> targets = new LinkedList<LivingEntity>();
+		for (DistanceObject<LivingEntity> obj : sorted) {
+			targets.add(obj.get());
+		}
+		return targets;
+	}
+	
 	public static List<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance) {
 		return getEntitiesInSight(source, range, tolerance, null);
 	}
