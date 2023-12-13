@@ -12,13 +12,13 @@ import org.bukkit.util.Vector;
 
 public class TargetUtil {
 	
-	public static List<LivingEntity> getEntitiesInRadius(LivingEntity source, double range, double tolerance, Predicate<LivingEntity> filter) {
+	public static LinkedList<LivingEntity> getEntitiesInRadius(LivingEntity source, double range, double tolerance) {
 		return getEntitiesInSight(source, range, tolerance, null);
 	}
 
 	// Gets all entities around source
 	// Sorted by nearest to furthest
-	public static List<LivingEntity> getEntitiesInRadius(LivingEntity source, double radius, double tolerance) {
+	public static LinkedList<LivingEntity> getEntitiesInRadius(LivingEntity source, double radius, double tolerance, Predicate<LivingEntity> filter) {
 		List<Entity> nearby = source.getNearbyEntities(radius, radius, radius);
 		TreeSet<DistanceObject<LivingEntity>> sorted = new TreeSet<DistanceObject<LivingEntity>>();
 
@@ -33,10 +33,10 @@ public class TargetUtil {
 		for (DistanceObject<LivingEntity> obj : sorted) {
 			targets.add(obj.get());
 		}
-		return targets;
+		return sorted.stream().map(obj -> obj.get()).filter(filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static List<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance) {
+	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance) {
 		return getEntitiesInSight(source, range, tolerance, null);
 	}
 
@@ -64,15 +64,6 @@ public class TargetUtil {
 		}
 		
 		return sorted.stream().map(obj -> obj.get()).filter(filter).collect(Collectors.toCollection(LinkedList::new));
-	}
-
-	public static boolean isInFront(Entity entity, Entity target) {
-		// Get the necessary vectors
-		Vector facing = entity.getLocation().getDirection();
-		Vector relative = target.getLocation().subtract(entity.getLocation()).toVector();
-
-		// If the dot product is positive, the target is in front
-		return facing.dot(relative) >= 0;
 	}
 
 	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, double arc, double range) {
@@ -113,6 +104,15 @@ public class TargetUtil {
 		}
 
 		return targets.stream().filter(filter).collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	public static boolean isInFront(Entity entity, Entity target) {
+		// Get the necessary vectors
+		Vector facing = entity.getLocation().getDirection();
+		Vector relative = target.getLocation().subtract(entity.getLocation()).toVector();
+
+		// If the dot product is positive, the target is in front
+		return facing.dot(relative) >= 0;
 	}
 	
 	private static class DistanceObject<E> implements Comparable<DistanceObject<E>> {
