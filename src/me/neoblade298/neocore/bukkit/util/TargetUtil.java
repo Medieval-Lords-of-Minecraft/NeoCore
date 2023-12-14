@@ -51,6 +51,10 @@ public class TargetUtil {
 	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double range) {
 		return getEntitiesInRadius(source, range, null);
 	}
+	
+	public static LinkedList<LivingEntity> getEntitiesInRadius(Entity source, double range, Predicate<LivingEntity> filter) {
+		return getEntitiesInRadius(source.getLocation(), range, filter);
+	}
 
 	// Gets all entities around source
 	// Sorted by nearest to furthest
