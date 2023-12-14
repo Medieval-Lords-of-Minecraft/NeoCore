@@ -2,6 +2,7 @@ package me.neoblade298.neocore.bukkit.particles;
 
 import java.util.ArrayList;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
@@ -21,6 +22,8 @@ public class ParticleContainer {
 	
 	public ParticleContainer(Particle particle) {
 		this.particle = particle;
+		
+		if (particle == Particle.REDSTONE) dustOptions = new DustOptions(Color.RED, count);
 	}
 	
 	public ParticleContainer clone() {
