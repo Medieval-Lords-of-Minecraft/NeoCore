@@ -17,6 +17,8 @@ import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.format.TextDecoration.State;
 
 public abstract class CoreInventory {
 	protected Inventory inv;
@@ -58,10 +60,10 @@ public abstract class CoreInventory {
 	
 	public static ItemStack createButton(ItemStack item, TextComponent name, TextComponent... lore) {
 		ItemMeta meta = item.getItemMeta();
-		meta.displayName(name);
+		meta.displayName(name.decorationIfAbsent(TextDecoration.ITALIC, State.FALSE));
 		ArrayList<Component> list = new ArrayList<Component>();
 		for (Component line : lore) {
-			list.add(line);
+			list.add(line.decorationIfAbsent(TextDecoration.ITALIC, State.FALSE));
 		}
 		meta.lore(list);
 		item.setItemMeta(meta);
@@ -69,11 +71,13 @@ public abstract class CoreInventory {
 	}
 	
 	public static ItemStack createButton(ItemStack item, TextComponent name, TextComponent lore, int pixelsPerLine, TextColor color) {
-		ItemMeta meta = item.getItemMeta();
-		meta.displayName(name);
-		meta.lore(SharedUtil.addLineBreaks(lore.colorIfAbsent(color), pixelsPerLine));
-		item.setItemMeta(meta);
-		return item;
+		ArrayList<TextComponent> list = SharedUtil.addLineBreaks(lore.colorIfAbsent(color), pixelsPerLine);
+		TextComponent[] arr = new TextComponent[list.size()];
+		int i = 0;
+		for (TextComponent tc : list) {
+			arr[i++] = tc;
+		}
+		return createButton(item, name, arr);
 	}
 	
 	public void openInventory() {

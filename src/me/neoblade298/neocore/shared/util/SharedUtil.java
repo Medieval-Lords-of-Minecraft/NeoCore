@@ -94,13 +94,17 @@ public class SharedUtil {
 		return StringUtils.isNumeric(in);
 	}
 	
+	public static ArrayList<TextComponent> addLineBreaks(TextComponent text) {
+		return addLineBreaks(text, 250);
+	}
+	
 	public static ArrayList<TextComponent> addLineBreaks(TextComponent text, int pixelsPerLine) {
-		LoreBuilder b = new LoreBuilder(pixelsPerLine);
+		LineBuilder b = new LineBuilder(pixelsPerLine);
 		addLineBreaksHelper(text, b);
 		return b.finish();
 	}
 	
-	private static void addLineBreaksHelper(TextComponent text, LoreBuilder b) {
+	private static void addLineBreaksHelper(TextComponent text, LineBuilder b) {
 		b.pushStyle(text);
 		
 		b.startNewComponent(text);
@@ -115,7 +119,7 @@ public class SharedUtil {
 		b.popStyle(text);
 	}
 	
-	protected static class LoreBuilder {
+	protected static class LineBuilder {
 		private StringBuilder b = new StringBuilder();
 		private Stack<Style> parents = new Stack<Style>();
 		private ArrayList<TextComponent> list = new ArrayList<TextComponent>();
@@ -124,7 +128,7 @@ public class SharedUtil {
 		private int pixelsPerLine, linePixels = 0;
 		private boolean isBold;
 		
-		protected LoreBuilder(int pixelsPerLine) {
+		protected LineBuilder(int pixelsPerLine) {
 			this.pixelsPerLine = pixelsPerLine;
 			lineComponent = Component.text().build();
 		}
@@ -173,14 +177,15 @@ public class SharedUtil {
 		}
 		
 		private void endCurrentComponent() {
+			if (b.isEmpty()) return;
 			TextComponent txt = Component.text().content(b.toString()).style(currStyle).build();
 			b = new StringBuilder();
 			lineComponent = lineComponent.append(txt);
 		}
 		
 		private void endLine() {
-			// Append last line in builder
-			TextComponent txt = Component.text().content(b.toString()).build();
+			// Flush builder and append line
+			TextComponent txt = Component.text().content(b.toString()).style(currStyle).build();
 			lineComponent = lineComponent.append(txt);
 			
 			// Create new line in list

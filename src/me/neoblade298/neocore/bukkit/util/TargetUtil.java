@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -43,21 +44,17 @@ public class TargetUtil {
 		return end;
 	}
 	
-	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double range, double tolerance) {
-		return getEntitiesInRadius(source, range, tolerance, null);
+	public static LinkedList<LivingEntity> getEntitiesInRadius(Entity source, double range) {
+		return getEntitiesInRadius(source.getLocation(), range, null);
 	}
 	
-	public static LinkedList<LivingEntity> getEntitiesInRadius(LivingEntity source, double range, double tolerance) {
-		return getEntitiesInRadius(source.getLocation(), range, tolerance, null);
-	}
-	
-	public static LinkedList<LivingEntity> getEntitiesInRadius(LivingEntity source, double range, double tolerance, Predicate<LivingEntity> filter) {
-		return getEntitiesInRadius(source.getLocation(), range, tolerance, null);
+	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double range) {
+		return getEntitiesInRadius(source, range, null);
 	}
 
 	// Gets all entities around source
 	// Sorted by nearest to furthest
-	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double radius, double tolerance, Predicate<LivingEntity> filter) {
+	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double radius, Predicate<LivingEntity> filter) {
 		Collection<Entity> nearby = source.getNearbyEntities(radius, radius, radius);
 		TreeSet<DistanceObject<LivingEntity>> sorted = new TreeSet<DistanceObject<LivingEntity>>();
 
@@ -72,7 +69,10 @@ public class TargetUtil {
 		for (DistanceObject<LivingEntity> obj : sorted) {
 			targets.add(obj.get());
 		}
-		return sorted.stream().map(obj -> obj.get()).filter(filter).collect(Collectors.toCollection(LinkedList::new));
+		
+		Stream<LivingEntity> stream = sorted.stream().map(obj -> obj.get());
+		if (filter != null) stream = stream.filter(filter);
+		return stream.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance) {
@@ -101,8 +101,10 @@ public class TargetUtil {
 			// If close enough to vision line, return the entity
 			if (dSquared < tolerance) sorted.add(new DistanceObject<LivingEntity>(le, rLengthSq));
 		}
-		
-		return sorted.stream().map(obj -> obj.get()).filter(filter).collect(Collectors.toCollection(LinkedList::new));
+
+		Stream<LivingEntity> stream = sorted.stream().map(obj -> obj.get());
+		if (filter != null) stream = stream.filter(filter);
+		return stream.collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, double arc, double range) {
@@ -141,8 +143,8 @@ public class TargetUtil {
 				}
 			}
 		}
-
-		return targets.stream().filter(filter).collect(Collectors.toCollection(LinkedList::new));
+		if (filter != null) return targets.stream().filter(filter).collect(Collectors.toCollection(LinkedList::new));
+		return targets;
 	}
 
 	public static boolean isInFront(Entity entity, Entity target) {
