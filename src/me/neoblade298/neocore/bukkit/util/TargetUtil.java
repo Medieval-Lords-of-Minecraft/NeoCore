@@ -1,31 +1,70 @@
 package me.neoblade298.neocore.bukkit.util;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 public class TargetUtil {
+
+	public static Location getSightLocation(LivingEntity source, double range, boolean stickToGround) {
+		Location start = source.getEyeLocation();
+		Vector v = start.getDirection();
+		Location end = start.add(v.multiply(range));
+		Block b = end.getBlock();
+		
+		RayTraceResult rtr = start.getWorld().rayTraceBlocks(start, v, range, FluidCollisionMode.NEVER, true);
+
+		/* 1. No stick to ground, hit block: subtract eye direction from the block hit
+		 * 2. No stick to ground, air: Do nothing
+		 * 3. Stick to ground: Get either the air or raytraced block and find the ground from there
+		 */
+		if (rtr.getHitBlock() != null) {
+			b = rtr.getHitBlock();
+			if (!stickToGround) {
+				return b.getLocation().subtract(v);
+			}
+		}
+		
+		if (stickToGround) {
+			end.setY(findGroundY(end.getBlock()));
+		}
+		return end;
+	}
+	
+	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double range, double tolerance) {
+		return getEntitiesInRadius(source, range, tolerance, null);
+	}
 	
 	public static LinkedList<LivingEntity> getEntitiesInRadius(LivingEntity source, double range, double tolerance) {
-		return getEntitiesInSight(source, range, tolerance, null);
+		return getEntitiesInRadius(source.getLocation(), range, tolerance, null);
+	}
+	
+	public static LinkedList<LivingEntity> getEntitiesInRadius(LivingEntity source, double range, double tolerance, Predicate<LivingEntity> filter) {
+		return getEntitiesInRadius(source.getLocation(), range, tolerance, null);
 	}
 
 	// Gets all entities around source
 	// Sorted by nearest to furthest
-	public static LinkedList<LivingEntity> getEntitiesInRadius(LivingEntity source, double radius, double tolerance, Predicate<LivingEntity> filter) {
-		List<Entity> nearby = source.getNearbyEntities(radius, radius, radius);
+	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double radius, double tolerance, Predicate<LivingEntity> filter) {
+		Collection<Entity> nearby = source.getNearbyEntities(radius, radius, radius);
 		TreeSet<DistanceObject<LivingEntity>> sorted = new TreeSet<DistanceObject<LivingEntity>>();
 
 		for (Entity entity : nearby) {
 			if (!(entity instanceof LivingEntity)) continue;
 			LivingEntity le = (LivingEntity) entity;
-			Vector relative = entity.getLocation().subtract(source.getLocation()).toVector();
+			Vector relative = entity.getLocation().subtract(source).toVector();
 			sorted.add(new DistanceObject<LivingEntity>(le, relative.lengthSquared()));
 		}
 
@@ -132,5 +171,12 @@ public class TargetUtil {
 		public int compareTo(DistanceObject<E> d) {
 			return Double.compare(this.distance, d.distance);
 		}
+	}
+	
+	private static double findGroundY(Block b) {
+		while (b.isEmpty()) {
+			b = b.getRelative(BlockFace.DOWN);
+		}
+		return b.getY() + 0.5;
 	}
 }

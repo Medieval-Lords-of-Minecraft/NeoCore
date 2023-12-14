@@ -13,7 +13,7 @@ public class ParticleContainer {
 	protected Player origin;
 	protected Particle particle;
 	protected int count = 1;
-	protected double offsetXZ, offsetY, speed;
+	protected double spreadXZ, spreadY, speed, offsetForward, offsetForwardAngle, offsetY;
 	protected BlockData blockData;
 	protected DustOptions dustOptions;
 	protected boolean ignoreSettings;
@@ -26,7 +26,7 @@ public class ParticleContainer {
 	public ParticleContainer clone() {
 		ParticleContainer pc = new ParticleContainer(particle);
 		pc.count(count);
-		pc.offset(offsetXZ, offsetY);
+		pc.spread(spreadXZ, spreadY);
 		pc.speed(speed);
 		pc.blockData(blockData);
 		pc.dustOptions(dustOptions);
@@ -43,8 +43,13 @@ public class ParticleContainer {
 		return this;
 	}
 	
-	public ParticleContainer offset(double offsetXZ, double offsetY) {
-		this.offsetXZ = offsetXZ;
+	public ParticleContainer spread(double spreadXZ, double spreadY) {
+		this.spreadXZ = spreadXZ;
+		this.spreadY = spreadY;
+		return this;
+	}
+	
+	public ParticleContainer offsetY(double offsetY) {
 		this.offsetY = offsetY;
 		return this;
 	}
@@ -72,12 +77,13 @@ public class ParticleContainer {
 	}
 	
 	public void spawn(Location loc) {
+		loc.add(0, offsetY, 0);
 		if (ignoreSettings) {
-			loc.getWorld().spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+			loc.getWorld().spawnParticle(particle, loc, count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
 		}
 		else {
 			for (Player p : ParticleUtil.calculateCache(loc)) {
-				p.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+				p.spawnParticle(particle, loc, count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
 			}
 		}
 	}
@@ -89,7 +95,7 @@ public class ParticleContainer {
 	// Skips calculating the players to target, useful for particle shapes
 	public void spawnWithCache(ArrayList<Player> cache, Location loc) {
 		for (Player p : cache) {
-			p.spawnParticle(particle, loc, count, offsetXZ, offsetY, offsetXZ, speed, blockData != null ? blockData : dustOptions);
+			p.spawnParticle(particle, loc, count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
 		}
 	}
 }
