@@ -37,8 +37,9 @@ public class Arg {
 		return display;
 	}
 	
-	public void setTabOptions(List<String> tabOptions) {
+	public Arg setTabOptions(List<String> tabOptions) {
 		this.tabOptions = tabOptions;
+		return this;
 	}
 	
 	public List<String> getTabOptions() {
