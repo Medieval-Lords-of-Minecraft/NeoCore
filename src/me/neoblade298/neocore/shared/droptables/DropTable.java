@@ -1,12 +1,13 @@
 package me.neoblade298.neocore.shared.droptables;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.TreeMap;
 
 public class DropTable<E> {
-	private LinkedList<Droppable<E>> drops = new LinkedList<Droppable<E>>();
+	private TreeMap<Double, ArrayList<E>> drops = new TreeMap<Double, ArrayList<E>>();
 	private double totalWeight = 0;
+	private int size = 0;
 	private static Random gen = new Random();
 	
 	public static DropTable<DropTable<?>> combine(DropTable<?>[] tables, double[] multipliers) {
@@ -26,21 +27,28 @@ public class DropTable<E> {
 	}
 	
 	public void add(E drop, double weight) {
-		drops.add(new Droppable<E>(drop, weight));
+		ArrayList<E> weightList = drops.getOrDefault(weight, new ArrayList<E>());
+		weightList.add(drop);
+		drops.put(weight, weightList);
 		totalWeight += weight;
+		size++;
 	}
 	
 	public E get() {
 		double rand = gen.nextDouble() * totalWeight;
 		
-		Iterator<Droppable<E>> iter = rand > totalWeight / 2 ? drops.descendingIterator() : drops.iterator();
-		Droppable<E> toReturn = null;
-		while (rand > 0) {
-			toReturn = iter.next();
-			rand -= toReturn.getWeight();
+		ArrayList<E> list = null;
+		double weight = -1;
+		for (double w : drops.descendingKeySet()) {
+			list = drops.get(w);
+			weight = w;
+			double listWeight = drops.get(weight).size() * weight;
+			if (rand < drops.get(weight).size() * weight) {
+				break;
+			}
+			rand -= listWeight;
 		}
-		
-		return toReturn.get();
+		return list.get((int) (rand / weight));
 	}
 	/*
 	public DropTable<E> combine(DropTable<E>[] others) {
@@ -72,7 +80,15 @@ public class DropTable<E> {
 	}
 	
 	public int size() {
-		return drops.size();
+		return size;
+	}
+	
+	public ArrayList<E> getItems() {
+		ArrayList<E> items = new ArrayList<E>(size);
+		for (ArrayList<E> list : drops.values()) {
+			items.addAll(list);
+		}
+		return items;
 	}
 	
 	@Override
