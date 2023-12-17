@@ -9,6 +9,7 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class ParticleContainer {
 	protected Player origin;
@@ -57,6 +58,23 @@ public class ParticleContainer {
 		return this;
 	}
 	
+	public ParticleContainer offsetForward(double offsetForward) {
+		this.offsetForward = offsetForward;
+		return this;
+	}
+	
+	public ParticleContainer offsetForward(double offsetForward, double offsetForwardAngle) {
+		this.offsetForward = offsetForward;
+		this.offsetForwardAngle = offsetForwardAngle;
+		return this;
+	}
+	
+	public ParticleContainer offsetForward(double offsetForward, double offsetForwardAngle, boolean offsetForwardUseOriginalY) {
+		this.offsetForward = offsetForward;
+		this.offsetForwardAngle = offsetForwardAngle;
+		return this;
+	}
+	
 	public ParticleContainer speed(double speed) {
 		this.speed = speed;
 		return this;
@@ -80,7 +98,12 @@ public class ParticleContainer {
 	}
 	
 	public void spawn(Location loc) {
-		loc.add(0, offsetY, 0);
+		if (offsetForward != 0) {
+			Vector v = loc.getDirection().rotateAroundY(offsetForwardAngle * ( Math.PI / 180));
+			loc = loc.add(v);
+		}
+		loc = loc.add(0, offsetY, 0);
+		
 		if (ignoreSettings) {
 			loc.getWorld().spawnParticle(particle, loc, count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
 		}
