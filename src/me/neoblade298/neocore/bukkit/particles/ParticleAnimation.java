@@ -1,8 +1,11 @@
 package me.neoblade298.neocore.bukkit.particles;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -24,22 +27,61 @@ public class ParticleAnimation {
 		this(particle, formula, duration, 1);
 	}
 	
-	private interface ParticleFormula {
-		public Location run(int step);
+	public ParticleAnimationInstance run(Entity ent) {
+		return new ParticleAnimationInstance(this, ent);
 	}
 	
-	private class ParticleAnimationInstance {
+	public ParticleAnimationInstance run(Location loc) {
+		return new ParticleAnimationInstance(this, loc);
+	}
+	
+	public interface ParticleFormula {
+		public LinkedList<Location> run(Location center, int step);
+	}
+	
+	public class ParticleAnimationInstance {
 		private ArrayList<BukkitTask> tasks;
+		private Entity ent;
+		private Location loc;
 		
-		public ParticleAnimationInstance(ParticleAnimation anim) {
+		private ParticleAnimationInstance(ParticleAnimation anim, Location loc) {
+			this.loc = loc;
+			ArrayList<Player> cache = ParticleUtil.calculateCache(ent.getLocation());
+			run(anim, cache);
+		}
+		
+		private ParticleAnimationInstance(ParticleAnimation anim, Entity ent) {
+			this.ent = ent;
+			ArrayList<Player> cache = ParticleUtil.calculateCache(ent.getLocation());
+			run(anim, cache);
+		}
+		
+		private void run(ParticleAnimation anim, ArrayList<Player> cache) {
 			tasks = new ArrayList<BukkitTask>(anim.steps);
-			for (int i = 0; i < anim.steps; i++) {
-				final int step = i;
-				tasks.add(new BukkitRunnable() {
-					public void run() {
-						anim.formula.run(step);
-					}
-				}.runTaskLater(NeoCore.inst(), i * anim.frequency));
+			
+			if (ent != null) {
+				for (int i = 0; i < anim.steps; i++) {
+					final int step = i;
+					tasks.add(new BukkitRunnable() {
+						public void run() {
+							for (Location l : anim.formula.run(ent.getLocation(), step)) {
+								anim.particle.spawnWithCache(cache, l);
+							}
+						}
+					}.runTaskLater(NeoCore.inst(), i * anim.frequency));
+				}
+			}
+			else {
+				for (int i = 0; i < anim.steps; i++) {
+					final int step = i;
+					tasks.add(new BukkitRunnable() {
+						public void run() {
+							for (Location l : anim.formula.run(loc, step)) {
+								anim.particle.spawnWithCache(cache, l);
+							}
+						}
+					}.runTaskLater(NeoCore.inst(), i * anim.frequency));
+				}
 			}
 		}
 		
