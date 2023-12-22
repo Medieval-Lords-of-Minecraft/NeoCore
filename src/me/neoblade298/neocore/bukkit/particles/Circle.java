@@ -29,23 +29,26 @@ public class Circle extends ParticleShape2D {
 	}
 
 	@Override
-	public void drawWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, Vector localRight,
-			Vector localUp, Vector localForward, ParticleContainer fill) {
+	public void drawWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, LocalAxes axes, ParticleContainer fill) {
 		// If circle is flat, no need to recreate circle except for the first time
-		if (localForward.getY() == 1) {
-			drawFlatWithCache(cache, particle, center, localRight, localUp, localForward, fill);
+		if (axes.isXZ()) {
+			drawFlatWithCache(cache, particle, center, fill);
 		}
 		else {
-			calculate(center, localRight, localUp, localForward).draw(cache, particle, fill);
+			calculate(center, axes).draw(cache, particle, fill);
 		}
 	}
 	
-	private void drawFlatWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, Vector localRight, Vector localUp, Vector localForward, ParticleContainer fill) {
+	private void drawFlatWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, ParticleContainer fill) {
+		LocalAxes axes = LocalAxes.xz();
 		if (flatEdges == null) {
-			ParticleShapeMemory mem = calculate(center, localRight, localUp, localForward);
+			ParticleShapeMemory mem = calculate(center, axes);
 			flatEdges = mem.getEdgeVectors();
 			flatFill = mem.getFillVectors();
+			mem.draw(cache, particle, fill);
+			return;
 		}
+		
 		for (Vector v : flatEdges) {
 			particle.spawnWithCache(cache, center.clone().add(v));
 		}
@@ -56,20 +59,20 @@ public class Circle extends ParticleShape2D {
 	}
 
 	@Override
-	public ParticleShapeMemory calculate(Location center, Vector localRight, Vector localUp, Vector localForward) {
+	public ParticleShapeMemory calculate(Location center, LocalAxes axes) {
 		double rotationPerPoint = (2 * Math.PI) / (double) points;
-		Vector rotator = localUp.clone().multiply(radius);
+		Vector rotator = axes.up().multiply(radius);
 		
 		LinkedList<Location> edges = new LinkedList<Location>();
 		for (int i = 0; i < points; i++) {
-			edges.add(center.clone().add(rotator.rotateAroundAxis(localForward, rotationPerPoint)));
+			edges.add(center.clone().add(rotator.rotateAroundAxis(axes.forward(), rotationPerPoint)));
 		}
 
 		LinkedList<Location> fill = new LinkedList<Location>();
-		Location topLeft = center.add(localRight.clone().multiply(radius)).add(localUp.clone().multiply(radius));
-		Vector right = localUp.clone().multiply(radius * 2);
+		Location topLeft = center.add(axes.left().multiply(radius)).add(axes.up().multiply(radius));
+		Vector right = axes.up().multiply(radius * 2);
 		double radiusSq = radius * radius;
-		for (Location upPoint : ParticleUtil.calculateLine(topLeft, topLeft.clone().add(localUp.clone().multiply(-2 * radius)), metersPerParticle)) {
+		for (Location upPoint : ParticleUtil.calculateLine(topLeft, topLeft.clone().add(axes.up().multiply(-2 * radius)), metersPerParticle)) {
 			for (Location point : ParticleUtil.calculateLine(upPoint, upPoint.clone().add(right), metersPerParticle)) {
 				if (point.distanceSquared(center) > radiusSq) continue;
 				fill.add(point);

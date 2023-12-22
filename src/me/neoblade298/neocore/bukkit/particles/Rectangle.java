@@ -21,24 +21,23 @@ public class Rectangle extends ParticleShape2D {
 	}
 
 	@Override
-	public void drawWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, Vector localRight,
-			Vector localUp, Vector localForward, ParticleContainer fill) {
-		ParticleShapeMemory mem = calculate(center, localRight, localUp, localForward);
+	public void drawWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, LocalAxes axes, ParticleContainer fill) {
+		ParticleShapeMemory mem = calculate(center, axes);
 		mem.draw(cache, particle, fill);
 	}
 
 	@Override
-	public ParticleShapeMemory calculate(Location center, Vector localRight, Vector localUp, Vector localForward) {
-		Location bl = center.add(localRight.clone().multiply(length * -0.5).add(localUp.clone().multiply(height * -0.5)));
-		Location tl = bl.clone().add(localUp.clone().multiply(height));
-		Location br = bl.clone().add(localRight.clone().multiply(length));
-		Location tr = br.clone().add(localUp.clone().multiply(height));
+	public ParticleShapeMemory calculate(Location center, LocalAxes axes) {
+		Location bl = center.add(axes.left().multiply(length * 0.5).add(axes.up().multiply(height * -0.5)));
+		Location tl = bl.clone().add(axes.up().multiply(height));
+		Location br = bl.clone().add(axes.left().multiply(-length));
+		Location tr = br.clone().add(axes.up().multiply(height));
 		LinkedList<Location> edges = ParticleUtil.calculateLine(bl, br, metersPerParticle);
 		edges.addAll(ParticleUtil.calculateLine(br, tr, metersPerParticle));
 		edges.addAll(ParticleUtil.calculateLine(tr, tl, metersPerParticle));
 		edges.addAll(ParticleUtil.calculateLine(tl, bl, metersPerParticle));
 
-		Vector right = localRight.clone().multiply(length);
+		Vector right = axes.left().multiply(-length);
 		LinkedList<Location> fill = new LinkedList<Location>();
 		for (Location upPoint : ParticleUtil.calculateLine(tl, bl, metersPerParticle, true)) {
 			fill.addAll(ParticleUtil.calculateLine(upPoint, upPoint.clone().add(right), metersPerParticle));
