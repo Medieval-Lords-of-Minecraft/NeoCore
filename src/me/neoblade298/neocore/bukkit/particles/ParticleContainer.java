@@ -1,6 +1,6 @@
 package me.neoblade298.neocore.bukkit.particles;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -119,7 +119,7 @@ public class ParticleContainer {
 	}
 	
 	// Skips calculating the players to target, useful for particle shapes
-	public void spawnWithCache(ArrayList<Player> cache, Location loc) {
+	public void spawnWithCache(LinkedList<Player> cache, Location loc) {
 		for (Player p : cache) {
 			p.spawnParticle(particle, loc, count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
 		}

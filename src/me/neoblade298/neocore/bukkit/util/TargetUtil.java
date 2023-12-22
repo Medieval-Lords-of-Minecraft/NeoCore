@@ -45,21 +45,21 @@ public class TargetUtil {
 	}
 	
 	public static LinkedList<LivingEntity> getEntitiesInRadius(Entity source, double range) {
-		return getEntitiesInRadius(source.getLocation(), range, null);
+		return getEntitiesInRadius(source.getLocation(), range, range, null);
 	}
 	
 	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double range) {
-		return getEntitiesInRadius(source, range, null);
+		return getEntitiesInRadius(source, range, range, null);
 	}
 	
 	public static LinkedList<LivingEntity> getEntitiesInRadius(Entity source, double range, Predicate<LivingEntity> filter) {
-		return getEntitiesInRadius(source.getLocation(), range, filter);
+		return getEntitiesInRadius(source.getLocation(), range, range, filter);
 	}
 
 	// Gets all entities around source
 	// Sorted by nearest to furthest
-	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double radius, Predicate<LivingEntity> filter) {
-		Collection<Entity> nearby = source.getNearbyEntities(radius, radius, radius);
+	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double radius, double height, Predicate<LivingEntity> filter) {
+		Collection<Entity> nearby = source.getNearbyEntities(radius, height, radius);
 		TreeSet<DistanceObject<LivingEntity>> sorted = new TreeSet<DistanceObject<LivingEntity>>();
 
 		for (Entity entity : nearby) {

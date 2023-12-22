@@ -1,65 +1,44 @@
 package me.neoblade298.neocore.bukkit.particles;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class Rectangle extends ParticleShape {
-	private static final double PARTICLES_PER_METER = 2;
+public class Rectangle extends ParticleShape2D {
+	private static final double DEFAULT_METERS = 0.5;
+	private double length, height, metersPerParticle;
 	
-	private Location bottomLeft;
-	private int heightIterations;
-	private double blocksPerParticle;
-	private Vector vIterWidth, vIterHeight, vWidth, vHeight;
-	
-	public Rectangle(LivingEntity owner, double width, double height, double forward, double forwardOffset) {
-		this(owner, width, height, forward, forwardOffset, 1 / PARTICLES_PER_METER);
+	public Rectangle(double length, double height) {
+		this(length, height, DEFAULT_METERS);
 	}
 	
-	// Create a rectangle where an entity is facing but stuck to the ground, primarily for shield walls
-	public Rectangle(LivingEntity owner, double width, double height, double forward, double forwardOffset, double blocksPerParticle) {
-		this.heightIterations = (int) (height / blocksPerParticle);
-		this.blocksPerParticle = blocksPerParticle;
-		
-		Vector localForward = owner.getEyeLocation().getDirection().normalize();
-		Vector localLeft = localForward.clone().setY(0).rotateAroundY(Math.PI / 2);
-		Vector localUp = localForward.clone().rotateAroundAxis(localLeft, -Math.PI / 2);
-		
-		vWidth = localLeft.clone().multiply(-width);
-		vHeight = localUp.clone().multiply(height);
+	public Rectangle(double length, double height, double metersPerParticle) {
+		this.length = length;
+		this.height = height;
+		this.metersPerParticle = metersPerParticle;
+	}
 
-		vIterWidth = localLeft.clone().multiply(width / 2);
-		vIterHeight = localUp.multiply(blocksPerParticle);
-		bottomLeft = owner.getLocation().add(localForward.clone().multiply(forwardOffset));
-		bottomLeft.add(localForward.clone().multiply(forward));
-		bottomLeft.add(vIterWidth);
-		vIterWidth.multiply(-2);
-	}
-	
 	@Override
-	public void draw(ParticleContainer container) {
-		Location left = bottomLeft.clone();
-		ArrayList<Player> cache = ParticleUtil.calculateCache(left);
-		for (int i = 0; i < heightIterations; i++) {
-			Location right = left.clone().add(vIterWidth);
-			ParticleUtil.drawLineWithCache(cache, container, left, right, blocksPerParticle);
-			left.add(vIterHeight);
+	public void drawWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, Vector localRight,
+			Vector localUp, Vector localForward, ParticleContainer fill) {
+		Location bl = center.add(localRight.clone().multiply(length * -0.5).add(localUp.clone().multiply(height * -0.5)));
+		Location tl = bl.clone().add(localUp.clone().multiply(height));
+		
+		if (fill == null) {
+			Location br = bl.clone().add(localRight.clone().multiply(length));
+			Location tr = br.clone().add(localUp.clone().multiply(height));
+			ParticleUtil.drawLineWithCache(cache, particle, bl, br, metersPerParticle);
+			ParticleUtil.drawLineWithCache(cache, particle, br, tr, metersPerParticle);
+			ParticleUtil.drawLineWithCache(cache, particle, tr, tl, metersPerParticle);
+			ParticleUtil.drawLineWithCache(cache, particle, tl, bl, metersPerParticle);
 		}
-	}
-	
-	@Override
-	public void drawEdges(ParticleContainer container) {
-		Location bl = bottomLeft.clone();
-		ArrayList<Player> cache = ParticleUtil.calculateCache(bl);
-		Location br = bl.clone().add(vWidth);
-		Location tl = bl.clone().add(vHeight);
-		Location tr = tl.clone().add(vWidth);
-		ParticleUtil.drawLineWithCache(cache, container, bl, br, blocksPerParticle);
-		ParticleUtil.drawLineWithCache(cache, container, br, tr, blocksPerParticle);
-		ParticleUtil.drawLineWithCache(cache, container, tr, tl, blocksPerParticle);
-		ParticleUtil.drawLineWithCache(cache, container, tl, bl, blocksPerParticle);
+		else {
+			Vector right = localRight.clone().multiply(length);
+			for (Location upPoint : ParticleUtil.calculateLine(tl, bl, metersPerParticle)) {
+				ParticleUtil.drawLineWithCache(cache, particle, upPoint, upPoint.clone().add(right), metersPerParticle);
+			}
+		}
 	}
 }

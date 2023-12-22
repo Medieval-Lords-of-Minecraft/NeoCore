@@ -1,6 +1,5 @@
 package me.neoblade298.neocore.bukkit.particles;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.bukkit.Location;
@@ -40,24 +39,24 @@ public class ParticleAnimation {
 	}
 	
 	public class ParticleAnimationInstance {
-		private ArrayList<BukkitTask> tasks;
+		private LinkedList<BukkitTask> tasks;
 		private Entity ent;
 		private Location loc;
 		
 		private ParticleAnimationInstance(ParticleAnimation anim, Location loc) {
 			this.loc = loc;
-			ArrayList<Player> cache = ParticleUtil.calculateCache(ent.getLocation());
+			LinkedList<Player> cache = ParticleUtil.calculateCache(ent.getLocation());
 			run(anim, cache);
 		}
 		
 		private ParticleAnimationInstance(ParticleAnimation anim, Entity ent) {
 			this.ent = ent;
-			ArrayList<Player> cache = ParticleUtil.calculateCache(ent.getLocation());
+			LinkedList<Player> cache = ParticleUtil.calculateCache(ent.getLocation());
 			run(anim, cache);
 		}
 		
-		private void run(ParticleAnimation anim, ArrayList<Player> cache) {
-			tasks = new ArrayList<BukkitTask>(anim.steps);
+		private void run(ParticleAnimation anim, LinkedList<Player> cache) {
+			tasks = new LinkedList<BukkitTask>();
 			
 			if (ent != null) {
 				for (int i = 0; i < anim.steps; i++) {
