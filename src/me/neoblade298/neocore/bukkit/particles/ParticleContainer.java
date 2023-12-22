@@ -1,6 +1,7 @@
 package me.neoblade298.neocore.bukkit.particles;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -116,6 +117,12 @@ public class ParticleContainer {
 	
 	public void spawn(Entity loc) {
 		spawn(loc.getLocation());
+	}
+	
+	public void spawn(List<Location> locs) {
+		for (Location loc : locs) {
+			spawn(loc);
+		}
 	}
 	
 	// Skips calculating the players to target, useful for particle shapes

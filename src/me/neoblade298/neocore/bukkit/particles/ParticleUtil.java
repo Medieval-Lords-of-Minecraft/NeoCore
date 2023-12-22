@@ -23,6 +23,10 @@ public class ParticleUtil {
 	}
 	
 	public static LinkedList<Location> calculateLine(Location l1, Location l2, double metersPerParticle) {
+		return calculateLine(l1, l2, metersPerParticle, false);
+	}
+	
+	public static LinkedList<Location> calculateLine(Location l1, Location l2, double metersPerParticle, boolean removeEdges) {
 		Location start = l1.clone();
 		Location end = l2.clone();
 	    
@@ -40,6 +44,10 @@ public class ParticleUtil {
 		for (int i = 0; i < iterations; i++) {
 		    start.add(v);
 		    locations.add(start.clone());
+		}
+		if (removeEdges) {
+			locations.removeFirst();
+			locations.removeLast();
 		}
 		return locations;
 	}

@@ -11,6 +11,9 @@ import org.bukkit.util.Vector;
 public abstract class ParticleShape2D {
 	// Vertical and horizontal axis are normalized vectors, for a flat draw just use x and z vector
 	public abstract void drawWithCache(LinkedList<Player> cache, ParticleContainer edges, Location center, Vector localRight, Vector localUp, Vector localForward, ParticleContainer fill);
+	
+	public abstract ParticleShapeMemory calculate(Location center, Vector localRight, Vector localUp, Vector localForward);
+	
 	public void draw(ParticleContainer edges, Location center, Vector localRight, Vector localUp, Vector localForward, ParticleContainer fill) {
 		drawWithCache(ParticleUtil.calculateCache(center), edges, center, localRight, localUp, localForward, fill);
 	}
