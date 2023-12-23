@@ -30,7 +30,7 @@ public class ParticleUtil {
 		Location start = l1.clone();
 		Location end = l2.clone();
 	    
-		Vector v = end.subtract(start).toVector();
+		Vector v = end.clone().subtract(start).toVector();
 		int iterations = (int) (v.length() / metersPerParticle);
 		double lengthPerIteration = v.length() / iterations; // Makes sure our iterations aren't short at the end
 		v.normalize();
@@ -41,14 +41,12 @@ public class ParticleUtil {
 	    }
 
 	    LinkedList<Location> locations = new LinkedList<Location>();
+	    if (!removeEdges) locations.add(start.clone());
 		for (int i = 0; i < iterations; i++) {
 		    start.add(v);
 		    locations.add(start.clone());
 		}
-		if (removeEdges) {
-			locations.removeFirst();
-			locations.removeLast();
-		}
+		if (removeEdges) locations.removeLast();
 		return locations;
 	}
 	

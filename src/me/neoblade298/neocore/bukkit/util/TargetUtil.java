@@ -48,12 +48,16 @@ public class TargetUtil {
 		return getEntitiesInRadius(source.getLocation(), range, range, null);
 	}
 	
+	public static LinkedList<LivingEntity> getEntitiesInRadius(Entity source, double range, Predicate<LivingEntity> filter) {
+		return getEntitiesInRadius(source.getLocation(), range, range, filter);
+	}
+	
 	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double range) {
 		return getEntitiesInRadius(source, range, range, null);
 	}
 	
-	public static LinkedList<LivingEntity> getEntitiesInRadius(Entity source, double range, Predicate<LivingEntity> filter) {
-		return getEntitiesInRadius(source.getLocation(), range, range, filter);
+	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double range, Predicate<LivingEntity> filter) {
+		return getEntitiesInRadius(source, range, range, filter);
 	}
 
 	// Gets all entities around source

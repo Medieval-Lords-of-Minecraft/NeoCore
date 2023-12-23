@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class Circle extends ParticleShape2D {
-	private static final double POINTS_PER_CIRCUMFERENCE = 5;
+	private static final double POINTS_PER_CIRCUMFERENCE = 1;
 	private static final double DEFAULT_METERS = 0.5;
 	
 	private double radius, metersPerParticle;
@@ -49,6 +49,7 @@ public class Circle extends ParticleShape2D {
 			return;
 		}
 		
+		System.out.println("Drawing flat");
 		for (Vector v : flatEdges) {
 			particle.spawnWithCache(cache, center.clone().add(v));
 		}
@@ -69,12 +70,14 @@ public class Circle extends ParticleShape2D {
 		}
 
 		LinkedList<Location> fill = new LinkedList<Location>();
-		Location topLeft = center.add(axes.left().multiply(radius)).add(axes.up().multiply(radius));
-		Vector right = axes.up().multiply(radius * 2);
+		Location topLeft = center.clone().add(axes.left().multiply(radius)).add(axes.up().multiply(radius));
+		Vector right = axes.left().multiply(radius * -2);
+		Vector down = axes.up().multiply(radius * -2);
 		double radiusSq = radius * radius;
-		for (Location upPoint : ParticleUtil.calculateLine(topLeft, topLeft.clone().add(axes.up().multiply(-2 * radius)), metersPerParticle)) {
-			for (Location point : ParticleUtil.calculateLine(upPoint, upPoint.clone().add(right), metersPerParticle)) {
-				if (point.distanceSquared(center) > radiusSq) continue;
+		for (Location horizontal : ParticleUtil.calculateLine(topLeft, topLeft.clone().add(right), metersPerParticle, true)) {
+			for (Location point : ParticleUtil.calculateLine(horizontal, horizontal.clone().add(down), metersPerParticle, true)) {
+				
+				if (point.distanceSquared(center) >= radiusSq) continue;
 				fill.add(point);
 			}
 		}
