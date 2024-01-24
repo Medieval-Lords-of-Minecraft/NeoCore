@@ -81,6 +81,7 @@ public class BungeeCore {
         mngr.register(CmdTphere.meta(mngr, this), new CmdTphere());
         mngr.register(CmdUptime.meta(mngr, this), new CmdUptime());
         mngr.register(CmdSendAll.meta(mngr, this), new CmdSendAll());
+        mngr.register(CmdSend.meta(mngr, this), new CmdSend());
         mngr.register(CmdKickAll.meta(mngr, this), new CmdKickAll());
         proxy.getEventManager().register(this, new MainListener());
         proxy.getEventManager().register(this, new ChatListener());
