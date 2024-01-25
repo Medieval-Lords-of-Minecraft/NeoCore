@@ -88,7 +88,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		SQLManager.load(cfg.getSection("sql"));
 		Section gen = cfg.getSection("general");
 		if (gen != null) {
-			welcome = gen.getString("welcome", "&4[&c&lMLMC&4] &7Welcome &e%player% &7to MLMC!");
+			welcome = gen.getString("welcome", "<dark_red>[<red><bold>MLMC</red></bold>] <gray>Welcome <yellow>%player%</yellow>to MLMC!");
 		}
         
         // Main listener
