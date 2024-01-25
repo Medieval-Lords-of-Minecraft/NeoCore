@@ -60,8 +60,12 @@ public class ParticleUtil {
 	}
 	
 	public static LinkedList<Player> calculateCache(Location loc) {
+		return calculateCache(loc, MAX_VIEW_DISTANCE);
+	}
+	
+	public static LinkedList<Player> calculateCache(Location loc, int viewDistance) {
 		LinkedList<Player> list = new LinkedList<Player>();
-		for (Player p : loc.getNearbyPlayers(MAX_VIEW_DISTANCE)) {
+		for (Player p : loc.getNearbyPlayers(viewDistance)) {
 			if (tags.exists("hide-particles", p.getUniqueId())) continue;
 			list.add(p);
 		}
