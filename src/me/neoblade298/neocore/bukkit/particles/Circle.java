@@ -49,7 +49,6 @@ public class Circle extends ParticleShape2D {
 			return;
 		}
 		
-		System.out.println("Drawing flat");
 		for (Vector v : flatEdges) {
 			particle.spawnWithCache(cache, center.clone().add(v));
 		}
