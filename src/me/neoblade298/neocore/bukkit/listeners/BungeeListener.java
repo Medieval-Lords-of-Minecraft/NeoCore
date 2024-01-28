@@ -24,9 +24,11 @@ public class BungeeListener implements PluginMessageListener, Listener {
 	private static HashMap<UUID, UUID> tpCallbacks = new HashMap<UUID, UUID>();
 	@Override
 	public void onPluginMessageReceived(String channel, Player p, byte[] msg) {
+		System.out.println("Channel: " + channel);
 		if (!channel.equals("neocore:bungee")) return;
 		ByteArrayDataInput in = ByteStreams.newDataInput(msg);
 		String subchannel = in.readUTF();
+		System.out.println("Got pluginmsg " + subchannel);
 		switch (subchannel) {
 		case "neocore-tp-instant": 
 			handleTeleportInstant(UUID.fromString(in.readUTF()), UUID.fromString(in.readUTF()));
@@ -36,6 +38,9 @@ public class BungeeListener implements PluginMessageListener, Listener {
 			break;
 		case "mutablebc":
 			handleMutableBroadcast(in.readUTF(), in.readUTF());
+			break;
+		case "neocore-afk":
+			handleAfkBroadcast(in.readUTF(), in.readUTF().equals("T"));
 			break;
 		default:
 			ArrayList<String> msgs = new ArrayList<String>();
@@ -49,6 +54,10 @@ public class BungeeListener implements PluginMessageListener, Listener {
 			Bukkit.getPluginManager().callEvent(new PluginMessageEvent(subchannel, msgs));
 			break;
 		}
+	}
+	
+	private void handleAfkBroadcast(String name, boolean isAfk) {
+		Util.broadcast("<gray>* " + name + (isAfk ? " is now AFK" : " is no longer AFK"), false);
 	}
 	
 	private void handleTeleportInstant(UUID src, UUID trg) {

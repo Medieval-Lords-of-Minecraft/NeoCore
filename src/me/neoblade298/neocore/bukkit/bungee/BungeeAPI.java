@@ -15,6 +15,12 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 
+/*
+ * Currently broken, velocity's pluginmessage seems less out-of-box
+ * Need to set up a server->velocity API and make velocity auto-forward
+ * it to servers.
+ * Before bungee auto-forwarded everything out of box.
+ */
 public class BungeeAPI {
 	private static Component prefix;
 	
