@@ -24,11 +24,9 @@ public class BungeeListener implements PluginMessageListener, Listener {
 	private static HashMap<UUID, UUID> tpCallbacks = new HashMap<UUID, UUID>();
 	@Override
 	public void onPluginMessageReceived(String channel, Player p, byte[] msg) {
-		System.out.println("Channel: " + channel);
 		if (!channel.equals("neocore:bungee")) return;
 		ByteArrayDataInput in = ByteStreams.newDataInput(msg);
 		String subchannel = in.readUTF();
-		System.out.println("Got pluginmsg " + subchannel);
 		switch (subchannel) {
 		case "neocore-tp-instant": 
 			handleTeleportInstant(UUID.fromString(in.readUTF()), UUID.fromString(in.readUTF()));
