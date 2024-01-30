@@ -18,6 +18,10 @@ public class InventoryListener implements Listener {
 		invs.put(p, inv);
 	}
 	
+	public static CoreInventory getCoreInventory(Player p) {
+		return invs.get(p);
+	}
+	
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e) {
 		Player p = (Player) e.getWhoClicked();
