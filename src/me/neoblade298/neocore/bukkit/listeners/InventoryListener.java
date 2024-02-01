@@ -42,8 +42,8 @@ public class InventoryListener implements Listener {
 	public void onInventoryClose(InventoryCloseEvent e) {
 		Player p = (Player) e.getPlayer();
 		if (invs.containsKey(p) && e.getInventory() == invs.get(p).getInventory()) {
-			invs.get(p).handleInventoryClose(e);
 			invs.remove(p);
+			invs.get(p).handleInventoryClose(e);
 		}
 	}
 }
