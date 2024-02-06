@@ -1,6 +1,7 @@
 package me.neoblade298.neocore.shared.droptables;
 
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 
@@ -50,6 +51,24 @@ public class DropTable<E> {
 		}
 		return list.get((int) (rand / weight));
 	}
+	
+	public boolean remove(E item, double weight) {
+		boolean success = drops.get(weight).remove(item);
+		if (success) totalWeight -= weight;
+		return success;
+	}
+	
+	public int remove(E item) {
+		int count = 0;
+		for (Entry<Double, ArrayList<E>> ent : drops.entrySet()) {
+			if (ent.getValue().remove(item)) {
+				count++;
+				totalWeight -= ent.getKey();
+			}
+		}
+		return count;
+	}
+	
 	/*
 	public DropTable<E> combine(DropTable<E>[] others) {
 		double[] multipliers = new double[others.length];
