@@ -27,6 +27,20 @@ public class DropTable<E> {
 		return group;
 	}
 	
+	public DropTable() {}
+	
+	private DropTable(DropTable<E> original) {
+		for (Entry<Double, ArrayList<E>> ent : original.drops.entrySet()) {
+			drops.put(ent.getKey(), new ArrayList<E>(ent.getValue()));
+		}
+		totalWeight = original.totalWeight;
+		size = original.size;
+	}
+	
+	public DropTable<E> clone() {
+		return new DropTable<E>(this);
+	}
+	
 	public void add(E drop, double weight) {
 		ArrayList<E> weightList = drops.getOrDefault(weight, new ArrayList<E>());
 		weightList.add(drop);
@@ -54,7 +68,10 @@ public class DropTable<E> {
 	
 	public boolean remove(E item, double weight) {
 		boolean success = drops.get(weight).remove(item);
-		if (success) totalWeight -= weight;
+		if (success) {
+			totalWeight -= weight;
+			size--;
+		}
 		return success;
 	}
 	
@@ -64,6 +81,7 @@ public class DropTable<E> {
 			if (ent.getValue().remove(item)) {
 				count++;
 				totalWeight -= ent.getKey();
+				size--;
 			}
 		}
 		return count;
