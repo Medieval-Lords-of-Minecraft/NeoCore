@@ -89,6 +89,14 @@ public class TargetUtil {
 	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance) {
 		return getEntitiesInSight(source, source.getEyeLocation().getDirection(), range, tolerance, null);
 	}
+	
+	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, Vector direction, double range, double tolerance) {
+		return getEntitiesInSight(source, direction, range, tolerance, null);
+	}
+	
+	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance, Predicate<LivingEntity> filter) {
+		return getEntitiesInSight(source, source.getEyeLocation().getDirection(), range, tolerance, null);
+	}
 
 	// Gets all entities in a line in front of source
 	// Sorted by nearest to furthest
