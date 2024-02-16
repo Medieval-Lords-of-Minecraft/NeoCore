@@ -2,6 +2,7 @@ package me.neoblade298.neocore.bukkit.commands;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
@@ -103,7 +104,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		if (args.length == 1) {
 			// Get all commands that can be run by user
 			return handlers.values().stream()
-					.filter(cmd -> check(cmd, s, true) && !cmd.isHidden() && cmd.getKey().length() > 0)
+					.filter(cmd -> check(cmd, s, true) && !cmd.isHidden() && cmd.getKey().length() > 0 && cmd.getKey().startsWith(args[0]))
 					.map(cmd -> cmd.getKey())
 					.toList();
 		}
@@ -116,7 +117,10 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 			
 			CommandArguments ca = cmd.getArgs();
 			Arg arg = CommandArguments.getCurrentArg(args, ca);
-			return arg.getTabOptions();
+			if (arg == null) return null;
+			return arg.getTabOptions().stream().filter((str) -> {
+				return str.startsWith(args[args.length - 1]);
+			}).collect(Collectors.toList());
 		}
 	}
 }
