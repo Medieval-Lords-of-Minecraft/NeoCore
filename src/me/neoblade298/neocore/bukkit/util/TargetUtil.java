@@ -20,12 +20,15 @@ import org.bukkit.util.Vector;
 public class TargetUtil {
 
 	public static Location getSightLocation(LivingEntity source, double range, boolean stickToGround) {
+		return getSightLocation(source, source.getEyeLocation().getDirection(), range, stickToGround);
+	}
+
+	public static Location getSightLocation(LivingEntity source, Vector direction, double range, boolean stickToGround) {
 		Location start = source.getEyeLocation();
-		Vector v = start.getDirection();
-		Location end = start.add(v.multiply(range));
+		Location end = start.add(direction.multiply(range));
 		Block b = end.getBlock();
 		
-		RayTraceResult rtr = start.getWorld().rayTraceBlocks(start, v, range, FluidCollisionMode.NEVER, true);
+		RayTraceResult rtr = start.getWorld().rayTraceBlocks(start, direction, range, FluidCollisionMode.NEVER, true);
 
 		/* 1. No stick to ground, hit block: subtract eye direction from the block hit
 		 * 2. No stick to ground, air: Do nothing
@@ -34,7 +37,7 @@ public class TargetUtil {
 		if (rtr.getHitBlock() != null) {
 			b = rtr.getHitBlock();
 			if (!stickToGround) {
-				return b.getLocation().subtract(v);
+				return b.getLocation().subtract(direction);
 			}
 		}
 		
@@ -84,23 +87,21 @@ public class TargetUtil {
 	}
 	
 	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance) {
-		return getEntitiesInSight(source, range, tolerance, null);
+		return getEntitiesInSight(source, source.getEyeLocation().getDirection(), range, tolerance, null);
 	}
 
 	// Gets all entities in a line in front of source
 	// Sorted by nearest to furthest
-	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance, Predicate<LivingEntity> filter) {
+	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, Vector direction, double range, double tolerance, Predicate<LivingEntity> filter) {
 		List<Entity> nearby = source.getNearbyEntities(range, range, range);
 		TreeSet<DistanceObject<LivingEntity>> sorted = new TreeSet<DistanceObject<LivingEntity>>();
-
-		Vector facing = source.getLocation().getDirection();
-		double fLengthSq = facing.lengthSquared();
+		double fLengthSq = direction.lengthSquared();
 
 		for (Entity entity : nearby) {
 			if (!isInFront(source, entity) || !(entity instanceof LivingEntity)) continue;
 			LivingEntity le = (LivingEntity) entity;
 			Vector relative = entity.getLocation().subtract(source.getLocation()).toVector();
-			double dot = relative.dot(facing);
+			double dot = relative.dot(direction);
 			double rLengthSq = relative.lengthSquared();
 			double cosSquared = (dot * dot) / (rLengthSq * fLengthSq);
 			double sinSquared = 1 - cosSquared;
@@ -120,13 +121,16 @@ public class TargetUtil {
 	}
 
 	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, double arc, double range, Predicate<LivingEntity> filter) {
+		return getEntitiesInCone(source, source.getEyeLocation().getDirection(), arc, range, filter);
+	}
+
+	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, Vector direction, double arc, double range, Predicate<LivingEntity> filter) {
 		LinkedList<LivingEntity> targets = new LinkedList<LivingEntity>();
 		List<Entity> list = source.getNearbyEntities(range, range, range);
 		if (arc <= 0) return targets;
 
 		// Initialize values
-		Vector dir = source.getLocation().getDirection();
-		dir.setY(0);
+		direction.setY(0);
 		double cos = Math.cos(arc * Math.PI / 180);
 		double cosSq = cos * cos;
 
@@ -143,7 +147,7 @@ public class TargetUtil {
 				else {
 					Vector relative = entity.getLocation().subtract(source.getLocation()).toVector();
 					relative.setY(0);
-					double dot = relative.dot(dir);
+					double dot = relative.dot(direction);
 					double value = dot * dot / relative.lengthSquared();
 					if (arc < 180 && dot > 0 && value >= cosSq)
 						targets.add((LivingEntity) entity);
