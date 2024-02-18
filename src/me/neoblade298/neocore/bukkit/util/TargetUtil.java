@@ -20,11 +20,11 @@ import org.bukkit.util.Vector;
 public class TargetUtil {
 
 	public static Location getSightLocation(LivingEntity source, double range, boolean stickToGround) {
-		return getSightLocation(source, source.getEyeLocation().getDirection(), range, stickToGround);
+		return getSightLocation(source.getLocation(), source.getEyeLocation().getDirection(), range, stickToGround);
 	}
 
-	public static Location getSightLocation(LivingEntity source, Vector direction, double range, boolean stickToGround) {
-		Location start = source.getEyeLocation();
+	public static Location getSightLocation(Location source, Vector direction, double range, boolean stickToGround) {
+		Location start = source;
 		Location end = start.add(direction.multiply(range));
 		Block b = end.getBlock();
 		
