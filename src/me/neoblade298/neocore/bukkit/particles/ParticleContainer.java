@@ -33,8 +33,8 @@ public class ParticleContainer {
 		pc.count(count);
 		pc.spread(spreadXZ, spreadY);
 		pc.speed(speed);
-		pc.blockData(blockData);
-		pc.dustOptions(dustOptions);
+		pc.blockData = blockData;
+		pc.dustOptions = dustOptions;
 		return pc;
 	}
 	
