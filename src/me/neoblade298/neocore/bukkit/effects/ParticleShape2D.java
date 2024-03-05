@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bukkit.particles;
+package me.neoblade298.neocore.bukkit.effects;
 
 
 import java.util.LinkedList;
@@ -15,7 +15,7 @@ public abstract class ParticleShape2D {
 	
 	public abstract ParticleShapeMemory calculate(Location center, LocalAxes axes);
 	
-	public void draw(ParticleContainer edges, Location center, LocalAxes axes, @Nullable ParticleContainer fill) {
-		drawWithCache(ParticleUtil.calculateCache(center), edges, center, axes, fill);
+	public void draw(Player origin, ParticleContainer edges, Location center, LocalAxes axes, @Nullable ParticleContainer fill) {
+		drawWithCache(Effect.calculateCache(origin, center, edges.forceVisibility, ParticleContainer.HIDE_TAG), edges, center, axes, fill);
 	}
 }

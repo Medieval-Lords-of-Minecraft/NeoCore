@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bukkit.particles;
+package me.neoblade298.neocore.bukkit.effects;
 
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;

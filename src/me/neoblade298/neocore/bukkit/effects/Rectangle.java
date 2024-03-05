@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bukkit.particles;
+package me.neoblade298.neocore.bukkit.effects;
 
 import java.util.LinkedList;
 
@@ -23,7 +23,7 @@ public class Rectangle extends ParticleShape2D {
 	@Override
 	public void drawWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, LocalAxes axes, ParticleContainer fill) {
 		ParticleShapeMemory mem = calculate(center, axes);
-		mem.draw(cache, particle, fill);
+		mem.play(cache, particle, fill);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bukkit.particles;
+package me.neoblade298.neocore.bukkit.effects;
 
 import java.util.LinkedList;
 
@@ -7,19 +7,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.bukkit.player.PlayerTags;
-
 public class ParticleUtil {
-	private static final int MAX_VIEW_DISTANCE = 32;
-	private static final PlayerTags tags;
-	
-	static {
-		tags = NeoCore.getNeoCoreTags();
-	}
-	
-	public static LinkedList<Player> drawLine(ParticleContainer particle, Location l1, Location l2, double metersPerParticle) {
-		return drawLineWithCache(calculateCache(l1), particle, l1, l2, metersPerParticle);
+	public static LinkedList<Player> drawLine(Player origin, ParticleContainer particle, Location l1, Location l2, double metersPerParticle) {
+		return drawLineWithCache(particle.calculateCache(origin, l1, particle.forceVisibility, 0), particle, l1, l2, metersPerParticle);
 	}
 	
 	public static LinkedList<Location> calculateLine(Location l1, Location l2, double metersPerParticle) {
@@ -51,24 +41,11 @@ public class ParticleUtil {
 	}
 	
 	public static LinkedList<Player> drawLineWithCache(LinkedList<Player> cache, ParticleContainer particle, Location l1, Location l2, double metersPerParticle) {
-		particle.spawnWithCache(cache, l1);
-		particle.spawnWithCache(cache, l2);
+		particle.playWithCache(cache, l1);
+		particle.playWithCache(cache, l2);
 		for (Location loc : calculateLine(l1, l2, metersPerParticle)) {
-			particle.spawnWithCache(cache, loc);
+			particle.playWithCache(cache, loc);
 		}
 		return cache;
-	}
-	
-	public static LinkedList<Player> calculateCache(Location loc) {
-		return calculateCache(loc, MAX_VIEW_DISTANCE);
-	}
-	
-	public static LinkedList<Player> calculateCache(Location loc, int viewDistance) {
-		LinkedList<Player> list = new LinkedList<Player>();
-		for (Player p : loc.getNearbyPlayers(viewDistance)) {
-			if (tags.exists("hide-particles", p.getUniqueId())) continue;
-			list.add(p);
-		}
-		return list;
 	}
 }

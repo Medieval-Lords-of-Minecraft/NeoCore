@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bukkit.particles;
+package me.neoblade298.neocore.bukkit.effects;
 
 import java.util.LinkedList;
 
@@ -26,12 +26,12 @@ public class ParticleAnimation {
 		this(particle, formula, duration, 1);
 	}
 	
-	public ParticleAnimationInstance run(Entity ent) {
-		return new ParticleAnimationInstance(this, ent);
+	public ParticleAnimationInstance play(Player origin, Entity ent) {
+		return new ParticleAnimationInstance(origin, this, ent);
 	}
 	
-	public ParticleAnimationInstance run(Location loc) {
-		return new ParticleAnimationInstance(this, loc);
+	public ParticleAnimationInstance play(Player origin, Location loc) {
+		return new ParticleAnimationInstance(origin, this, loc);
 	}
 	
 	public interface ParticleFormula {
@@ -43,15 +43,15 @@ public class ParticleAnimation {
 		private Entity ent;
 		private Location loc;
 		
-		private ParticleAnimationInstance(ParticleAnimation anim, Location loc) {
+		private ParticleAnimationInstance(Player origin, ParticleAnimation anim, Location loc) {
 			this.loc = loc;
-			LinkedList<Player> cache = ParticleUtil.calculateCache(ent.getLocation());
+			LinkedList<Player> cache = Effect.calculateCache(origin, loc, anim.particle.forceVisibility, ParticleContainer.HIDE_TAG);
 			run(anim, cache);
 		}
 		
-		private ParticleAnimationInstance(ParticleAnimation anim, Entity ent) {
+		private ParticleAnimationInstance(Player origin, ParticleAnimation anim, Entity ent) {
 			this.ent = ent;
-			LinkedList<Player> cache = ParticleUtil.calculateCache(ent.getLocation());
+			LinkedList<Player> cache = Effect.calculateCache(origin, ent.getLocation(), anim.particle.forceVisibility, ParticleContainer.HIDE_TAG);
 			run(anim, cache);
 		}
 		
@@ -64,7 +64,7 @@ public class ParticleAnimation {
 					tasks.add(new BukkitRunnable() {
 						public void run() {
 							for (Location l : anim.formula.run(ent.getLocation(), step)) {
-								anim.particle.spawnWithCache(cache, l);
+								anim.particle.playWithCache(cache, l);
 							}
 						}
 					}.runTaskLater(NeoCore.inst(), i * anim.frequency));
@@ -76,7 +76,7 @@ public class ParticleAnimation {
 					tasks.add(new BukkitRunnable() {
 						public void run() {
 							for (Location l : anim.formula.run(loc, step)) {
-								anim.particle.spawnWithCache(cache, l);
+								anim.particle.playWithCache(cache, l);
 							}
 						}
 					}.runTaskLater(NeoCore.inst(), i * anim.frequency));

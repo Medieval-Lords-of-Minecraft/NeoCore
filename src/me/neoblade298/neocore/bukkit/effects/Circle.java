@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bukkit.particles;
+package me.neoblade298.neocore.bukkit.effects;
 
 import java.util.LinkedList;
 
@@ -35,7 +35,7 @@ public class Circle extends ParticleShape2D {
 			drawFlatWithCache(cache, particle, center, fill);
 		}
 		else {
-			calculate(center, axes).draw(cache, particle, fill);
+			calculate(center, axes).play(cache, particle, fill);
 		}
 	}
 	
@@ -45,16 +45,16 @@ public class Circle extends ParticleShape2D {
 			ParticleShapeMemory mem = calculate(center, axes);
 			flatEdges = mem.getEdgeVectors();
 			flatFill = mem.getFillVectors();
-			mem.draw(cache, particle, fill);
+			mem.play(cache, particle, fill);
 			return;
 		}
 		
 		for (Vector v : flatEdges) {
-			particle.spawnWithCache(cache, center.clone().add(v));
+			particle.playWithCache(cache, center.clone().add(v));
 		}
 		if (fill == null) return;
 		for (Vector v : flatFill) {
-			fill.spawnWithCache(cache, center.clone().add(v));
+			fill.playWithCache(cache, center.clone().add(v));
 		}
 	}
 

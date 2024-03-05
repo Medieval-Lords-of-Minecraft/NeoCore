@@ -153,32 +153,6 @@ public class Util {
     		}
     	}.runTaskLater(NeoCore.inst(), delay);
     }
-    
-    public static void playSound(Player p, Sound sound, float volume, float pitch, boolean showAllPlayers) {
-    	if (showAllPlayers) {
-    		p.playSound(p, sound, volume, pitch);
-    	}
-    	else {
-    		p.getWorld().playSound(p, sound, volume, pitch);
-    	}
-    }
-    
-    public static void playSound(Player p, Sound sound, boolean showAllPlayers) {
-    	playSound(p, sound, 1F, 1F, showAllPlayers);
-    }
-    
-    public static void playSound(Player p, Location loc, Sound sound, float volume, float pitch, boolean showAllPlayers) {
-    	if (showAllPlayers) {
-    		p.playSound(loc, sound, volume, pitch);
-    	}
-    	else {
-    		loc.getWorld().playSound(loc, sound, volume, pitch);
-    	}
-    }
-    
-    public static void playSound(Player p, Location loc, Sound sound, boolean showAllPlayers) {
-    	playSound(p, loc, sound, 1F, 1F, showAllPlayers);
-    }
 
 	public static void displayError(Player p, String error) {
 		p.playSound(p, Sound.BLOCK_NOTE_BLOCK_BASS, 1F, 0.7F);

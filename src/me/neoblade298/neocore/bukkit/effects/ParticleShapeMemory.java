@@ -1,4 +1,4 @@
-package me.neoblade298.neocore.bukkit.particles;
+package me.neoblade298.neocore.bukkit.effects;
 
 import java.util.LinkedList;
 
@@ -16,17 +16,19 @@ public class ParticleShapeMemory {
 		this.fill = fill;
 	}
 	
-	public LinkedList<Player> calculateCache() {
-		return ParticleUtil.calculateCache(center);
+	public void play(LinkedList<Player> cache, ParticleContainer edge) {
+		play(cache, edge, null);
 	}
 	
-	public void draw(LinkedList<Player> cache, ParticleContainer edge) {
-		edge.spawn(edges);
-	}
-	
-	public void draw(LinkedList<Player> cache, ParticleContainer edge, ParticleContainer fill) {
-		edge.spawn(edges);
-		if (fill != null) fill.spawn(this.fill);
+	public void play(LinkedList<Player> cache, ParticleContainer edge, ParticleContainer fill) {
+		for (Location loc : edges) {
+			edge.playWithCache(cache, loc);
+		}
+		if (fill != null) {
+			for (Location loc : this.fill) {
+				fill.playWithCache(cache, loc);
+			}
+		}
 	}
 
 	public LinkedList<Location> getEdges() {
