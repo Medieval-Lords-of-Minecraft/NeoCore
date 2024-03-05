@@ -97,6 +97,10 @@ public class TargetUtil {
 	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance, Predicate<LivingEntity> filter) {
 		return getEntitiesInLine(source.getLocation(), source.getEyeLocation().getDirection(), range, tolerance, null);
 	}
+
+	public static LinkedList<LivingEntity> getEntitiesInLine(Location source, Vector direction, double range, double tolerance) {
+		return getEntitiesInLine(source, direction, range, tolerance, null);
+	}
 	
 	// Gets all entities in a line in front of source
 	// Sorted by nearest to furthest
