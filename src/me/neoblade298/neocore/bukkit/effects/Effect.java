@@ -28,8 +28,19 @@ public abstract class Effect {
 		this.tagPrefix = tagPrefix;
 		this.forceVisibility = forceVisibility;
 	}
+	
+	public Audience getForcedVisibility() {
+		return forceVisibility;
+	}
 
 	protected abstract void playEffect(Player p, Location loc);
+	protected abstract void playEffect(Location loc);
+	public void play(Entity loc) {
+		playEffect(loc.getLocation());
+	}
+	public void play(Location loc) {
+		playEffect(loc);
+	}
 	public void play(Player origin, Entity loc, Audience audience) {
 		play(origin, loc.getLocation(), audience);
 	}
@@ -83,6 +94,12 @@ public abstract class Effect {
 	}
 	public static LinkedList<Player> calculateCache(Player origin, Location loc, Audience forceVisibility, String tagPrefix) {
 		return calculateCache(origin, loc, forceVisibility, tagPrefix, MAX_VIEW_DISTANCE);
+	}
+	public static LinkedList<Player> calculateCache(Location loc) {
+		return calculateCache(loc, MAX_VIEW_DISTANCE);
+	}
+	public static LinkedList<Player> calculateCache(Location loc, int viewDistance) {
+		return new LinkedList<Player>(loc.getNearbyPlayers(viewDistance));
 	}
 	
 	public static LinkedList<Player> calculateCache(Player origin, Location loc, Audience forceVisibility, String tagPrefix, int viewDistance) {

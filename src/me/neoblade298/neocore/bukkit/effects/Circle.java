@@ -29,13 +29,13 @@ public class Circle extends ParticleShape2D {
 	}
 
 	@Override
-	public void drawWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, LocalAxes axes, ParticleContainer fill) {
+	public void playWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, LocalAxes axes, ParticleContainer fill) {
 		// If circle is flat, no need to recreate circle except for the first time
 		if (axes.isXZ()) {
 			drawFlatWithCache(cache, particle, center, fill);
 		}
 		else {
-			calculate(center, axes).play(cache, particle, fill);
+			calculate(center, axes).playWithCache(cache, particle, fill);
 		}
 	}
 	
@@ -45,7 +45,7 @@ public class Circle extends ParticleShape2D {
 			ParticleShapeMemory mem = calculate(center, axes);
 			flatEdges = mem.getEdgeVectors();
 			flatFill = mem.getFillVectors();
-			mem.play(cache, particle, fill);
+			mem.playWithCache(cache, particle, fill);
 			return;
 		}
 		

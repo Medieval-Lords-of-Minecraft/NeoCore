@@ -92,4 +92,9 @@ public class ParticleContainer extends Effect {
 	public void playEffect(Player p, Location loc) {
 		p.spawnParticle(particle, loc, count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
 	}
+
+	@Override
+	protected void playEffect(Location loc) {
+		loc.getWorld().spawnParticle(particle, loc, count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
+	}
 }

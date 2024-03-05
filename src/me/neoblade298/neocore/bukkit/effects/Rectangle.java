@@ -21,9 +21,9 @@ public class Rectangle extends ParticleShape2D {
 	}
 
 	@Override
-	public void drawWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, LocalAxes axes, ParticleContainer fill) {
+	public void playWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, LocalAxes axes, ParticleContainer fill) {
 		ParticleShapeMemory mem = calculate(center, axes);
-		mem.play(cache, particle, fill);
+		mem.playWithCache(cache, particle, fill);
 	}
 
 	@Override

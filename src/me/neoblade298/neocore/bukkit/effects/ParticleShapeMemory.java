@@ -16,11 +16,34 @@ public class ParticleShapeMemory {
 		this.fill = fill;
 	}
 	
-	public void play(LinkedList<Player> cache, ParticleContainer edge) {
-		play(cache, edge, null);
+	public void play(ParticleContainer edge) {
+		play(edge, null);
 	}
 	
-	public void play(LinkedList<Player> cache, ParticleContainer edge, ParticleContainer fill) {
+	public void play(ParticleContainer edge, ParticleContainer fill) {
+		for (Location loc : edges) {
+			edge.play(loc);
+		}
+		if (fill != null) {
+			for (Location loc : this.fill) {
+				fill.play(loc);
+			}
+		}
+	}
+	
+	public void play(Player origin, ParticleContainer edge) {
+		playWithCache(Effect.calculateCache(origin, center, edge.getForcedVisibility(), ParticleContainer.HIDE_TAG), edge);
+	}
+	
+	public void play(Player origin, ParticleContainer edge, ParticleContainer fill) {
+		playWithCache(Effect.calculateCache(origin, center, edge.getForcedVisibility(), ParticleContainer.HIDE_TAG), edge, fill);
+	}
+	
+	public void playWithCache(LinkedList<Player> cache, ParticleContainer edge) {
+		playWithCache(cache, edge, null);
+	}
+	
+	public void playWithCache(LinkedList<Player> cache, ParticleContainer edge, ParticleContainer fill) {
 		for (Location loc : edges) {
 			edge.playWithCache(cache, loc);
 		}

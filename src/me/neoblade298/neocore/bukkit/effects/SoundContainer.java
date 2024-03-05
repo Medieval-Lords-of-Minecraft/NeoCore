@@ -33,4 +33,9 @@ public class SoundContainer extends Effect {
 	protected void playEffect(Player p, Location loc) {
 		p.playSound(loc, sound, volume, pitch);
 	}
+
+	@Override
+	protected void playEffect(Location loc) {
+		loc.getWorld().playSound(loc, sound, pitch, volume);
+	}
 }
