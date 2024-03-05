@@ -62,6 +62,10 @@ public class TargetUtil {
 	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double range, Predicate<LivingEntity> filter) {
 		return getEntitiesInRadius(source, range, range, filter);
 	}
+	
+	public static LinkedList<LivingEntity> getEntitiesInRadius(Location source, double radius, double height) {
+		return getEntitiesInRadius(source, radius, height, null);
+	}
 
 	// Gets all entities around source
 	// Sorted by nearest to furthest
@@ -87,28 +91,24 @@ public class TargetUtil {
 	}
 	
 	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance) {
-		return getEntitiesInSight(source, source.getEyeLocation().getDirection(), range, tolerance, null);
-	}
-	
-	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, Vector direction, double range, double tolerance) {
-		return getEntitiesInSight(source, direction, range, tolerance, null);
+		return getEntitiesInLine(source.getLocation(), source.getEyeLocation().getDirection(), range, tolerance, null);
 	}
 	
 	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance, Predicate<LivingEntity> filter) {
-		return getEntitiesInSight(source, source.getEyeLocation().getDirection(), range, tolerance, null);
+		return getEntitiesInLine(source.getLocation(), source.getEyeLocation().getDirection(), range, tolerance, null);
 	}
-
+	
 	// Gets all entities in a line in front of source
 	// Sorted by nearest to furthest
-	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, Vector direction, double range, double tolerance, Predicate<LivingEntity> filter) {
-		List<Entity> nearby = source.getNearbyEntities(range, range, range);
+	public static LinkedList<LivingEntity> getEntitiesInLine(Location source, Vector direction, double range, double tolerance, Predicate<LivingEntity> filter) {
+		Collection<Entity> nearby = source.getNearbyEntities(range, range, range);
 		TreeSet<DistanceObject<LivingEntity>> sorted = new TreeSet<DistanceObject<LivingEntity>>();
 		double fLengthSq = direction.lengthSquared();
 
 		for (Entity entity : nearby) {
-			if (!isInFront(source, entity) || !(entity instanceof LivingEntity)) continue;
+			if (!isInFront(source, entity.getLocation()) || !(entity instanceof LivingEntity)) continue;
 			LivingEntity le = (LivingEntity) entity;
-			Vector relative = entity.getLocation().subtract(source.getLocation()).toVector();
+			Vector relative = entity.getLocation().subtract(source).toVector();
 			double dot = relative.dot(direction);
 			double rLengthSq = relative.lengthSquared();
 			double cosSquared = (dot * dot) / (rLengthSq * fLengthSq);
@@ -167,10 +167,10 @@ public class TargetUtil {
 		return targets;
 	}
 
-	public static boolean isInFront(Entity entity, Entity target) {
+	public static boolean isInFront(Location source, Location target) {
 		// Get the necessary vectors
-		Vector facing = entity.getLocation().getDirection();
-		Vector relative = target.getLocation().subtract(entity.getLocation()).toVector();
+		Vector facing = source.getDirection();
+		Vector relative = target.subtract(source).toVector();
 
 		// If the dot product is positive, the target is in front
 		return facing.dot(relative) >= 0;
