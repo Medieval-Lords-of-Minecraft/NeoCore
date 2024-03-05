@@ -110,7 +110,7 @@ public class TargetUtil {
 		double fLengthSq = direction.lengthSquared();
 
 		for (Entity entity : nearby) {
-			if (!isInFront(source, entity.getLocation()) || !(entity instanceof LivingEntity)) continue;
+			if (!isInFront(source, entity.getLocation(), direction) || !(entity instanceof LivingEntity)) continue;
 			LivingEntity le = (LivingEntity) entity;
 			Vector relative = entity.getLocation().subtract(source).toVector();
 			double dot = relative.dot(direction);
@@ -170,14 +170,17 @@ public class TargetUtil {
 		if (filter != null) return targets.stream().filter(filter).collect(Collectors.toCollection(LinkedList::new));
 		return targets;
 	}
-
+	
 	public static boolean isInFront(Location source, Location target) {
+		return isInFront(source, target, source.getDirection());
+	}
+
+	public static boolean isInFront(Location source, Location target, Vector direction) {
 		// Get the necessary vectors
-		Vector facing = source.getDirection();
 		Vector relative = target.subtract(source).toVector();
 
 		// If the dot product is positive, the target is in front
-		return facing.dot(relative) >= 0;
+		return direction.dot(relative) >= 0;
 	}
 	
 	private static class DistanceObject<E> implements Comparable<DistanceObject<E>> {
