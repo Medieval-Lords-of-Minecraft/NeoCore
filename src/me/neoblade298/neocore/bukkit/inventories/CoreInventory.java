@@ -81,7 +81,9 @@ public abstract class CoreInventory {
 	}
 	
 	public void openInventory() {
+		CorePlayerInventory lower = InventoryListener.getLowerInventory(p);
 		p.openInventory(inv);
 		InventoryListener.registerInventory(p, this);
+		if (lower != null) InventoryListener.registerPlayerInventory(p, lower);
 	}
 }

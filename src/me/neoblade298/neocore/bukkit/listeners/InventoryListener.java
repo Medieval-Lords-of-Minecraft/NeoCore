@@ -17,10 +17,20 @@ public class InventoryListener implements Listener {
 	private static HashMap<Player, CorePlayerInventory> lowerInvs = new HashMap<Player, CorePlayerInventory>();
 	
 	public static void registerInventory(Player p, CoreInventory inv) {
+		if (inv == null) upperInvs.remove(p);
 		upperInvs.put(p, inv);
 	}
 	public static void registerPlayerInventory(Player p, CorePlayerInventory inv) {
+		if (inv == null) lowerInvs.remove(p);
 		lowerInvs.put(p, inv);
+	}
+	
+	public static void unregisterInventory(Player p) {
+		upperInvs.remove(p);
+	}
+	
+	public static void unregisterPlayerInventory(Player p) {
+		lowerInvs.remove(p);
 	}
 	
 	public static CoreInventory getUpperInventory(Player p) {
@@ -40,7 +50,7 @@ public class InventoryListener implements Listener {
 		Player p = (Player) e.getWhoClicked();
 		if (lowerInvs.containsKey(p)) {
 			CorePlayerInventory inv = lowerInvs.get(p);
-			if (inv.handlesEvents() && e.getClickedInventory() == p.getInventory()) {
+			if (inv.handlesEvents() && e.getClickedInventory() == p.getInventory() || e.getClickedInventory() == null) {
 				lowerInvs.get(p).handleInventoryClick(e);
 				return;
 			}
