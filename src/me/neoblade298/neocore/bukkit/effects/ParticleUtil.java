@@ -9,7 +9,7 @@ import org.bukkit.util.Vector;
 
 public class ParticleUtil {
 	public static LinkedList<Player> drawLine(Player origin, ParticleContainer particle, Location l1, Location l2, double metersPerParticle) {
-		return drawLineWithCache(particle.calculateCache(origin, l1, particle.forceVisibility, 0), particle, l1, l2, metersPerParticle);
+		return drawLineWithCache(particle.calculateCache(origin, l1, particle.forceVisibility), particle, l1, l2, metersPerParticle);
 	}
 	
 	public static LinkedList<Location> calculateLine(Location l1, Location l2, double metersPerParticle) {
