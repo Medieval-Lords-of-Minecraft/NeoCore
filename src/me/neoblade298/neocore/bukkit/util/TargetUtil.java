@@ -95,7 +95,7 @@ public class TargetUtil {
 	}
 	
 	public static LinkedList<LivingEntity> getEntitiesInSight(LivingEntity source, double range, double tolerance, Predicate<LivingEntity> filter) {
-		return getEntitiesInLine(source.getLocation(), source.getEyeLocation().getDirection(), range, tolerance, null);
+		return getEntitiesInLine(source.getLocation(), source.getEyeLocation().getDirection(), range, tolerance, filter);
 	}
 
 	public static LinkedList<LivingEntity> getEntitiesInLine(Location source, Vector direction, double range, double tolerance) {
