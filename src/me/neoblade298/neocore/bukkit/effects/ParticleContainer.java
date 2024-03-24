@@ -6,6 +6,7 @@ import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class ParticleContainer extends Effect {
 	public static final String HIDE_TAG = "hide-particles";
@@ -31,6 +32,11 @@ public class ParticleContainer extends Effect {
 		pc.dustOptions = dustOptions;
 		pc.forceVisibility = forceVisibility;
 		return pc;
+	}
+	
+	public ParticleContainer particle(Particle particle) {
+		this.particle = particle;
+		return this;
 	}
 	
 	public ParticleContainer count(int count) {
@@ -88,13 +94,21 @@ public class ParticleContainer extends Effect {
 		return this;
 	}
 	
+	private Location calculateOffset(Location loc) {
+		loc = loc.clone();
+		loc.add(0, offsetY, 0);
+		Vector forward = loc.getDirection();
+		forward.rotateAroundY(Math.toDegrees(offsetForwardAngle));
+		return loc.add(forward.multiply(offsetForward));
+	}
+	
 	@Override
 	public void playEffect(Player p, Location loc) {
-		p.spawnParticle(particle, loc, count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
+		p.spawnParticle(particle, calculateOffset(loc), count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
 	}
 
 	@Override
 	protected void playEffect(Location loc) {
-		loc.getWorld().spawnParticle(particle, loc, count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
+		loc.getWorld().spawnParticle(particle, calculateOffset(loc), count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
 	}
 }
