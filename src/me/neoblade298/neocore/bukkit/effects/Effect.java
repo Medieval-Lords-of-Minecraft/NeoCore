@@ -80,8 +80,8 @@ public abstract class Effect {
 	private void playForNotOrigin(Player origin, Location loc) {
 		for (Player p : calculateCache(origin, loc, forceVisibility)) {
 			if (p == origin) continue;
-			if (forceVisibility.containsNonOrigin() && Effect.tags.exists(tagPrefix + "-other", p.getUniqueId())) continue;
-			playEffect(origin, loc);
+			if (!forceVisibility.containsNonOrigin() && Effect.tags.exists(tagPrefix + "-other", p.getUniqueId())) continue;
+			playEffect(p, loc);
 		}
 	}
 	
