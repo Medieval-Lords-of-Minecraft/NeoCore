@@ -121,7 +121,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 			
 			CommandArguments ca = cmd.getArgs();
 			Arg arg = CommandArguments.getCurrentArg(args, ca);
-			if (arg == null) return null;
+			if (arg == null || arg.getTabOptions() == null) return null;
 			return arg.getTabOptions().stream().filter((str) -> {
 				return str.startsWith(args[args.length - 1]);
 			}).collect(Collectors.toList());
