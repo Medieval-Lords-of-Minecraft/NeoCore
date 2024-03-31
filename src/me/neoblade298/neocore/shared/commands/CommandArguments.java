@@ -89,7 +89,7 @@ public class CommandArguments {
 			}
 			
 			// Gone past all args
-			if (cargsIdx + 1 > cargs.size()) {
+			if (cargsIdx + 1 >= cargs.size()) {
 				return null;
 			}
 		}
