@@ -14,8 +14,10 @@ public abstract class Subcommand extends AbstractSubcommand {
 	}
 
 	public abstract void run(CommandSender s, String[] args);
+	// Must override getTabOptions for this to actually work
 	public void overrideTabHandler() {
 		overridesTab = true;
+		enableTabComplete();
 	}
-	public List<String> getTabOptions() { return null; }
+	public List<String> getTabOptions(CommandSender s, String[] args) { return null; }
 }

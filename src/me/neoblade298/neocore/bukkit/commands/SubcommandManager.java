@@ -116,7 +116,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 			if (cmd == null || cmd.isHidden() || !cmd.isTabEnabled()) return null;
 			
 			if (cmd.overridesTab) {
-				return cmd.getTabOptions();
+				return cmd.getTabOptions(s, args);
 			}
 			
 			CommandArguments ca = cmd.getArgs();
