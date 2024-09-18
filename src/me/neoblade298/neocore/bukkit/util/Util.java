@@ -91,6 +91,10 @@ public class Util {
 		}
 		return new Location(w, x, y, z, yaw, pitch);
 	}
+	
+	public static String locToString(Location loc) {
+		return locToString(loc, true, false);
+	}
 
 	public static String locToString(Location loc, boolean round, boolean includePitch) {
 		double x = loc.getX(), y = loc.getY(), z = loc.getZ();

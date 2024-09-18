@@ -20,12 +20,12 @@ import org.bukkit.util.Vector;
 public class TargetUtil {
 
 	public static Location getSightLocation(LivingEntity source, double range, boolean stickToGround) {
-		return getSightLocation(source.getLocation(), source.getEyeLocation().getDirection(), range, stickToGround);
+		return getSightLocation(source.getEyeLocation(), source.getEyeLocation().getDirection(), range, stickToGround);
 	}
 
 	public static Location getSightLocation(Location source, Vector direction, double range, boolean stickToGround) {
 		Location start = source;
-		Location end = start.add(direction.multiply(range));
+		Location end = start.clone().add(direction.multiply(range));
 		Block b = end.getBlock();
 		
 		RayTraceResult rtr = start.getWorld().rayTraceBlocks(start, direction, range, FluidCollisionMode.NEVER, true);
@@ -39,6 +39,7 @@ public class TargetUtil {
 			if (!stickToGround) {
 				return b.getLocation().subtract(direction);
 			}
+			end = b.getLocation();
 		}
 		
 		if (stickToGround) {
@@ -205,6 +206,7 @@ public class TargetUtil {
 	private static double findGroundY(Block b) {
 		while (b.isEmpty() && b.getY() > -64) {
 			b = b.getRelative(BlockFace.DOWN);
+			System.out.println("Finding ground " + Util.locToString(b.getLocation(), true, false) + " " + b.getType());
 		}
 		return b.getY() + 0.5;
 	}
