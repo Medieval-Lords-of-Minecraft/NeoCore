@@ -34,7 +34,7 @@ public class TargetUtil {
 		 * 2. No stick to ground, air: Do nothing
 		 * 3. Stick to ground: Get either the air or raytraced block and find the ground from there
 		 */
-		if (rtr.getHitBlock() != null) {
+		if (rtr != null && rtr.getHitBlock() != null) {
 			b = rtr.getHitBlock();
 			if (!stickToGround) {
 				return b.getLocation().subtract(direction);
@@ -203,7 +203,7 @@ public class TargetUtil {
 	}
 	
 	private static double findGroundY(Block b) {
-		while (b.isEmpty()) {
+		while (b.isEmpty() && b.getY() > -64) {
 			b = b.getRelative(BlockFace.DOWN);
 		}
 		return b.getY() + 0.5;
