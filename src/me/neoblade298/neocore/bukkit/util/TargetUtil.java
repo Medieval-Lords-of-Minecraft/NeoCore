@@ -206,7 +206,6 @@ public class TargetUtil {
 	private static double findGroundY(Block b) {
 		while (b.isEmpty() && b.getY() > -64) {
 			b = b.getRelative(BlockFace.DOWN);
-			System.out.println("Finding ground " + Util.locToString(b.getLocation(), true, false) + " " + b.getType());
 		}
 		return b.getY() + 0.5;
 	}
