@@ -20,7 +20,7 @@ public class ParticleContainer extends Effect {
 		super(HIDE_TAG);
 		this.particle = particle;
 		
-		if (particle == Particle.REDSTONE) dustOptions = new DustOptions(Color.RED, count);
+		if (particle == Particle.DUST) dustOptions = new DustOptions(Color.RED, count);
 	}
 	
 	public ParticleContainer clone() {

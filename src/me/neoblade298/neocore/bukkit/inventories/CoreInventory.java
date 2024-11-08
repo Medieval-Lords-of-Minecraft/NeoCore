@@ -39,7 +39,7 @@ public abstract class CoreInventory {
 	}
 	
 	public static ItemStack createButton(String b64, TextComponent name, TextComponent... lore) {
-		ItemStack item = SkullUtil.itemFromBase64(b64);
+		ItemStack item = SkullUtil.fromBase64(b64);
 		return createButton(item, name, lore);
 	}
 	
