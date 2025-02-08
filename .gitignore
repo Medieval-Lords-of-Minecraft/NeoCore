@@ -2,3 +2,4 @@
 /target/
 /doc/
 /.apt_generated/
+/.classpath
