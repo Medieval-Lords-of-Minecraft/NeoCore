@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 
+import org.bukkit.Bukkit;
+
 public class DropTable<E> {
 	private TreeMap<Double, ArrayList<E>> drops = new TreeMap<Double, ArrayList<E>>();
 	private double totalWeight = 0;
@@ -62,6 +64,10 @@ public class DropTable<E> {
 				break;
 			}
 			rand -= listWeight;
+		}
+		if (list == null) {
+			Bukkit.getLogger().warning("[NeoCore] Failed to get item from droptable: " + this.toString());
+			return null;
 		}
 		return list.get((int) (rand / weight));
 	}

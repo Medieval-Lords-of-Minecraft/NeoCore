@@ -2,4 +2,6 @@
 /target/
 /doc/
 /.apt_generated/
-/.classpath
+.vscode/settings.json
+.classpath
+.settings/org.eclipse.jdt.core.prefs
