@@ -8,10 +8,10 @@ public class LocalAxes {
 	private Vector left, up, forward;
 	private static final LocalAxes XZ = new LocalAxes(new Vector(-1,0,0), new Vector(0,0,1), new Vector(0,1,0));
 	
-	private LocalAxes(Vector left, Vector up, Vector forward) {
-		this.left = left;
-		this.up = up;
-		this.forward = forward;
+	public LocalAxes(Vector left, Vector up, Vector forward) {
+		this.left = left.normalize();
+		this.up = up.normalize();
+		this.forward = forward.normalize();
 	}
 	
 	public Vector left() {
