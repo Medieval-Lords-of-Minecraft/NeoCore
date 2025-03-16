@@ -133,16 +133,12 @@ public class TargetUtil {
 		return getEntitiesInCone(source, arc, range, null);
 	}
 
-	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, Location loc, double arc, double range) {
-		return getEntitiesInCone(source, loc, arc, range, null);
+	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, Location loc, Vector direction, double arc, double range) {
+		return getEntitiesInCone(source, loc, direction, arc, range, null);
 	}
 
 	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, double arc, double range, Predicate<LivingEntity> filter) {
 		return getEntitiesInCone(source, source.getLocation(), source.getEyeLocation().getDirection(), arc, range, filter);
-	}
-
-	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, Location loc, double arc, double range, Predicate<LivingEntity> filter) {
-		return getEntitiesInCone(source, loc, source.getEyeLocation().getDirection(), arc, range, filter);
 	}
 
 	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, Location loc, Vector direction, double arc, double range, Predicate<LivingEntity> filter) {
