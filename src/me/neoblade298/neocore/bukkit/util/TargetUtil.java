@@ -133,13 +133,21 @@ public class TargetUtil {
 		return getEntitiesInCone(source, arc, range, null);
 	}
 
-	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, double arc, double range, Predicate<LivingEntity> filter) {
-		return getEntitiesInCone(source, source.getEyeLocation().getDirection(), arc, range, filter);
+	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, Location loc, double arc, double range) {
+		return getEntitiesInCone(source, loc, arc, range, null);
 	}
 
-	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, Vector direction, double arc, double range, Predicate<LivingEntity> filter) {
+	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, double arc, double range, Predicate<LivingEntity> filter) {
+		return getEntitiesInCone(source, source.getLocation(), source.getEyeLocation().getDirection(), arc, range, filter);
+	}
+
+	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, Location loc, double arc, double range, Predicate<LivingEntity> filter) {
+		return getEntitiesInCone(source, loc, source.getEyeLocation().getDirection(), arc, range, filter);
+	}
+
+	public static LinkedList<LivingEntity> getEntitiesInCone(LivingEntity source, Location loc, Vector direction, double arc, double range, Predicate<LivingEntity> filter) {
 		LinkedList<LivingEntity> targets = new LinkedList<LivingEntity>();
-		List<Entity> list = source.getNearbyEntities(range, range, range);
+		Collection<Entity> list = loc.getNearbyEntities(range, range, range);
 		if (arc <= 0) return targets;
 
 		// Initialize values
