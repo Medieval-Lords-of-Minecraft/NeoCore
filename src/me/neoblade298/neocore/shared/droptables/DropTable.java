@@ -52,24 +52,62 @@ public class DropTable<E> {
 	}
 	
 	public E get() {
-		double rand = gen.nextDouble() * totalWeight;
-		
-		ArrayList<E> list = null;
-		double weight = -1;
-		for (double w : drops.descendingKeySet()) {
-			list = drops.get(w);
-			weight = w;
-			double listWeight = drops.get(weight).size() * weight;
-			if (rand < drops.get(weight).size() * weight) {
-				break;
+		return getMultiple(1, false, null).get(0);
+	}
+
+	public ArrayList<E> getMultiple(int amount, boolean unique) {
+		return getMultiple(amount, unique, null);
+	}
+
+	public ArrayList<E> getMultiple(int amount, boolean unique, ArrayList<E> blockedItems) {
+		ArrayList<DroptableItem> removedItems = new ArrayList<DroptableItem>();
+		// Temporarily remove blocked items from droptable
+		if (blockedItems != null) {
+			for (E item : blockedItems) {
+				for (Entry<Double, ArrayList<E>> ent : drops.entrySet()) {
+					if (ent.getValue().remove(item)) {
+						removedItems.add(new DroptableItem(item, ent.getKey()));
+					}
+				}
 			}
-			rand -= listWeight;
 		}
-		if (list == null) {
-			Bukkit.getLogger().warning("[NeoCore] Failed to get item from droptable: " + this.toString());
-			return null;
+		
+		ArrayList<E> results = new ArrayList<E>();
+		for (int i = 0; i < amount; i++) {
+			// Get one item at random
+			double rand = gen.nextDouble() * totalWeight;
+			ArrayList<E> list = null;
+			double weight = -1;
+			// Go through weight list from highest to lowest and find appropriate list
+			for (double w : drops.descendingKeySet()) {
+				list = drops.get(w);
+				weight = w;
+				double listWeight = drops.get(weight).size() * weight;
+				if (rand < drops.get(weight).size() * weight) {
+					break;
+				}
+				rand -= listWeight;
+			}
+			if (list == null) {
+				Bukkit.getLogger().warning("[NeoCore] Failed to get item from droptable with weight " + weight + ": " + this.toString());
+				return null;
+			}
+			E item = list.get((int) (rand / weight));
+			results.add(item);
+
+			// Remove the item from the droptable
+			if (unique) {
+				if (remove(item, weight)) {
+					removedItems.add(new DroptableItem(item, weight));
+				}
+			}
 		}
-		return list.get((int) (rand / weight));
+
+		// Re-add removed items
+		for (DroptableItem ditem : removedItems) {
+			add(ditem.item, ditem.weight);
+		}
+		return results;
 	}
 	
 	public boolean remove(E item, double weight) {
@@ -93,31 +131,6 @@ public class DropTable<E> {
 		return count;
 	}
 	
-	/*
-	public DropTable<E> combine(DropTable<E>[] others) {
-		double[] multipliers = new double[others.length];
-		for (int i = 0; i < others.length; i++) {
-			multipliers[i] = 1;
-		}
-		return combine(others, multipliers);
-	}
-	
-	public DropTable<E> combine(DropTable<E>[] others, double[] multipliers) {
-		DropTable<E> combined = new DropTable<E>();
-		combined.drops.addAll(this.drops);
-		
-		for (Droppable<E> drop : this.drops) {
-			combined.add(drop.get(), drop.getWeight());
-		}
-		int i = 0;
-		for (DropTable<E> other : others) {
-			for (Droppable<E> drop : other.drops) {
-				combined.add(drop.get(), drop.getWeight() * multipliers[i++]);
-			}
-		}
-		return combined;
-	}*/
-	
 	public double getTotalWeight() {
 		return totalWeight;
 	}
@@ -137,5 +150,15 @@ public class DropTable<E> {
 	@Override
 	public String toString() {
 		return drops.toString();
+	}
+
+	private class DroptableItem {
+		public E item;
+		public double weight;
+		
+		public DroptableItem(E item, double weight) {
+			this.item = item;
+			this.weight = weight;
+		}
 	}
 }
