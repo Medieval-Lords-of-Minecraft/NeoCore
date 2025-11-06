@@ -65,7 +65,7 @@ public class DropTable<E> {
 		if (blockedItems != null) {
 			for (E item : blockedItems) {
 				for (Entry<Double, ArrayList<E>> ent : drops.entrySet()) {
-					if (ent.getValue().remove(item)) {
+					if (remove(item, ent.getKey())) {
 						removedItems.add(new DroptableItem(item, ent.getKey()));
 					}
 				}
@@ -81,6 +81,7 @@ public class DropTable<E> {
 			// Go through weight list from highest to lowest and find appropriate list
 			for (double w : drops.descendingKeySet()) {
 				list = drops.get(w);
+				if (list.size() == 0) continue;
 				weight = w;
 				double listWeight = drops.get(weight).size() * weight;
 				if (rand < drops.get(weight).size() * weight) {
