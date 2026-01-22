@@ -12,21 +12,28 @@ public class DropTable<E> {
 	private double totalWeight = 0;
 	private int size = 0;
 	private static Random gen = new Random();
-	
-	public static DropTable<DropTable<?>> combine(DropTable<?>[] tables, double[] multipliers) {
-		DropTable<DropTable<?>> group = new DropTable<DropTable<?>>();
-		for (int i = 0; i < tables.length; i++) {
-			group.add(tables[i], tables[i].getTotalWeight() * multipliers[i]);
+
+	public DropTable<E> combine(DropTable<E>[] others) {
+		// Start with a clone of this table to avoid modifying the original
+		DropTable<E> combined = this.clone();
+		
+		// Add all entries from other tables
+		for (DropTable<E> other : others) {
+			if (other == null) continue;
+			
+			// Iterate through each weight group in the other table
+			for (Entry<Double, ArrayList<E>> entry : other.drops.entrySet()) {
+				double weight = entry.getKey();
+				ArrayList<E> items = entry.getValue();
+				
+				// Add each item with its weight to the combined table
+				for (E item : items) {
+					combined.add(item, weight);
+				}
+			}
 		}
-		return group;
-	}
-	
-	public static DropTable<DropTable<?>> combine(DropTable<?>[] tables) {
-		DropTable<DropTable<?>> group = new DropTable<DropTable<?>>();
-		for (int i = 0; i < tables.length; i++) {
-			group.add(tables[i], tables[i].getTotalWeight());
-		}
-		return group;
+		
+		return combined;
 	}
 	
 	public DropTable() {}
@@ -138,6 +145,10 @@ public class DropTable<E> {
 	
 	public int size() {
 		return size;
+	}
+
+	public boolean isEmpty() {
+		return size == 0;
 	}
 	
 	public ArrayList<E> getItems() {
