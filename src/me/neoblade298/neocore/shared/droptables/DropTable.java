@@ -1,6 +1,7 @@
 package me.neoblade298.neocore.shared.droptables;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
@@ -13,12 +14,27 @@ public class DropTable<E> {
 	private int size = 0;
 	private static Random gen = new Random();
 
-	public DropTable<E> combine(DropTable<E>[] others) {
-		// Start with a clone of this table to avoid modifying the original
-		DropTable<E> combined = this.clone();
+	public static <E> DropTable<E> combine(List<DropTable<E>> others) {
+		List<Double> weights = new ArrayList<Double>();
+		for (int i = 0; i < others.size(); i++) {
+			weights.add(1.0);
+		}
+		return combine(others, weights);
+	}
+
+	public static <E> DropTable<E> combine(List<DropTable<E>> others, List<Double> weights) {
+		if (weights == null || weights.size() != others.size()) {
+			throw new IllegalArgumentException("Weights list must be the same size as others list");
+		}
+
+
+		// Start with an empty droptable
+		DropTable<E> combined = new DropTable<E>();
 		
 		// Add all entries from other tables
-		for (DropTable<E> other : others) {
+		for (int i = 0; i < others.size(); i++) {
+			DropTable<E> other = others.get(i);
+			double weightMultiplier = weights.get(i);
 			if (other == null) continue;
 			
 			// Iterate through each weight group in the other table
@@ -28,7 +44,7 @@ public class DropTable<E> {
 				
 				// Add each item with its weight to the combined table
 				for (E item : items) {
-					combined.add(item, weight);
+					combined.add(item, weight * weightMultiplier);
 				}
 			}
 		}
