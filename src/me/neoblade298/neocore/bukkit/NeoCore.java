@@ -277,7 +277,8 @@ public class NeoCore extends JavaPlugin implements Listener {
 		}
 		
 		try {
-			if (load.isDirectory() && load.getName().startsWith(".")) {
+			// Ignores hidden files and only loads yml files
+			if (load.isDirectory() && !load.getName().startsWith(".")) {
 				for (File file : load.listFiles()) {
 					loadFiles(file, loader);
 				}
