@@ -276,14 +276,23 @@ public class NeoCore extends JavaPlugin implements Listener {
 			return;
 		}
 		
-		if (load.isDirectory()) {
-			for (File file : load.listFiles()) {
-				loadFiles(file, loader);
+		try {
+			if (load.isDirectory() && load.getName().startsWith(".")) {
+				for (File file : load.listFiles()) {
+					loadFiles(file, loader);
+				}
+			}
+			else {
+				if (!load.getName().endsWith(".yml")) {
+					return;
+				}
+				Config cfg = Config.load(load);
+				loader.load(cfg, load);
 			}
 		}
-		else {
-			Config cfg = Config.load(load);
-			loader.load(cfg, load);
+		catch (Exception e) {
+			Bukkit.getLogger().warning("[NeoCore] Failed to load file " + load.getPath() + ": " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
