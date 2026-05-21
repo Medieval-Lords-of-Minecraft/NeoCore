@@ -52,8 +52,9 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 	private ArrayList<Component> getPageDisplay(int page, PermissionChecker checker) {
 		ArrayList<Component> msgs = new ArrayList<Component>();
 		page = page - 1;
-		if (page >= pages.size() || page < 0) {
+		if (page >= pages.pages() || page < 0) {
 			msgs.add(OUT_OF_BOUNDS);
+			return msgs;
 		}
 
 		msgs.add(Component.text("List of commands: [] = Required, {} = Optional").color(NamedTextColor.GRAY));
