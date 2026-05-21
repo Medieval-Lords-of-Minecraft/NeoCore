@@ -13,10 +13,10 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.neoblade298.neocore.shared.commands.AbstractSubcommand;
 import me.neoblade298.neocore.shared.commands.AbstractSubcommandManager;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.CommandArguments;
-import me.neoblade298.neocore.shared.commands.AbstractSubcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.kyori.adventure.text.format.TextColor;
 
@@ -104,7 +104,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		if (args.length == 1) {
 			// Get all commands that can be run by user
 			return handlers.values().stream()
-					.filter(cmd -> check(cmd, s, true) && !cmd.isHidden() && cmd.getKey().length() > 0 && cmd.getKey().startsWith(args[0]))
+					.filter(cmd -> check(cmd, s, true) && !cmd.isHidden() && cmd.getKey().length() > 0 && cmd.getKey().toLowerCase().startsWith(args[0].toLowerCase()))
 					.map(cmd -> cmd.getKey())
 					.toList();
 		}
@@ -123,7 +123,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 			Arg arg = CommandArguments.getCurrentArg(args, ca);
 			if (arg == null || arg.getTabOptions() == null) return null;
 			return arg.getTabOptions().stream().filter((str) -> {
-				return str.startsWith(args[args.length - 1]);
+				return str.toLowerCase().startsWith(args[args.length - 1].toLowerCase());
 			}).collect(Collectors.toList());
 		}
 	}
