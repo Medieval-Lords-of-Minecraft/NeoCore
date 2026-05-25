@@ -4,7 +4,7 @@
         {
             "label": "mvn package",
             "type": "shell",
-            "command": "mvn package",
+            "command": "mvn package -Pdeploy-local",
             "group": {
                 "kind": "build",
                 "isDefault": true
