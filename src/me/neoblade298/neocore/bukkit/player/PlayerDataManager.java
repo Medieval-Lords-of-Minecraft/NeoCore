@@ -1,7 +1,10 @@
 package me.neoblade298.neocore.bukkit.player;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -16,12 +19,12 @@ public class PlayerDataManager implements IOComponent {
 	private static HashMap<String, PlayerTags> tags = new HashMap<String, PlayerTags>();
 
 	@Override
-	public void savePlayer(Player p, Statement insert, Statement delete) {
+	public void savePlayer(Player p, Connection con, List<PreparedStatement> stmts) throws Exception {
 		for (PlayerFields pFields : fields.values()) {
-			pFields.save(insert, delete, p.getUniqueId());
+			pFields.save(con, stmts, p.getUniqueId());
 		}
 		for (PlayerTags pTags : tags.values()) {
-			pTags.save(insert, delete, p.getUniqueId());
+			pTags.save(con, stmts, p.getUniqueId());
 		}
 	}
 
@@ -41,13 +44,13 @@ public class PlayerDataManager implements IOComponent {
 
 	// In case neocore unloads before player kick
 	@Override
-	public void cleanup(Statement insert, Statement delete) {
+	public void cleanup(Connection con, List<PreparedStatement> stmts) throws Exception {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			for (PlayerFields pFields : fields.values()) {
-				pFields.save(insert, delete, p.getUniqueId());
+				pFields.save(con, stmts, p.getUniqueId());
 			}
 			for (PlayerTags pTags : tags.values()) {
-				pTags.save(insert, delete, p.getUniqueId());
+				pTags.save(con, stmts, p.getUniqueId());
 			}
 		}
 	}

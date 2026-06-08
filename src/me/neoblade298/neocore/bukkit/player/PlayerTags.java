@@ -1,11 +1,14 @@
 package me.neoblade298.neocore.bukkit.player;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -15,6 +18,8 @@ import org.bukkit.Bukkit;
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.events.PlayerTagChangedEvent;
 import me.neoblade298.neocore.bukkit.events.ValueChangeType;
+import me.neoblade298.neocore.shared.util.SQLInsertBuilder;
+import me.neoblade298.neocore.shared.util.SQLInsertBuilder.SQLAction;
 
 public class PlayerTags {
 	private final String key;
@@ -60,12 +65,17 @@ public class PlayerTags {
 	}
 	
 	// Only happens on logout
-	public void save(Statement insert, Statement delete, UUID uuid) {
+	public void save(Connection con, List<PreparedStatement> stmts, UUID uuid) {
 		if (changedValues.containsKey(uuid) && !changedValues.get(uuid).isEmpty()) {
 			HashMap<String, Value> pValues = values.get(uuid);
 			if (NeoCore.isDebug()) {
 				Bukkit.getLogger().log(Level.INFO, "[NeoCore] Debug: Changed values: " + this.getKey() + " " + changedValues.get(uuid) + " for " + uuid + ".");
 			}
+			
+			SQLInsertBuilder insertBuilder = new SQLInsertBuilder(SQLAction.REPLACE, "neocore_tags");
+			boolean hasInserts = false;
+			
+			PreparedStatement deleteStmt = null;
 			
 			// Only save changed values
 			if (changedValues.size() > 0) Bukkit.getLogger().info("[NeoCore] Saving " + changedValues.size() + " changed tags for key " + this.getKey());
@@ -83,8 +93,12 @@ public class PlayerTags {
 					
 					try {
 						Bukkit.getLogger().log(Level.INFO, "[NeoCore] Saving tag " + this.getKey() + "." + key + " for " + uuid + ".");
-						insert.addBatch("REPLACE INTO neocore_tags VALUES ('" + uuid + "','" + this.getKey()
-						+ "','" + key + "'," + expiration + ");");
+						insertBuilder.addValue("uuid", uuid.toString());
+						insertBuilder.addValue("key", this.getKey());
+						insertBuilder.addValue("tag", key);
+						insertBuilder.addValue("expiration", expiration);
+						insertBuilder.addRow();
+						hasInserts = true;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -93,12 +107,25 @@ public class PlayerTags {
 				else {
 					Bukkit.getLogger().log(Level.INFO, "[NeoCore] Removing tag " + this.getKey() + "." + key + " for " + uuid + ".");
 					try {
-						delete.addBatch("DELETE FROM neocore_tags WHERE `key` = '" + this.getKey() + "' AND tag = '" + key +
-						"' AND uuid = '" + uuid + "';");
+						if (deleteStmt == null) {
+							deleteStmt = con.prepareStatement(
+								"DELETE FROM neocore_tags WHERE `key` = ? AND tag = ? AND uuid = ?");
+						}
+						deleteStmt.setString(1, this.getKey());
+						deleteStmt.setString(2, key);
+						deleteStmt.setString(3, uuid.toString());
+						deleteStmt.addBatch();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
+			}
+			
+			try {
+				if (hasInserts) stmts.add(insertBuilder.build(con));
+				if (deleteStmt != null) stmts.add(deleteStmt);
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 		values.remove(uuid);

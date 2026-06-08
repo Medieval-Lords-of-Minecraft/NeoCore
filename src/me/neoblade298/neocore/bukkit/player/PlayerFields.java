@@ -1,11 +1,14 @@
 package me.neoblade298.neocore.bukkit.player;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -15,6 +18,8 @@ import org.bukkit.Bukkit;
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.events.PlayerFieldChangedEvent;
 import me.neoblade298.neocore.bukkit.events.ValueChangeType;
+import me.neoblade298.neocore.shared.util.SQLInsertBuilder;
+import me.neoblade298.neocore.shared.util.SQLInsertBuilder.SQLAction;
 
 public class PlayerFields {
 	private final String key;
@@ -93,12 +98,19 @@ public class PlayerFields {
 	}
 	
 	// Only happens on logout atm
-	public void save(Statement insert, Statement delete, UUID uuid) {
+	public void save(Connection con, List<PreparedStatement> stmts, UUID uuid) {
 		if (changedValues.containsKey(uuid) && !changedValues.get(uuid).isEmpty()) {
 			HashMap<String, Value> pValues = values.get(uuid);
 			if (NeoCore.isDebug()) {
 				Bukkit.getLogger().log(Level.INFO, "[NeoCore] Debug: Changed values: " + this.getKey() + " " + changedValues.get(uuid) + " for " + uuid + ".");
 			}
+			
+			SQLInsertBuilder stringInsert = new SQLInsertBuilder(SQLAction.REPLACE, "neocore_fields_strings");
+			SQLInsertBuilder intInsert = new SQLInsertBuilder(SQLAction.REPLACE, "neocore_fields_integers");
+			boolean hasStringInserts = false, hasIntInserts = false;
+			
+			PreparedStatement deleteStrings = null;
+			PreparedStatement deleteIntegers = null;
 			
 			// Only save changed values
 			for (String key : changedValues.get(uuid)) {
@@ -118,16 +130,31 @@ public class PlayerFields {
 					try {
 						Bukkit.getLogger().log(Level.INFO, "[NeoCore] Saving " + this.getKey() + "." + key + " to " + value + " for " + uuid + ".");
 						if (value instanceof String) {
-							insert.addBatch("REPLACE INTO neocore_fields_strings VALUES ('" + uuid + "','" + this.getKey()
-							+ "','" + key + "','" + value + "'," + expiration + ");");
+							stringInsert.addValue("uuid", uuid.toString());
+							stringInsert.addValue("key", this.getKey());
+							stringInsert.addValue("field", key);
+							stringInsert.addValue("value", (String) value);
+							stringInsert.addValue("expiration", expiration);
+							stringInsert.addRow();
+							hasStringInserts = true;
 						}
 						else if (value instanceof Boolean) {
-							insert.addBatch("REPLACE INTO neocore_fields_strings VALUES ('" + uuid + "','" + this.getKey()
-							+ "','" + key + "','" + value + "'," + expiration + ");");
+							stringInsert.addValue("uuid", uuid.toString());
+							stringInsert.addValue("key", this.getKey());
+							stringInsert.addValue("field", key);
+							stringInsert.addValue("value", String.valueOf(value));
+							stringInsert.addValue("expiration", expiration);
+							stringInsert.addRow();
+							hasStringInserts = true;
 						}
 						else if (value instanceof Integer) {
-							insert.addBatch("REPLACE INTO neocore_fields_integers VALUES ('" + uuid + "','" + this.getKey()
-							+ "','" + key + "','" + value + "'," + expiration + ");");
+							intInsert.addValue("uuid", uuid.toString());
+							intInsert.addValue("key", this.getKey());
+							intInsert.addValue("field", key);
+							intInsert.addValue("value", String.valueOf(value));
+							intInsert.addValue("expiration", expiration);
+							intInsert.addRow();
+							hasIntInserts = true;
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -139,17 +166,38 @@ public class PlayerFields {
 					Bukkit.getLogger().log(Level.INFO, "[NeoCore] Defaulting " + this.getKey() + "." + key + " to " + def + " for " + uuid + ".");
 					try {
 						if (def instanceof String || def instanceof Boolean) {
-							delete.addBatch("DELETE FROM neocore_fields_strings WHERE `key` = '" + this.getKey() + "' AND field = '" + key +
-							"' AND uuid = '" + uuid + "';");
+							if (deleteStrings == null) {
+								deleteStrings = con.prepareStatement(
+									"DELETE FROM neocore_fields_strings WHERE `key` = ? AND field = ? AND uuid = ?");
+							}
+							deleteStrings.setString(1, this.getKey());
+							deleteStrings.setString(2, key);
+							deleteStrings.setString(3, uuid.toString());
+							deleteStrings.addBatch();
 						}
 						else if (def instanceof Integer) {
-							delete.addBatch("DELETE FROM neocore_fields_integers WHERE `key` = '" + this.getKey() + "' AND field = '" + key +
-							"' AND uuid = '" + uuid + "';");
+							if (deleteIntegers == null) {
+								deleteIntegers = con.prepareStatement(
+									"DELETE FROM neocore_fields_integers WHERE `key` = ? AND field = ? AND uuid = ?");
+							}
+							deleteIntegers.setString(1, this.getKey());
+							deleteIntegers.setString(2, key);
+							deleteIntegers.setString(3, uuid.toString());
+							deleteIntegers.addBatch();
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
+			}
+			
+			try {
+				if (hasStringInserts) stmts.add(stringInsert.build(con));
+				if (hasIntInserts) stmts.add(intInsert.build(con));
+				if (deleteStrings != null) stmts.add(deleteStrings);
+				if (deleteIntegers != null) stmts.add(deleteIntegers);
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 		values.remove(uuid);
