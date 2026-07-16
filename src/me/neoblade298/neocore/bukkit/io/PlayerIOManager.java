@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,11 +19,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -40,6 +43,7 @@ public class PlayerIOManager implements Listener {
 	private static HashMap<IOType, HashSet<UUID>> performingIO = new HashMap<IOType, HashSet<UUID>>();
 	private static HashMap<IOType, HashMap<UUID, ArrayList<PostIOTask>>> postIORunnables = new HashMap<IOType, HashMap<UUID, ArrayList<PostIOTask>>>();
 	private static boolean debug = false;
+	private static boolean unloadSaveDone = false;
 	
 	static {
 		for (IOType type : IOType.values()) {
@@ -82,6 +86,16 @@ public class PlayerIOManager implements Listener {
 		return io;
 	}
 	
+	// Fires when any registered dependent plugin begins disabling (they unload before NeoCore).
+	// Triggers a one-shot synchronous save of all online players while NeoCore is still active.
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPluginDisable(PluginDisableEvent e) {
+		if (unloadSaveDone) return;
+		if (!components.values().stream().anyMatch(w -> w.getPlugin().equals(e.getPlugin()))) return;
+		unloadSaveDone = true;
+		saveAllSync();
+	}
+
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		load(e.getPlayer());
@@ -338,6 +352,59 @@ public class PlayerIOManager implements Listener {
 		}.runTaskTimerAsynchronously(NeoCore.inst(), 40L, 20L);
 	}
 	
+	// Synchronous save for all online players. Intended to be called by dependent plugins
+	// in their own onDisable(), before NeoCore itself unloads.
+	public static void saveAllSync() {
+		HashSet<String> disabledKeys = disabledIO.get(IOType.UNLOAD_SAVE);
+		if (disabledKeys.contains("*")) {
+			return;
+		}
+
+		Collection<? extends Player> online = Bukkit.getOnlinePlayers();
+		if (online.isEmpty()) return;
+
+		ArrayList<Connection> cons = new ArrayList<Connection>(SQLManager.getDataSources().size());
+		HashMap<String, Connection> connections = new HashMap<String, Connection>();
+		try {
+			for (Entry<String, HikariDataSource> e : SQLManager.getDataSources().entrySet()) {
+				Connection con = e.getValue().getConnection();
+				cons.add(con);
+				connections.put(e.getKey(), con);
+			}
+
+			long saveTimestamp = System.currentTimeMillis();
+			Bukkit.getLogger().info("[NeoCore] saveAllSync: saving " + online.size() + " online player(s)...");
+			for (Player p : online) {
+				UUID uuid = p.getUniqueId();
+				for (IOComponentWrapper io : orderedComponents) {
+					if (!disabledKeys.contains(io.getKey().toUpperCase())) {
+						try {
+							Connection con = connections.getOrDefault(io.getDatabase(), connections.get(null));
+							List<PreparedStatement> stmts = new ArrayList<PreparedStatement>();
+							io.getComponent().savePlayer(p, con, stmts);
+							executeAndClose(stmts);
+						}
+						catch (Exception ex) {
+							Bukkit.getLogger().log(Level.WARNING, "[NeoCore] saveAllSync: failed for component " + io.getKey() + " for player " + uuid);
+							ex.printStackTrace();
+						}
+					}
+				}
+			}
+			Bukkit.getLogger().info("[NeoCore] saveAllSync: finished in " + (System.currentTimeMillis() - saveTimestamp) + "ms");
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		finally {
+			try {
+				for (Connection con : cons) con.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+
 	public static void handleDisable() {
 		HashSet<String> disabledKeys = disabledIO.get(IOType.CLEANUP);
 		if (disabledKeys.contains("*")) {
@@ -354,7 +421,35 @@ public class PlayerIOManager implements Listener {
 				cons.add(con);
 				connections.put(e.getKey(), con);
 			}
-			
+
+			// Blanket save all online players before cleanup (players stay online past plugin unload now)
+			HashSet<String> unloadSaveDisabledKeys = disabledIO.get(IOType.UNLOAD_SAVE);
+			if (!unloadSaveDisabledKeys.contains("*")) {
+				Collection<? extends Player> online = Bukkit.getOnlinePlayers();
+				if (!online.isEmpty()) {
+					long saveTimestamp = System.currentTimeMillis();
+					Bukkit.getLogger().info("[NeoCore] Saving " + online.size() + " online player(s) on unload...");
+					for (Player p : online) {
+						UUID uuid = p.getUniqueId();
+						for (IOComponentWrapper io : orderedComponents) {
+							if (!unloadSaveDisabledKeys.contains(io.getKey().toUpperCase())) {
+								try {
+									Connection con = connections.getOrDefault(io.getDatabase(), connections.get(null));
+									List<PreparedStatement> stmts = new ArrayList<PreparedStatement>();
+									io.getComponent().savePlayer(p, con, stmts);
+									executeAndClose(stmts);
+								}
+								catch (Exception ex) {
+									Bukkit.getLogger().log(Level.WARNING, "[NeoCore] Failed to handle unload save for component " + io.getKey() + " for player " + uuid);
+									ex.printStackTrace();
+								}
+							}
+						}
+					}
+					Bukkit.getLogger().info("[NeoCore] Finished unload save for " + online.size() + " player(s) in " + (System.currentTimeMillis() - saveTimestamp) + "ms");
+				}
+			}
+
 			// Any final cleanup
 			for (IOComponentWrapper io : orderedComponents) {
 				if (!disabledKeys.contains(io.getKey().toUpperCase())) {
