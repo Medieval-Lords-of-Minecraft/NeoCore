@@ -34,14 +34,14 @@ public class CmdRename extends Subcommand {
 				// Put together rename string
 				String rename = SharedUtil.connectArgs(args);
 				
-				if (ChatColor.stripColor(rename).length() > 30 && !p.hasPermission("mycommand.staff")) {
+				if (ChatColor.stripColor(rename).length() > 30 && !p.hasPermission("neocore.staff")) {
 					p.sendMessage("§4[§c§lMLMC§4] §cName must be less than 30 characters!");
 					return;
 				}
 				
 				meta.displayName(NeoCore.miniMessage().deserialize(rename));
 				item.setItemMeta(meta);
-				econ.withdrawPlayer(p, RENAME_PRICE);
+				if (!p.hasPermission("neocore.staff")) econ.withdrawPlayer(p, RENAME_PRICE);
 				p.sendMessage("§4[§c§lMLMC§4] §7Successfully renamed item!");
 			}
 			else {

@@ -35,7 +35,7 @@ public class CmdCoreHasField extends Subcommand {
 		
 		// Must be staff to change hidden tags or tags that aren't yours
 		if ((fields.isHidden() || !p.equals(s))
-				&& !s.hasPermission("mycommand.staff")) {
+				&& !s.hasPermission("neocore.staff")) {
 			Util.msg(s, noPerms);
 			return;
 		}
