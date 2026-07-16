@@ -11,9 +11,9 @@ import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
+
 import me.neoblade298.neocore.bungee.BungeeCore;
 import me.neoblade298.neocore.bungee.util.Util;
-import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.kyori.adventure.text.Component;
@@ -131,8 +131,7 @@ public class SubcommandManager implements SimpleCommand {
 			if (cmd == null || cmd.isHidden() || !cmd.isTabEnabled()) return Collections.emptyList();
 			
 			CommandArguments ca = cmd.getArgs();
-			Arg arg = CommandArguments.getCurrentArg(args, ca);
-			return arg.getTabOptions() != null ? arg.getTabOptions() : Collections.emptyList();
+			return ca.getTabCompletions(args);
 		}
 	}
 }

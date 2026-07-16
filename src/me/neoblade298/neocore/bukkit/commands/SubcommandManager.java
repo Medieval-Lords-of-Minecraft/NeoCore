@@ -2,7 +2,6 @@ package me.neoblade298.neocore.bukkit.commands;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
@@ -15,7 +14,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.neoblade298.neocore.shared.commands.AbstractSubcommand;
 import me.neoblade298.neocore.shared.commands.AbstractSubcommandManager;
-import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.kyori.adventure.text.format.TextColor;
@@ -120,11 +118,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 			}
 			
 			CommandArguments ca = cmd.getArgs();
-			Arg arg = CommandArguments.getCurrentArg(args, ca);
-			if (arg == null || arg.getTabOptions() == null) return null;
-			return arg.getTabOptions().stream().filter((str) -> {
-				return str.toLowerCase().startsWith(args[args.length - 1].toLowerCase());
-			}).collect(Collectors.toList());
+			return ca.getTabCompletions(args);
 		}
 	}
 }
