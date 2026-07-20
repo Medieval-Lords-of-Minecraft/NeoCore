@@ -38,6 +38,12 @@ public class SubcommandManager implements SimpleCommand {
 		mngr.register(meta(mngr, base, plugin), this);
 	}
 	
+	// Nested use (e.g. SubcommandGroup): routes but does not register a proxy command.
+	// base should be the full path so far (e.g. "cmd subcmd1").
+	SubcommandManager(String base, String perm, TextColor color) {
+		overhead = new CommandOverhead(base, perm, color);
+	}
+	
 	@Override
 	public void execute(Invocation inv) {
 		String[] args = inv.arguments();
@@ -120,6 +126,12 @@ public class SubcommandManager implements SimpleCommand {
     public List<String> suggest(final Invocation inv) {
 		CommandSource s = inv.source();
 		String[] args = inv.arguments();
+		return tabComplete(s, args);
+	}
+	
+	// Resolves tab completions for the given args. Split out from suggest so a nested
+	// SubcommandGroup can delegate into a child manager recursively.
+	public List<String> tabComplete(CommandSource s, String[] args) {
 		if (!(s instanceof Player)) return Collections.emptyList(); // Only player senders can use tab complete
 		if (args.length == 0) return Collections.emptyList();
 		if (overhead.getPermission() != null && !s.hasPermission(overhead.getPermission())) return Collections.emptyList();
@@ -137,6 +149,11 @@ public class SubcommandManager implements SimpleCommand {
 			// Only look for a subcommand if the first arg is not a number and not blank
 			Subcommand cmd = overhead.getHandlers().get(args[0].toLowerCase());
 			if (cmd == null || cmd.isHidden() || !cmd.isTabEnabled()) return Collections.emptyList();
+			
+			if (cmd.overridesTab) {
+				List<String> opts = cmd.getTabOptions(s, args);
+				return opts != null ? opts : Collections.emptyList();
+			}
 			
 			CommandArguments ca = cmd.getArgs();
 			return ca.getTabCompletions(args);

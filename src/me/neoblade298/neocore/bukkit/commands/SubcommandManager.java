@@ -33,6 +33,12 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		plugin.getCommand(base).setTabCompleter(this);
 	}
 	
+	// Nested use (e.g. SubcommandGroup): routes but does not register a top-level
+	// Bukkit command. base should be the full path so far (e.g. "cmd subcmd1").
+	SubcommandManager(String base, String perm, TextColor color) {
+		super(base, perm, color);
+	}
+	
 	@Override
 	public boolean onCommand(CommandSender s, Command cmd, String lbl, String[] args) {
 		dispatch(s, args);
@@ -111,6 +117,12 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 
 	@Override
 	public List<String> onTabComplete(CommandSender s, Command command, String label, String[] args) {
+		return tabComplete(s, args);
+	}
+	
+	// Resolves tab completions for the given args. Split out from onTabComplete so a
+	// nested SubcommandGroup can delegate into a child manager recursively.
+	public List<String> tabComplete(CommandSender s, String[] args) {
 		if (!(s instanceof Player)) return null;
 		
 		if (perm != null && !s.hasPermission(perm)) return null;
