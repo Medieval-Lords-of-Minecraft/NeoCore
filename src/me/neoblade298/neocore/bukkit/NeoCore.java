@@ -76,7 +76,7 @@ import me.neoblade298.neocore.shared.util.GradientManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault2.economy.Economy;
 
 public class NeoCore extends JavaPlugin implements Listener {
 	private static NeoCore inst;

@@ -19,6 +19,14 @@ import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.kyori.adventure.text.format.TextColor;
 
 public class SubcommandManager extends AbstractSubcommandManager<Subcommand> implements CommandExecutor, TabCompleter {
+	private static final String MSG_INVALID = "§cInvalid command! Are you using the right syntax? /";
+	private static final String MSG_MISSING_PERM = "§cYou're missing the permission: ";
+	private static final String MSG_WRONG_USER = "§cYou are the wrong type of user for this command!";
+
+	private static String argCountMsg(String qualifier, int count, int received) {
+		return "§cThis command requires " + qualifier + " " + count + " args but received " + received + ".";
+	}
+
 	public SubcommandManager(String base, String perm, TextColor color, JavaPlugin plugin) {
 		super(base, perm, color);
 		plugin.getCommand(base).setExecutor(this);
@@ -27,17 +35,25 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 	
 	@Override
 	public boolean onCommand(CommandSender s, Command cmd, String lbl, String[] args) {
+		dispatch(s, args);
+		return true;
+	}
+	
+	// Routes args to a subcommand. Returns true only if a valid command was found,
+	// passed all checks, and was executed. Enables recursive/nested dispatch.
+	public boolean dispatch(CommandSender s, String[] args) {
 		Subcommand sc = super.parseForCommand(args);
 		if (sc == null) {
-			s.sendMessage("§cInvalid command! Are you using the right syntax? /" + base);
-			return true;
+			s.sendMessage(MSG_INVALID + base);
+			return false;
 		}
 		
 		args = super.reduceArgs(args, sc);
 		if (check(sc, s, args)) {
 			sc.run(s, args);
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	
@@ -46,13 +62,13 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		// If cmd permission exists, it overrides list permission
 		String activePerm = cmd.getPermission() != null ? cmd.getPermission() : perm;
 		if (activePerm != null && !s.hasPermission(activePerm)) {
-			if (!silent) s.sendMessage("§cYou're missing the permission: " + activePerm);
+			if (!silent) s.sendMessage(MSG_MISSING_PERM + activePerm);
 			return false;
 		}
 
 		if ((cmd.getRunner() == SubcommandRunner.PLAYER_ONLY && !(s instanceof Player)) ||
 				(cmd.getRunner() == SubcommandRunner.CONSOLE_ONLY && !(s instanceof ConsoleCommandSender))) {
-			if (!silent) s.sendMessage("§cYou are the wrong type of user for this command!");
+			if (!silent) s.sendMessage(MSG_WRONG_USER);
 			return false;
 		}
 		return true;
@@ -63,13 +79,13 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		
 		CommandArguments cargs = cmd.getArgs();
 		if (args.length < cargs.getMin() && cargs.getMin() != -1) {
-			s.sendMessage("§cThis command requires at least " + cargs.getMin() + " args but received " + args.length + ".");
+			s.sendMessage(argCountMsg("at least", cargs.getMin(), args.length));
 			s.sendMessage(getCommandLine(cmd));
 			return false;
 		}
 		
 		if (args.length > cargs.getMax() && cargs.getMax() != -1) {
-			s.sendMessage("§cThis command requires at most " + cargs.getMax() + " args but received " + args.length + ".");
+			s.sendMessage(argCountMsg("at most", cargs.getMax(), args.length));
 			s.sendMessage(getCommandLine(cmd));
 			return false;
 		}

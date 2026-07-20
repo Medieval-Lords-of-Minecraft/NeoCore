@@ -7,7 +7,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 
-import me.neoblade298.neocore.bukkit.commands.CmdList;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextComponent.Builder;
@@ -37,7 +36,7 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 			}
 		}
 		// Run no-arg command with a number value, specifically for command lists
-		else if (StringUtils.isNumeric(args[0]) && handlers.get("") != null && handlers.get("") instanceof CmdList) {
+		else if (StringUtils.isNumeric(args[0]) && handlers.get("") != null && handlers.get("").acceptsNumericFirstArg()) {
 			return handlers.get("");
 		}
 		// Run command normally
@@ -77,7 +76,7 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 	}
 	
 	public AbstractSubcommand getCommand(String key) {
-		return handlers.get(key.toUpperCase());
+		return handlers.get(key.toLowerCase());
 	}
 	
 	public Set<String> getKeys() {

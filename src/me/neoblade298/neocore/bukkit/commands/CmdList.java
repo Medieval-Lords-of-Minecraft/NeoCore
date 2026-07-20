@@ -33,4 +33,9 @@ public class CmdList extends Subcommand {
 			s.sendMessage(comp);
 		}
 	}
+	
+	@Override
+	public boolean acceptsNumericFirstArg() {
+		return true;
+	}
 }

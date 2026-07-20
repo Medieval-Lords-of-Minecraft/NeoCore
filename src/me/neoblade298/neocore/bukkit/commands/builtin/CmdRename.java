@@ -1,5 +1,7 @@
 package me.neoblade298.neocore.bukkit.commands.builtin;
 
+import java.math.BigDecimal;
+
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,7 +13,7 @@ import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.util.SharedUtil;
 import net.md_5.bungee.api.ChatColor;
-import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault2.economy.Economy;
 
 public class CmdRename extends Subcommand {
 	private static int RENAME_PRICE = 1000;
@@ -26,7 +28,8 @@ public class CmdRename extends Subcommand {
 	public void run(CommandSender s, String[] args) {
 		Player p = (Player) s;
 		Economy econ = NeoCore.getEconomy();
-		if (econ.getBalance(p) >= RENAME_PRICE) {
+		BigDecimal price = BigDecimal.valueOf(RENAME_PRICE);
+		if (econ.has("NeoCore", p.getUniqueId(), price)) {
 			ItemStack item = p.getInventory().getItemInMainHand();
 			if (item != null && !item.getType().equals(Material.AIR)) {
 				ItemMeta meta = item.getItemMeta();
@@ -41,7 +44,7 @@ public class CmdRename extends Subcommand {
 				
 				meta.displayName(NeoCore.miniMessage().deserialize(rename));
 				item.setItemMeta(meta);
-				if (!p.hasPermission("neocore.staff")) econ.withdrawPlayer(p, RENAME_PRICE);
+				if (!p.hasPermission("neocore.staff")) econ.withdraw("NeoCore", p.getUniqueId(), price);
 				p.sendMessage("§4[§c§lMLMC§4] §7Successfully renamed item!");
 			}
 			else {

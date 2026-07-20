@@ -59,6 +59,12 @@ public abstract class AbstractSubcommand {
 		return tabEnabled;
 	}
 	
+	// Whether a numeric first argument should route to this handler when it's the
+	// empty-key ("") command. Overridden by command lists to support paging.
+	public boolean acceptsNumericFirstArg() {
+		return false;
+	}
+	
 	public void setTabEnabled(boolean enabled) {
 		this.tabEnabled = enabled;
 	}

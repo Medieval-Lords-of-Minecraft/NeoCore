@@ -42,13 +42,21 @@ public class SubcommandManager implements SimpleCommand {
 	public void execute(Invocation inv) {
 		String[] args = inv.arguments();
 		CommandSource s = inv.source();
+		dispatch(s, args);
+	}
+	
+	// Routes args to a subcommand. Returns true only if a valid command was found,
+	// passed all checks, and was executed. Enables recursive/nested dispatch.
+	public boolean dispatch(CommandSource s, String[] args) {
 		Subcommand sc = overhead.parseForCommand(args);
-		if (sc == null) return;
+		if (sc == null) return false;
 
 		args = overhead.reduceArgs(args, sc);
 		if (check(sc, s, args)) {
 			sc.run(s, args);
+			return true;
 		}
+		return false;
 	}
 	
 	private boolean check(Subcommand cmd, CommandSource s, boolean silent) {
