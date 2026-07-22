@@ -1,130 +1,99 @@
 package me.neoblade298.neocore.bukkit.commands;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.function.Predicate;
 
-import org.apache.commons.lang3.StringUtils;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import me.neoblade298.neocore.shared.commands.AbstractSubcommand;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import me.neoblade298.neocore.shared.commands.AbstractSubcommandManager;
-import me.neoblade298.neocore.shared.commands.Arg;
-import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.kyori.adventure.text.format.TextColor;
 
-public class SubcommandManager extends AbstractSubcommandManager<Subcommand> implements CommandExecutor, TabCompleter {
-	public SubcommandManager(String base, String perm, TextColor color, JavaPlugin plugin) {
-		super(base, perm, color);
-		plugin.getCommand(base).setExecutor(this);
-		plugin.getCommand(base).setTabCompleter(this);
-	}
-	
-	@Override
-	public boolean onCommand(CommandSender s, Command cmd, String lbl, String[] args) {
-		Subcommand sc = super.parseForCommand(args);
-		if (sc == null) {
-			s.sendMessage("§cInvalid command! Are you using the right syntax? /" + base);
-			return true;
-		}
-		
-		args = super.reduceArgs(args, sc);
-		if (check(sc, s, args)) {
-			sc.run(s, args);
-		}
-		return true;
-	}
-	
-	
-	// Modular for tabcomplete to use
-	private boolean check(Subcommand cmd, CommandSender s, boolean silent) {
-		// If cmd permission exists, it overrides list permission
-		String activePerm = cmd.getPermission() != null ? cmd.getPermission() : perm;
-		if (activePerm != null && !s.hasPermission(activePerm)) {
-			if (!silent) s.sendMessage("§cYou're missing the permission: " + activePerm);
-			return false;
-		}
+public class SubcommandManager extends AbstractSubcommandManager<Subcommand> {
 
-		if ((cmd.getRunner() == SubcommandRunner.PLAYER_ONLY && !(s instanceof Player)) ||
-				(cmd.getRunner() == SubcommandRunner.CONSOLE_ONLY && !(s instanceof ConsoleCommandSender))) {
-			if (!silent) s.sendMessage("§cYou are the wrong type of user for this command!");
-			return false;
-		}
-		return true;
+	public SubcommandManager(String base, String perm, TextColor color) {
+		super(base, perm, color);
 	}
-	
-	private boolean check(Subcommand cmd, CommandSender s, String[] args) {
-		if (!check(cmd, s, false)) return false;
-		
-		CommandArguments cargs = cmd.getArgs();
-		if (args.length < cargs.getMin() && cargs.getMin() != -1) {
-			s.sendMessage("§cThis command requires at least " + cargs.getMin() + " args but received " + args.length + ".");
-			s.sendMessage(getCommandLine(cmd));
-			return false;
-		}
-		
-		if (args.length > cargs.getMax() && cargs.getMax() != -1) {
-			s.sendMessage("§cThis command requires at most " + cargs.getMax() + " args but received " + args.length + ".");
-			s.sendMessage(getCommandLine(cmd));
-			return false;
-		}
-		
-		return true;
+
+	public void registerCommandList() {
+		registerCommandList("", null, null);
 	}
-	
+
 	public void registerCommandList(String key) {
 		registerCommandList(key, null, null);
 	}
-	
+
 	public void registerCommandList(String key, String perm, TextColor color) {
 		handlers.put(key.toLowerCase(), new CmdList(key, base, perm, super.perm, handlers, aliases, this.color, color));
 	}
-	
-	public AbstractSubcommand getCommand(String key) {
-		return handlers.get(key.toLowerCase());
-	}
-	
-	public Set<String> getKeys() {
-		return handlers.keySet();
+
+	/**
+	 * Builds the Brigadier command tree from all registered subcommands and
+	 * registers it with the Paper command system.
+	 */
+	public void registerTo(Commands commands) {
+		LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(base);
+
+		for (Map.Entry<String, Subcommand> entry : handlers.entrySet()) {
+			String key = entry.getKey();
+			Subcommand sc = entry.getValue();
+
+			// Skip alias map entries - they're handled below when processing the primary key
+			if (aliases.contains(key)) continue;
+
+			if (key.isEmpty()) {
+				// Base command (e.g. CmdList or a root-action command like /fix).
+				// For real action commands (not CmdList), apply requires to the root literal.
+				if (!(sc instanceof CmdList)) {
+					root.requires(buildRequirement(sc));
+				}
+				sc.buildNode(root);
+			} else {
+				// Regular subcommand literal
+				LiteralArgumentBuilder<CommandSourceStack> literal = buildLiteral(key, sc);
+				sc.buildNode(literal);
+				root.then(literal);
+
+				// Subcommand aliases become sibling literals in the tree
+				if (sc.getAliases() != null) {
+					for (String alias : sc.getAliases()) {
+						LiteralArgumentBuilder<CommandSourceStack> aliasLiteral = buildLiteral(alias, sc);
+						sc.buildNode(aliasLiteral);
+						root.then(aliasLiteral);
+					}
+				}
+			}
+		}
+
+		commands.register(root.build(), base + " command", List.of());
 	}
 
-	@Override
-	public List<String> onTabComplete(CommandSender s, Command command, String label, String[] args) {
-		if (!(s instanceof Player)) return null;
-		
-		if (perm != null && !s.hasPermission(perm)) return null;
-		
-		if (args.length == 1) {
-			// Get all commands that can be run by user
-			return handlers.values().stream()
-					.filter(cmd -> check(cmd, s, true) && !cmd.isHidden() && cmd.getKey().length() > 0 && cmd.getKey().toLowerCase().startsWith(args[0].toLowerCase()))
-					.map(cmd -> cmd.getKey())
-					.toList();
+	private LiteralArgumentBuilder<CommandSourceStack> buildLiteral(String key, Subcommand sc) {
+		return Commands.literal(key).requires(buildRequirement(sc));
+	}
+
+	private Predicate<CommandSourceStack> buildRequirement(Subcommand sc) {
+		String effectivePerm = sc.getPermission() != null ? sc.getPermission() : perm;
+		List<Predicate<CommandSourceStack>> conditions = new ArrayList<>();
+
+		if (effectivePerm != null) {
+			final String fp = effectivePerm;
+			conditions.add(src -> src.getSender().hasPermission(fp));
 		}
-		else {
-			if (args[0].isBlank() || StringUtils.isNumeric(args[0])) return null;
-			
-			// Only look for a subcommand if the first arg is not a number and not blank
-			Subcommand cmd = handlers.get(args[0].toLowerCase());
-			if (cmd == null || cmd.isHidden() || !cmd.isTabEnabled()) return null;
-			
-			if (cmd.overridesTab) {
-				return cmd.getTabOptions(s, args);
-			}
-			
-			CommandArguments ca = cmd.getArgs();
-			Arg arg = CommandArguments.getCurrentArg(args, ca);
-			if (arg == null || arg.getTabOptions() == null) return null;
-			return arg.getTabOptions().stream().filter((str) -> {
-				return str.toLowerCase().startsWith(args[args.length - 1].toLowerCase());
-			}).collect(Collectors.toList());
+		if (sc.getRunner() == SubcommandRunner.PLAYER_ONLY) {
+			conditions.add(src -> src.getSender() instanceof Player);
+		} else if (sc.getRunner() == SubcommandRunner.CONSOLE_ONLY) {
+			conditions.add(src -> src.getSender() instanceof ConsoleCommandSender);
 		}
+
+		if (conditions.isEmpty()) return src -> true;
+		return conditions.stream().reduce(src -> true, Predicate::and);
 	}
 }

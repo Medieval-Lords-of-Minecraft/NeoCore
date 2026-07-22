@@ -77,7 +77,7 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 			}
 			
 			// Add args
-			line += " " + sc.getArgs().getDisplay();
+			line += " " + sc.getDisplayArgs();
 			b.append(Component.text(line, color));
 			
 			// Add description

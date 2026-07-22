@@ -2,6 +2,10 @@ package me.neoblade298.neocore.bukkit.commands.builtin;
 
 import org.bukkit.command.CommandSender;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
@@ -17,14 +21,18 @@ public class CmdIODisabled extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSender s, String[] args) {
-		for (IOType type : IOType.values()) {
-			Builder b = Component.text();
-			b.content(type.name()).color(NamedTextColor.GOLD).append(Component.text(":", NamedTextColor.GRAY));
-			for (String key : PlayerIOManager.getDisabledIO().get(type)) {
-				b.append(Component.text(" " + key, NamedTextColor.YELLOW));
+	public void buildNode(LiteralArgumentBuilder<CommandSourceStack> node) {
+		node.executes(ctx -> {
+			CommandSender s = ctx.getSource().getSender();
+			for (IOType type : IOType.values()) {
+				Builder b = Component.text();
+				b.content(type.name()).color(NamedTextColor.GOLD).append(Component.text(":", NamedTextColor.GRAY));
+				for (String key : PlayerIOManager.getDisabledIO().get(type)) {
+					b.append(Component.text(" " + key, NamedTextColor.YELLOW));
+				}
+				Util.msg(s, b.build(), false);
 			}
-			Util.msg(s, b.build(), false);
-		}
+			return Command.SINGLE_SUCCESS;
+		});
 	}
 }

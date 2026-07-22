@@ -3,23 +3,4 @@ main: me.neoblade298.neocore.bukkit.NeoCore
 author: [Ascheladd]
 softdepend: [MythicMobs, NBTAPI, Essentials, Vault, LastLoginAPI]
 version: 1.0
-api-version: 1.19
-commands:
-   ncore:
-      description: NeoCore command
-      usage: /ncore
-   bcore:
-      description: NeoCore bungee command
-      usage: /bcore
-   io:
-      description: NeoCore IO command
-      usage: /io
-   nbt:
-      description: NeoCore NBT Editor
-      usage: /nbt
-   rename:
-      description: Base command
-      usage: /rename
-   fix:
-      description: Base command
-      usage: /fix
+api-version: 1.21

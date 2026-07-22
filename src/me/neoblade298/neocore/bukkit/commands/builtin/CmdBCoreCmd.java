@@ -1,31 +1,28 @@
 package me.neoblade298.neocore.bukkit.commands.builtin;
 
-import org.bukkit.command.CommandSender;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
-import me.neoblade298.neocore.shared.util.SharedUtil;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 
 public class CmdBCoreCmd extends Subcommand {
-	private static Component error = Component.text("Must have a command to send!", NamedTextColor.RED);
 
 	public CmdBCoreCmd(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
-		args.setOverride("[cmd]");
+		setDisplayArgs("[cmd]");
 	}
 
 	@Override
-	public void run(CommandSender s, String[] args) {
-		if (args.length == 0) {
-			Util.msg(s, error);
-		}
-		else {
-			// Send cmd
-			BungeeAPI.sendBungeeCommand(SharedUtil.connectArgs(args));
-		}
+	public void buildNode(LiteralArgumentBuilder<CommandSourceStack> node) {
+		node.then(Commands.argument("cmd", StringArgumentType.greedyString())
+			.executes(ctx -> {
+				BungeeAPI.sendBungeeCommand(StringArgumentType.getString(ctx, "cmd"));
+				return Command.SINGLE_SUCCESS;
+			}));
 	}
 }

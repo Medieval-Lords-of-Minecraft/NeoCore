@@ -10,7 +10,8 @@ public abstract class AbstractSubcommand {
 	protected String[] aliases;
 	protected TextColor color;
 	protected CommandArguments args = new CommandArguments();
-	protected boolean hidden = false, tabEnabled = false;
+	protected boolean hidden = false;
+	protected String displayArgs = "";
 	
 	public AbstractSubcommand(String key, String desc, String perm, SubcommandRunner runner) {
 		this.key = key;
@@ -55,16 +56,14 @@ public abstract class AbstractSubcommand {
 		this.hidden = hidden;
 	}
 	
-	public boolean isTabEnabled() {
-		return tabEnabled;
+	/** Returns the display string used in help listings.
+	 *  For bukkit/Brigadier subcommands, set via setDisplayArgs().
+	 *  Falls back to CommandArguments.getDisplay() (used by bungee subcommands). */
+	public String getDisplayArgs() {
+		return displayArgs.isEmpty() ? args.getDisplay() : displayArgs;
 	}
-	
-	public void setTabEnabled(boolean enabled) {
-		this.tabEnabled = enabled;
-	}
-	
-	public AbstractSubcommand enableTabComplete() {
-		this.tabEnabled = true;
-		return this;
+
+	protected void setDisplayArgs(String d) {
+		this.displayArgs = d;
 	}
 }

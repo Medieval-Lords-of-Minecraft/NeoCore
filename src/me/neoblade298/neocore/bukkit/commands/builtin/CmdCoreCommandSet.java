@@ -1,7 +1,11 @@
 package me.neoblade298.neocore.bukkit.commands.builtin;
 
-import org.bukkit.command.CommandSender;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commandsets.CommandSetManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
@@ -10,16 +14,22 @@ public class CmdCoreCommandSet extends Subcommand {
 
 	public CmdCoreCommandSet(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
-		args.setOverride("[key] {args}");
-		args.setMin(1);
+		setDisplayArgs("[key] {args}");
 	}
 
 	@Override
-	public void run(CommandSender s, String[] args) {
-		String[] newArgs = new String[args.length - 1];
-		for (int i = 1; i < args.length; i++) {
-			newArgs[i - 1] = args[i];
-		}
-		CommandSetManager.runSet(args[0], newArgs);
+	public void buildNode(LiteralArgumentBuilder<CommandSourceStack> node) {
+		node.then(Commands.argument("key", StringArgumentType.word())
+			.executes(ctx -> {
+				CommandSetManager.runSet(StringArgumentType.getString(ctx, "key"), new String[0]);
+				return Command.SINGLE_SUCCESS;
+			})
+			.then(Commands.argument("args", StringArgumentType.greedyString())
+				.executes(ctx -> {
+					String key = StringArgumentType.getString(ctx, "key");
+					String[] extraArgs = StringArgumentType.getString(ctx, "args").split(" ");
+					CommandSetManager.runSet(key, extraArgs);
+					return Command.SINGLE_SUCCESS;
+				})));
 	}
 }

@@ -2,6 +2,10 @@ package me.neoblade298.neocore.bukkit.commands.builtin;
 
 import org.bukkit.command.CommandSender;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
@@ -17,14 +21,18 @@ public class CmdIOList extends Subcommand {
 	}
 
 	@Override
-	public void run(CommandSender s, String[] args) {
-		for (IOComponentWrapper io : PlayerIOManager.getComponents()) {
-			Builder b = Component.text();
-			b.content("- ").color(NamedTextColor.GRAY)
-			.append(Component.text(io.getKey() + " (", NamedTextColor.GOLD))
-			.append(Component.text(io.getPriority(), NamedTextColor.YELLOW))
-			.append(Component.text(")", NamedTextColor.GOLD));
-			Util.msg(s, b.build(), false);
-		}
+	public void buildNode(LiteralArgumentBuilder<CommandSourceStack> node) {
+		node.executes(ctx -> {
+			CommandSender s = ctx.getSource().getSender();
+			for (IOComponentWrapper io : PlayerIOManager.getComponents()) {
+				Builder b = Component.text();
+				b.content("- ").color(NamedTextColor.GRAY)
+				.append(Component.text(io.getKey() + " (", NamedTextColor.GOLD))
+				.append(Component.text(io.getPriority(), NamedTextColor.YELLOW))
+				.append(Component.text(")", NamedTextColor.GOLD));
+				Util.msg(s, b.build(), false);
+			}
+			return Command.SINGLE_SUCCESS;
+		});
 	}
 }
