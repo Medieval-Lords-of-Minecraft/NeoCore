@@ -1,6 +1,7 @@
 package me.neoblade298.neocore.bukkit.util;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -172,6 +173,7 @@ public class TargetUtil {
 				}
 			}
 		}
+		targets.sort(Comparator.comparingDouble(entity -> entity.getLocation().distanceSquared(source.getLocation())));
 		if (filter != null) return targets.stream().filter(filter).collect(Collectors.toCollection(LinkedList::new));
 		return targets;
 	}
