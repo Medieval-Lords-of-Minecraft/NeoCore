@@ -1,7 +1,6 @@
 package me.neoblade298.neocore.bukkit.commands.builtin;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.mojang.brigadier.Command;
@@ -32,7 +31,6 @@ public class CmdCoreBroadcast extends Subcommand {
 	public void buildNode(LiteralArgumentBuilder<CommandSourceStack> node) {
 		node.then(Commands.argument("broadcast", StringArgumentType.greedyString())
 			.executes(ctx -> {
-				CommandSender s = ctx.getSource().getSender();
 				String msg = StringArgumentType.getString(ctx, "broadcast");
 				for (Player p : Bukkit.getOnlinePlayers()) {
 					p.sendMessage(prefix.append(NeoCore.miniMessage().deserialize(msg)));

@@ -172,6 +172,9 @@ public class TargetUtil {
 				}
 			}
 		}
+		targets.sort((first, second) -> Double.compare(
+				first.getLocation().distanceSquared(loc),
+				second.getLocation().distanceSquared(loc)));
 		if (filter != null) return targets.stream().filter(filter).collect(Collectors.toCollection(LinkedList::new));
 		return targets;
 	}

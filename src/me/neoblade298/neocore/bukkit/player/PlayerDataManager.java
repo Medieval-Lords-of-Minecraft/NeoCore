@@ -63,6 +63,10 @@ public class PlayerDataManager implements IOComponent {
 		return tags.get(key);
 	}
 	
+	public static java.util.Set<String> getTagKeys() {
+		return tags.keySet();
+	}
+	
 	public static PlayerFields createPlayerFields(String key, Plugin plugin, boolean hidden) {
 		if (fields.containsKey(key)) {
 			Bukkit.getLogger().log(Level.INFO, "[NeoCore] Player fields " + key + " for plugin " + plugin.getName() + " already exists. Returning existing keyed player data.");
