@@ -18,7 +18,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.bar.BarAPI;
 import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
-import me.neoblade298.neocore.bukkit.chat.ChatResponseHandler;
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreBroadcast;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreCmd;
@@ -60,7 +59,6 @@ import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.listeners.BungeeListener;
 import me.neoblade298.neocore.bukkit.listeners.EssentialsListener;
 import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
-import me.neoblade298.neocore.bukkit.listeners.MainListener;
 import me.neoblade298.neocore.bukkit.player.PlayerDataManager;
 import me.neoblade298.neocore.bukkit.player.PlayerFields;
 import me.neoblade298.neocore.bukkit.player.PlayerTags;
@@ -125,7 +123,6 @@ public class NeoCore extends JavaPlugin implements Listener {
         
         // Main listener
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new MainListener(), this);
         
         // core commands
         initCommands();
@@ -344,14 +341,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public static void addPostIORunnable(BukkitRunnable task, IOType type, UUID uuid, boolean async) {
 		PlayerIOManager.addPostIORunnable(task, type, uuid, async);
-	}
-	
-	public static void promptChatResponse(Player p, ChatResponseHandler... handler) {
-		MainListener.addChatHandler(p, 30, handler);
-	}
-	
-	public static void promptChatResponse(Player p, int timeoutSeconds, ChatResponseHandler... handler) {
-		MainListener.addChatHandler(p, timeoutSeconds, handler);
 	}
 	
 	@EventHandler
