@@ -3,10 +3,9 @@ package me.neoblade298.neocore.bukkit.effects;
 
 import java.util.LinkedList;
 
-import javax.annotation.Nullable;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 // By default, draws the shape flat on the ground
 public abstract class ParticleShape2D {

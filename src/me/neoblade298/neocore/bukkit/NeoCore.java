@@ -39,6 +39,7 @@ import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreResetField;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreSchedule;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreSendMessage;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreSetField;
+import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreSprites;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreTitle;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdFix;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdIODebug;
@@ -182,6 +183,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdCoreBroadcast("bc", "Broadcasts to only the server you're on", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreDebug("debug", "Toggles debug mode", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreSchedule("schedule", "Lists all items in the current scheduler", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreSprites("sprites", "Displays the block sprite gallery", null, SubcommandRunner.PLAYER_ONLY));
 		mngr.register(new CmdCoreMessage("msg", "Sends a player a message", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreRawMessage("rawmsg", "Sends a player a message without prefix", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreSendMessage("sendmsg", "Plays a message", null, SubcommandRunner.BOTH));

@@ -1,5 +1,5 @@
 /bin/
-/target/
+**/target/
 /doc/
 /.apt_generated/
 .vscode/settings.json

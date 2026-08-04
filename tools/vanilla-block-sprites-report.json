@@ -1,0 +1,24 @@
+{
+  "minecraft_version": "26.2",
+  "total_block_ids": 1198,
+  "eligible_block_ids": 1189,
+  "resolved_block_ids": 1189,
+  "coverage_percent": 100.0,
+  "resolution_counts": {
+    "blockstate": 133,
+    "item_model": 989,
+    "override": 67
+  },
+  "excluded": [
+    "air",
+    "barrier",
+    "cave_air",
+    "end_gateway",
+    "end_portal",
+    "light",
+    "moving_piston",
+    "structure_void",
+    "void_air"
+  ],
+  "unresolved": []
+}

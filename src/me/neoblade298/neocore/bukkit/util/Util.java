@@ -4,18 +4,23 @@ import java.util.Collection;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
 import me.neoblade298.neocore.bukkit.NeoCore;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.object.ObjectContents;
 
 public class Util {
+	private static final Key ITEM_SPRITE_ATLAS = Key.key("minecraft", "items");
 	private static Component prefix;
 	
 	static {
@@ -67,6 +72,29 @@ public class Util {
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			p.sendMessage(msg);
 		}
+	}
+
+	public static Component materialToSprite(Material material) {
+		if (material.isBlock()) {
+			BlockSpriteResolver.SpriteRef sprite = BlockSpriteResolver.resolve(material);
+			return sprite == null ? Component.empty() : sprite.component();
+		}
+		if (!material.isItem()) return Component.empty();
+
+		Key materialKey = material.getKey();
+		String spritePath = switch (material) {
+			case CLOCK -> "item/clock_00";
+			case COMPASS -> "item/compass_00";
+			case RECOVERY_COMPASS -> "item/recovery_compass_00";
+			default -> "item/" + materialKey.value();
+		};
+		Key spriteKey = Key.key(materialKey.namespace(), spritePath);
+		return sprite(ITEM_SPRITE_ATLAS, spriteKey);
+	}
+
+	private static Component sprite(Key atlas, Key sprite) {
+		return Component.object(ObjectContents.sprite(atlas, sprite))
+				.color(NamedTextColor.WHITE);
 	}
 
 	public static Location stringToLoc(String loc) {
