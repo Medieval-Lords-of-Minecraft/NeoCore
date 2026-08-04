@@ -3,8 +3,11 @@ package me.neoblade298.neocore.shared.util;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 import org.bukkit.command.CommandSender;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent.Builder;
@@ -12,6 +15,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+@NullMarked
 public class PaginatedList<E> implements Iterable<E> {
 	private static final int DEFAULT_PAGE_SIZE = 10;
 	private LinkedList<LinkedList<E>> pages = new LinkedList<LinkedList<E>>();
@@ -54,7 +58,7 @@ public class PaginatedList<E> implements Iterable<E> {
 		return pages.size();
 	}
 	
-	public E get(PaginatedListLocater<E> c) {
+	public @Nullable E get(PaginatedListLocater<E> c) {
 		return search(false, c, 0, pages() - 1);
 	}
 	
@@ -83,11 +87,11 @@ public class PaginatedList<E> implements Iterable<E> {
 		return remove(index / pageSize, index % pageSize);
 	}
 	
-	public E remove(PaginatedListLocater<E> c) {
+	public @Nullable E remove(PaginatedListLocater<E> c) {
 		return search(true, c, 0, pages() - 1);
 	}
 	
-	private E search(boolean remove, PaginatedListLocater<E> c, int min, int max) {
+	private @Nullable E search(boolean remove, PaginatedListLocater<E> c, int min, int max) {
 		if (size() == 0) return null;
 		
 		int page = (min + max) / 2;
@@ -132,7 +136,7 @@ public class PaginatedList<E> implements Iterable<E> {
 		return null;
 	}
 	
-	public E remove(E toRemove) {
+	public @Nullable E remove(E toRemove) {
 		Iterator<LinkedList<E>> iter = pages.descendingIterator();
 		int pagenum = pages.size() - 1;
 		while (iter.hasNext()) {
@@ -242,7 +246,7 @@ public class PaginatedList<E> implements Iterable<E> {
 				iter = pages.get(++this.page).iterator();
 				return iter.next();
 			}
-			return null;
+			throw new NoSuchElementException();
 		}
 	}
 	

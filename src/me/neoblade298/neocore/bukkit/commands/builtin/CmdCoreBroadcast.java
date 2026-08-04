@@ -1,5 +1,7 @@
 package me.neoblade298.neocore.bukkit.commands.builtin;
 
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,7 +27,8 @@ public class CmdCoreBroadcast extends Subcommand {
 			Util.msg(s, error);
 		}
 		else {
-			for (Player p : Bukkit.getOnlinePlayers()) {
+			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+				Player p = Objects.requireNonNull(onlinePlayer);
 				p.sendMessage(NeoCore.miniMessage().deserialize(SharedUtil.connectArgs(args)));
 			}
 		}

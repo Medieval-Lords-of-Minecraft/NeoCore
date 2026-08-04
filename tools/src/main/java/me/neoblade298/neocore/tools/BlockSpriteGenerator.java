@@ -152,7 +152,7 @@ public final class BlockSpriteGenerator {
     private static String propertiesContent(Result result) {
         StringBuilder output = new StringBuilder()
                 .append("# Generated from Minecraft ").append(MINECRAFT_VERSION).append(" client assets.\n")
-                .append("# Run mvn -f tools/pom.xml compile exec:java to update.\n");
+                .append("# Run mvn -f tools/generator-pom.xml compile exec:java to update.\n");
         result.resolved.forEach((blockId, texture) -> output.append(blockId).append('=')
                 .append(atlasFor(texture)).append('|').append(texture).append('\n'));
         return output.toString();

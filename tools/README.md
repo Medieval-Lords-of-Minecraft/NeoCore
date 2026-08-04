@@ -11,13 +11,13 @@ The matching client JAR must be installed at the standard launcher path:
 Generate the mapping and coverage report:
 
 ```shell
-mvn -f tools/pom.xml compile exec:java
+mvn -f tools/generator-pom.xml compile exec:java
 ```
 
 Verify that checked-in generated files are current without changing them:
 
 ```shell
-mvn -f tools/pom.xml compile exec:java -Dgenerator.mode=--check
+mvn -f tools/generator-pom.xml compile exec:java -Dgenerator.mode=--check
 ```
 
 Generated files:

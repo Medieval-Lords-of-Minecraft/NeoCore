@@ -12,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -108,7 +107,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		
 		// economy
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
-            RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+			var rsp = getServer().getServicesManager().getRegistration(Economy.class);
             if (rsp != null) {
                 econ = rsp.getProvider();
             }

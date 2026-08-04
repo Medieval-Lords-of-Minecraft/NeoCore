@@ -2,6 +2,7 @@ package me.neoblade298.neocore.bukkit.listeners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -67,7 +68,8 @@ public class BungeeListener implements PluginMessageListener, Listener {
 	}
 	
 	private void handleMutableBroadcast(String tagForMute, String msg) {
-		for (Player p : Bukkit.getOnlinePlayers()) {
+		for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+			Player p = Objects.requireNonNull(onlinePlayer);
 			if (!NeoCore.getNeoCoreTags().exists(tagForMute, p.getUniqueId())) {
 				Util.msg(p, JSONComponentSerializer.json().deserialize(msg), false);
 			}

@@ -6,6 +6,9 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import me.neoblade298.neocore.shared.util.PaginatedList;
 import net.kyori.adventure.text.Component;
@@ -13,16 +16,19 @@ import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
-public class SharedCmdList<T extends AbstractSubcommand> {
-	protected String base, key, permission;
+@NullMarked
+public class SharedCmdList<T extends @NonNull AbstractSubcommand> {
+	protected String base, key;
+	protected @Nullable String permission;
 	protected TextColor listColor;
-	protected TreeMap<String, T> cmds;
-	protected HashSet<String> aliases;
-	protected PaginatedList<T> pages = null;
+	protected TreeMap<@NonNull String, @NonNull T> cmds;
+	protected HashSet<@NonNull String> aliases;
+	protected @Nullable PaginatedList<T> pages;
 	
 	private static final Component OUT_OF_BOUNDS = Component.text("Page is out of bounds!").color(NamedTextColor.RED);
 	
-	public SharedCmdList(String key, String base, String permission, TreeMap<String, T> cmds, HashSet<String> aliases, TextColor listColor) {
+	public SharedCmdList(String key, String base, @Nullable String permission,
+			TreeMap<@NonNull String, @NonNull T> cmds, HashSet<@NonNull String> aliases, TextColor listColor) {
 		this.key = key;
 		this.base = base;
 		this.permission = permission;
@@ -31,34 +37,39 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 		this.aliases = aliases;
 	}
 
+	@SuppressWarnings("null")
 	public ArrayList<Component> run(String[] args, PermissionChecker checker) {
-		if (pages == null) {
-			pages = new PaginatedList<T>();
-			for (Entry<String, T> entry : cmds.entrySet()) {
-				if (!entry.getValue().isHidden() && !aliases.contains(entry.getKey())) {
-					pages.add(entry.getValue());
+		PaginatedList<T> commandPages = pages;
+		if (commandPages == null) {
+			commandPages = new PaginatedList<T>();
+			for (Entry<@NonNull String, @NonNull T> entry : cmds.entrySet()) {
+				String commandKey = entry.getKey();
+				T command = entry.getValue();
+				if (!command.isHidden() && !aliases.contains(commandKey)) {
+					commandPages.add(command);
 				}
 			}
+			pages = commandPages;
 		}
 		
 		if (args.length == 0 || !StringUtils.isNumeric(args[0])) {
-			return getPageDisplay(1, checker);
+			return getPageDisplay(commandPages, 1, checker);
 		}
 		else {
-			return getPageDisplay(Integer.parseInt(args[0]), checker);
+			return getPageDisplay(commandPages, Integer.parseInt(args[0]), checker);
 		}
 	}
 	
-	private ArrayList<Component> getPageDisplay(int page, PermissionChecker checker) {
+	private ArrayList<Component> getPageDisplay(PaginatedList<T> commandPages, int page, PermissionChecker checker) {
 		ArrayList<Component> msgs = new ArrayList<Component>();
 		page = page - 1;
-		if (page >= pages.pages() || page < 0) {
+		if (page >= commandPages.pages() || page < 0) {
 			msgs.add(OUT_OF_BOUNDS);
 			return msgs;
 		}
 
 		msgs.add(Component.text("List of commands: [] = Required, {} = Optional").color(NamedTextColor.GRAY));
-		for (AbstractSubcommand sc : pages.get(page)) {
+		for (T sc : commandPages.get(page)) {
 			if (sc.isHidden()) {
 				continue;
 			}
@@ -90,7 +101,7 @@ public class SharedCmdList<T extends AbstractSubcommand> {
 		
 		String nextCmd = "/" + this.base + " " + (this.key.length() == 0 ? "" : this.key + " ") + (page + 2);
 		String prevCmd = "/" + this.base + " " + (this.key.length() == 0 ? "" : this.key + " ") + page;
-		msgs.add(pages.getFooter(page, nextCmd, prevCmd));
+		msgs.add(commandPages.getFooter(page, nextCmd, prevCmd));
 		return msgs;
 	}
 }

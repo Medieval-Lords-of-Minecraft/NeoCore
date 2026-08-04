@@ -8,17 +8,19 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-import me.neoblade298.neocore.shared.commands.AbstractSubcommand;
 import me.neoblade298.neocore.shared.commands.AbstractSubcommandManager;
 import me.neoblade298.neocore.shared.commands.CommandArguments;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.kyori.adventure.text.format.TextColor;
 
-public class SubcommandManager extends AbstractSubcommandManager<Subcommand> implements CommandExecutor, TabCompleter {
+public class SubcommandManager extends AbstractSubcommandManager<@NonNull Subcommand> implements CommandExecutor, TabCompleter {
 	private static final String MSG_INVALID = "§cInvalid command! Are you using the right syntax? /";
 	private static final String MSG_MISSING_PERM = "§cYou're missing the permission: ";
 	private static final String MSG_WRONG_USER = "§cYou are the wrong type of user for this command!";
@@ -27,15 +29,17 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		return "§cThis command requires " + qualifier + " " + count + " args but received " + received + ".";
 	}
 
-	public SubcommandManager(String base, String perm, TextColor color, JavaPlugin plugin) {
+	public SubcommandManager(String base, @Nullable String perm, TextColor color, JavaPlugin plugin) {
 		super(base, perm, color);
-		plugin.getCommand(base).setExecutor(this);
-		plugin.getCommand(base).setTabCompleter(this);
+		PluginCommand command = plugin.getCommand(base);
+		if (command == null) throw new IllegalStateException("Command is not registered in plugin.yml: " + base);
+		command.setExecutor(this);
+		command.setTabCompleter(this);
 	}
 	
 	// Nested use (e.g. SubcommandGroup): routes but does not register a top-level
 	// Bukkit command. base should be the full path so far (e.g. "cmd subcmd1").
-	SubcommandManager(String base, String perm, TextColor color) {
+	SubcommandManager(String base, @Nullable String perm, TextColor color) {
 		super(base, perm, color);
 	}
 	
@@ -103,15 +107,15 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 		registerCommandList(key, null, null);
 	}
 	
-	public void registerCommandList(String key, String perm, TextColor color) {
+	public void registerCommandList(String key, @Nullable String perm, @Nullable TextColor color) {
 		handlers.put(key.toLowerCase(), new CmdList(key, base, perm, super.perm, handlers, aliases, this.color, color));
 	}
 	
-	public AbstractSubcommand getCommand(String key) {
-		return handlers.get(key.toLowerCase());
+	public @Nullable Subcommand getCommand(@NonNull String key) {
+		return lookup(key.toLowerCase());
 	}
 	
-	public Set<String> getKeys() {
+	public @NonNull Set<@NonNull String> getKeys() {
 		return handlers.keySet();
 	}
 
@@ -138,7 +142,7 @@ public class SubcommandManager extends AbstractSubcommandManager<Subcommand> imp
 			if (args[0].isBlank() || StringUtils.isNumeric(args[0])) return null;
 			
 			// Only look for a subcommand if the first arg is not a number and not blank
-			Subcommand cmd = handlers.get(args[0].toLowerCase());
+			Subcommand cmd = lookup(args[0].toLowerCase());
 			if (cmd == null || cmd.isHidden() || !cmd.isTabEnabled()) return null;
 			
 			if (cmd.overridesTab) {

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -186,7 +187,8 @@ public class PlayerIOManager implements Listener {
 		long timestamp = System.currentTimeMillis();
 		
 		ArrayList<Player> toSave = new ArrayList<Player>();
-		for (Player p : Bukkit.getOnlinePlayers()) {
+		for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+			Player p = Objects.requireNonNull(onlinePlayer);
 			UUID uuid = p.getUniqueId();
 			if (lastSave.getOrDefault(uuid, 0L) + 10000 >= System.currentTimeMillis()) {
 				// If saved less than 10 seconds ago, don't save again
@@ -374,7 +376,8 @@ public class PlayerIOManager implements Listener {
 
 			long saveTimestamp = System.currentTimeMillis();
 			Bukkit.getLogger().info("[NeoCore] saveAllSync: saving " + online.size() + " online player(s)...");
-			for (Player p : online) {
+			for (Player onlinePlayer : online) {
+				Player p = Objects.requireNonNull(onlinePlayer);
 				UUID uuid = p.getUniqueId();
 				for (IOComponentWrapper io : orderedComponents) {
 					if (!disabledKeys.contains(io.getKey().toUpperCase())) {
@@ -429,7 +432,8 @@ public class PlayerIOManager implements Listener {
 				if (!online.isEmpty()) {
 					long saveTimestamp = System.currentTimeMillis();
 					Bukkit.getLogger().info("[NeoCore] Saving " + online.size() + " online player(s) on unload...");
-					for (Player p : online) {
+					for (Player onlinePlayer : online) {
+						Player p = Objects.requireNonNull(onlinePlayer);
 						UUID uuid = p.getUniqueId();
 						for (IOComponentWrapper io : orderedComponents) {
 							if (!unloadSaveDisabledKeys.contains(io.getKey().toUpperCase())) {

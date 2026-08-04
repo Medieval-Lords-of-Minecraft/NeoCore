@@ -30,7 +30,6 @@ public class BungeeAPI {
 				.append(Component.text("]", NamedTextColor.RED));
 	}
 	
-	@SuppressWarnings("null")
 	public static void broadcast(String msg) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("MessageRaw");
@@ -88,7 +87,6 @@ public class BungeeAPI {
 		sendBungeeMessage(out);
 	}
 	
-	@SuppressWarnings("null")
 	public static void sendBungeeMessage(String[] msgs) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("NeoCore");

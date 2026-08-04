@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
@@ -30,17 +32,17 @@ public class SubcommandManager implements SimpleCommand {
             .build();
         return meta;
 	}
-	public SubcommandManager(String base, String perm, TextColor color, CommandManager mngr, Object plugin) {
+	public SubcommandManager(String base, @Nullable String perm, TextColor color, CommandManager mngr, Object plugin) {
 		this(base, perm, color, mngr, plugin, new String[0]);
 	}
-	public SubcommandManager(String base, String perm, TextColor color, CommandManager mngr, Object plugin, String[] aliases) {
+	public SubcommandManager(String base, @Nullable String perm, TextColor color, CommandManager mngr, Object plugin, String[] aliases) {
 		overhead = new CommandOverhead(base, perm, color);
 		mngr.register(meta(mngr, base, plugin), this);
 	}
 	
 	// Nested use (e.g. SubcommandGroup): routes but does not register a proxy command.
 	// base should be the full path so far (e.g. "cmd subcmd1").
-	SubcommandManager(String base, String perm, TextColor color) {
+	SubcommandManager(String base, @Nullable String perm, TextColor color) {
 		overhead = new CommandOverhead(base, perm, color);
 	}
 	
@@ -101,7 +103,7 @@ public class SubcommandManager implements SimpleCommand {
 		return true;
 	}
 	
-	public void registerCommandList(String key, String perm, TextColor color) {
+	public void registerCommandList(String key, @Nullable String perm, @Nullable TextColor color) {
 		overhead.getHandlers().put(key.toLowerCase(), new CmdList(key, overhead.getBase(), perm, overhead.getPermission(), overhead.getHandlers(), overhead.getAliases(), overhead.getColor(), color));
 	}
 	
@@ -114,11 +116,11 @@ public class SubcommandManager implements SimpleCommand {
 		overhead.register(cmd);
 	}
 	
-	public Subcommand getCommand(String key) {
+	public @Nullable Subcommand getCommand(String key) {
 		return overhead.getHandlers().get(key.toLowerCase());
 	}
 	
-	public Set<String> getKeys() {
+	public Set<@NonNull String> getKeys() {
 		return overhead.getHandlers().keySet();
 	}
 
@@ -147,7 +149,7 @@ public class SubcommandManager implements SimpleCommand {
 			if (args[0].isBlank() || StringUtils.isNumeric(args[0])) return Collections.emptyList();
 			
 			// Only look for a subcommand if the first arg is not a number and not blank
-			Subcommand cmd = overhead.getHandlers().get(args[0].toLowerCase());
+			Subcommand cmd = overhead.getCommand(args[0]);
 			if (cmd == null || cmd.isHidden() || !cmd.isTabEnabled()) return Collections.emptyList();
 			
 			if (cmd.overridesTab) {

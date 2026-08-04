@@ -33,6 +33,7 @@ public class TeleportAPI implements Listener {
 	
 	public static void teleportPlayer(Player p, Location loc) {
 		final Location formerLoc = p.getLocation();
+		if (formerLoc == null) throw new IllegalStateException("Player location is unavailable");
 		ArrayList<BukkitTask> tasks = new ArrayList<BukkitTask>(TELEPORT_DELAY + 1);
 		Util.msg(p, noMove);
 		BukkitTask teleport = new BukkitRunnable() {
@@ -49,6 +50,7 @@ public class TeleportAPI implements Listener {
 						if (!teleports.containsKey(p)) return;
 						
 						Location loc = p.getLocation();
+						if (loc == null) return;
 						// Player moved more than 1 block
 						if (Math.abs(loc.getX() - formerLoc.getX()) > 1 ||
 								Math.abs(loc.getY() - formerLoc.getY()) > 1 ||

@@ -1,21 +1,24 @@
 package me.neoblade298.neocore.bungee.util;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.UUID;
+
+import org.jspecify.annotations.Nullable;
+
+import com.alessiodp.lastloginapi.api.LastLogin;
+import com.alessiodp.lastloginapi.api.interfaces.LastLoginPlayer;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
+
+import me.neoblade298.neocore.bungee.BungeeCore;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.UUID;
-
-import com.alessiodp.lastloginapi.api.LastLogin;
-import com.alessiodp.lastloginapi.api.interfaces.LastLoginPlayer;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
-import me.neoblade298.neocore.bungee.BungeeCore;
 
 public class Util {
 	private static Component prefix;
@@ -101,10 +104,14 @@ public class Util {
 		BungeeCore.sendPluginMessage(new String[] {"mutablebc", tagForMute, JSONComponentSerializer.json().serialize(msg)});
 	}
 	
-	public static UUID getUniqueId(String name) {
+	public static @Nullable UUID getUniqueId(String name) {
 		Set<? extends LastLoginPlayer> set = LastLogin.getApi().getPlayerByName(name);
-		if (set.size() == 0) return null;
-		return set.stream().max(comp).get().getPlayerUUID();
+		LastLoginPlayer latest = null;
+		for (LastLoginPlayer candidate : set) {
+			if (candidate == null) continue;
+			if (latest == null || comp.compare(candidate, latest) > 0) latest = candidate;
+		}
+		return latest == null ? null : latest.getPlayerUUID();
 	}
 	
 	public static String getUsername(UUID uuid) {

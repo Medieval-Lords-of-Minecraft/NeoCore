@@ -33,9 +33,12 @@ class BlockSpriteResolverTest {
 
 	@Test
 	void buildsDirectPlayerHeadObject() {
-		ObjectComponent component = assertInstanceOf(ObjectComponent.class,
-				BlockSpriteResolver.resolve(Material.PLAYER_HEAD).component());
-		PlayerHeadObjectContents contents = assertInstanceOf(PlayerHeadObjectContents.class, component.contents());
+		Object componentValue = BlockSpriteResolver.resolve(Material.PLAYER_HEAD).component();
+		assertInstanceOf(ObjectComponent.class, componentValue);
+		ObjectComponent component = (ObjectComponent) componentValue;
+		Object contentsValue = component.contents();
+		assertInstanceOf(PlayerHeadObjectContents.class, contentsValue);
+		PlayerHeadObjectContents contents = (PlayerHeadObjectContents) contentsValue;
 		assertEquals(Key.key("minecraft:entity/player/wide/steve"), contents.texture());
 	}
 

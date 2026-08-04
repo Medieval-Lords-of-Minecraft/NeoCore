@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.TreeMap;
 
 import org.bukkit.command.CommandSender;
+import org.jspecify.annotations.NonNull;
 
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SharedCmdList;
@@ -12,17 +13,20 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 
 public class CmdList extends Subcommand {
-	private SharedCmdList<Subcommand> cmds;
+	private SharedCmdList<@NonNull Subcommand> cmds;
 	
-	public CmdList(String key, String base, String perm, String basePerm, TreeMap<String, Subcommand> cmds, HashSet<String> aliases, TextColor defaultColor) {
+	public CmdList(String key, String base, String perm, String basePerm,
+			TreeMap<@NonNull String, @NonNull Subcommand> cmds, HashSet<@NonNull String> aliases, TextColor defaultColor) {
 		super(key, "List all commands", perm, SubcommandRunner.BOTH);
-		this.cmds = new SharedCmdList<Subcommand>(key, base, basePerm, cmds, aliases, defaultColor);
+		this.cmds = new SharedCmdList<@NonNull Subcommand>(key, base, basePerm, cmds, aliases, defaultColor);
 		args.add(new Arg("page", false));
 	}
 	
-	public CmdList(String key, String base, String perm, String basePerm, TreeMap<String, Subcommand> cmds, HashSet<String> aliases, TextColor defaultColor, TextColor cmdColor) {
+	public CmdList(String key, String base, String perm, String basePerm,
+			TreeMap<@NonNull String, @NonNull Subcommand> cmds, HashSet<@NonNull String> aliases,
+			TextColor defaultColor, TextColor cmdColor) {
 		super(key, "List all commands", perm, SubcommandRunner.BOTH);
-		this.cmds = new SharedCmdList<Subcommand>(key, base, basePerm, cmds, aliases, defaultColor);
+		this.cmds = new SharedCmdList<@NonNull Subcommand>(key, base, basePerm, cmds, aliases, defaultColor);
 		this.color = cmdColor;
 		args.add(new Arg("page", false));
 	}

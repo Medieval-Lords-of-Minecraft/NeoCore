@@ -6,6 +6,7 @@ import java.util.Stack;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
@@ -202,7 +203,7 @@ public class SharedUtil {
 		return mini.deserialize(msg);
 	}
 	
-	public static Component createText(String text, String hover, ClickEvent click) {
+	public static Component createText(String text, String hover, ClickEvent<?> click) {
 		Component c = SharedUtil.color(text);
 		if (hover != null) {
 			c = c.hoverEvent(HoverEvent.showText(SharedUtil.color(hover)));
@@ -213,7 +214,7 @@ public class SharedUtil {
 		return c;
 	}
 	
-	public static Component createText(String text, Component hover, ClickEvent click) {
+	public static Component createText(String text, Component hover, ClickEvent<?> click) {
 		Component c = SharedUtil.color(text);
 		if (hover != null) {
 			c = c.hoverEvent(HoverEvent.showText(hover));

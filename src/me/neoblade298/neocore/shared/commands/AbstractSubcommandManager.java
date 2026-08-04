@@ -6,6 +6,9 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -13,39 +16,43 @@ import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
-public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
-	protected TreeMap<String, T> handlers = new TreeMap<String, T>();
-	protected HashSet<String> aliases = new HashSet<String>();
-	protected String base, perm;
+@NullMarked
+public abstract class AbstractSubcommandManager<T extends @NonNull AbstractSubcommand> {
+	protected TreeMap<@NonNull String, @NonNull T> handlers = new TreeMap<>();
+	protected HashSet<@NonNull String> aliases = new HashSet<>();
+	protected String base;
+	protected @Nullable String perm;
 	protected TextColor color = NamedTextColor.RED;
 	
-	public AbstractSubcommandManager(String base, String perm, TextColor color) {
+	public AbstractSubcommandManager(String base, @Nullable String perm, TextColor color) {
 		this.base = base;
 		this.perm = perm;
 		this.color = color;
 	}
 	
-	public T parseForCommand(String[] args) {
+	public @Nullable T parseForCommand(String[] args) {
 		// Run command no args
 		if (args.length == 0) {
 			if (handlers.containsKey("") ) {
-				return handlers.get("");
+				return lookup("");
 			}
 			else {
 				return null;
 			}
 		}
 		// Run no-arg command with a number value, specifically for command lists
-		else if (StringUtils.isNumeric(args[0]) && handlers.get("") != null && handlers.get("").acceptsNumericFirstArg()) {
-			return handlers.get("");
+		else if (StringUtils.isNumeric(args[0])) {
+			@Nullable T baseCommand = lookup("");
+			if (baseCommand != null && baseCommand.acceptsNumericFirstArg()) return baseCommand;
 		}
 		// Run command normally
 		else if (handlers.containsKey(args[0].toLowerCase())) {
-			return handlers.get(args[0].toLowerCase());
+			return lookup(args[0].toLowerCase());
 		}
 		// Run base command with args (like /rename [variable])
 		else if (!handlers.containsKey(args[0].toLowerCase()) && handlers.containsKey("")) {
-			T cmd = handlers.get("");
+			@Nullable T cmd = lookup("");
+			if (cmd == null) return null;
 			CommandArguments cArgs = cmd.getArgs();
 			if ((cArgs.getMin() <= args.length || cArgs.getMin() == -1) && (cArgs.getMax() > 0 || cArgs.getMax() == -1)) {
 				return cmd;
@@ -75,11 +82,15 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 		}
 	}
 	
-	public AbstractSubcommand getCommand(String key) {
-		return handlers.get(key.toLowerCase());
+	public @Nullable T getCommand(String key) {
+		return lookup(key.toLowerCase());
+	}
+
+	protected @Nullable T lookup(String key) {
+		return handlers.get(key);
 	}
 	
-	public Set<String> getKeys() {
+	public Set<@NonNull String> getKeys() {
 		return handlers.keySet();
 	}
 	
@@ -108,7 +119,7 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 		return b.build();
 	}
 	
-	public String getPermission() {
+	public @Nullable String getPermission() {
 		return perm;
 	}
 	
@@ -120,7 +131,7 @@ public abstract class AbstractSubcommandManager<T extends AbstractSubcommand> {
 		return color;
 	}
 	
-	public HashSet<String> getAliases() {
+	public HashSet<@NonNull String> getAliases() {
 		return aliases;
 	}
 }
