@@ -23,3 +23,7 @@ commands:
    fix:
       description: Base command
       usage: /fix
+permissions:
+   neocore.book:
+      description: Allows players to open configured books
+      default: true

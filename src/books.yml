@@ -1,0 +1,120 @@
+# Configurable books opened with /ncore book <book> [chapter].
+#
+# Each top-level key is a book id. Supported book fields:
+#   title:          MiniMessage title shown in the book.
+#   permission:     Optional permission required to open this book. Omit for public access.
+#   line-width:     Optional character wrap width. Defaults to 19.
+#   lines-per-page: Optional page height. Defaults to 14.
+#   rewards:        Optional console commands run once when each chapter is first opened.
+#                   Supports %player% and %uuid%. Books without rewards store no read flags.
+#   chapters:       Map of chapter id to name, optional priority, and MiniMessage content.
+
+neorogue_guide:
+  title: "<gold><bold>Caravan Guide"
+  rewards:
+    - "ashstore give %player% 10"
+  chapters:
+    getting_started:
+      name: "Getting Started"
+      priority: 1
+      content: |
+        You choose your path strategically.
+
+        <red>Fight</red> spawns mobs for you to kill. The faster you kill, the better your score, the greater the rewards.
+
+        <gold>Chance</gold> are random events that can help or hinder you.
+
+        <green>Shop</green> lets you buy items in exchange for coins.
+
+        <gold>Shrine</gold> lets you choose between resting and upgrading your equipment.
+
+        <blue>Treasure</blue> gives you some free coins and a random artifact.
+
+        <red>Miniboss</red> and <red>Boss</red> are tough fights that give better rewards and an artifact.
+    combat_basics:
+      name: "Combat Basics"
+      priority: 2
+      content: |
+        In fights, deal damage with weapons or abilities. Abilities may cost <blue>Mana</blue> or <green>Stamina</green> to use.
+
+        Running out of <green>Stamina</green> prevents sprinting too, so use it wisely!
+
+        You do not recover health after fights, ration your health wisely too!
+    combat_advanced:
+      name: "Advanced Combat"
+      priority: 3
+      content: |
+        You can view a basic description of enemies in the <gold>Lectern</gold> in the node select area. Use it to gain an edge!
+
+        Some enemies have unique mechanics to watch out for.
+
+        <gold>Statuses</gold> are a valuable way to gain an edge. Some equipment can apply them. You can read what a status does in the equipment's <blue>glossary</blue>.
+    equipment_basics:
+      name: "Equipment Basics"
+      priority: 4
+      content: |
+        Equipment is how you become stronger. You can find <gold>Abilities</gold>, <gold>Weapons</gold>, <gold>Armor</gold>, <gold>Accessories</gold>, <gold>Offhands</gold>, <gold>Consumables</gold>, and <gold>Artifacts</gold>.
+
+        Equipment usually have <blue>keywords</blue> that have their own definitions. Right click any equipment in your inventory to open up its <blue>glossary page</blue>!
+
+        <gold>Armor</gold>, <gold>Accessories</gold>, and <gold>Offhands</gold> are equipped in their specific slots.
+
+        <gold>Weapons</gold>, <gold>Consumables</gold> and <gold>Abilities</gold> are equipped in the <blue>Hotbar</blue>, and used in combat by selecting their hotbar slot.
+
+        You can also equip <gold>Abilities</gold> and <gold>Consumables</gold> in the other keybinds too.
+
+        <gold>Artifacts</gold> are special, they don't take inventory space, you can have as many as you can get!
+    using_abilities:
+      name: "Using Abilities"
+      priority: 5
+      content: |
+        This game uses a <blue>Hotbar</blue> and <blue>Keybind</blue> system.
+
+        Putting an <gold>Ability</gold> in your <blue>Hotbar</blue> allows you to use it in combat by selecting its hotbar slot.
+
+        Likewise, putting an <gold>Ability</gold> in your <blue>Keybinds</blue> allows you to use it in combat by pressing the appropriate keybind.
+
+        Passive abilities can be equipped in either the <blue>Hotbar</blue> or <blue>Keybinds</blue>, they will always be active in combat.
+    equipment_reforging:
+      name: "Equipment Reforging"
+      priority: 6
+      content: |
+        Some equipment can be reforged, meaning they can combine with another equipment to create a stronger one. Reforging requires at least one of the equipment to be upgraded.
+
+        An equipment's reforge options are viewable in its <blue>glossary</blue>.
+
+        Once you have the prerequisites, you can either drag one equipment onto another or use the anvil in your inventory to reforge them.
+    making_money:
+      name: "Making Money"
+      priority: 7
+      content: |
+        Beating a boss will grant you some <gold>Crowns</gold>.
+
+        Once you unlock it, you can also carry <gold>Cargo</gold> on your run, which are sold after beating a boss too.
+
+        There are a few ways to add multipliers to your <gold>Crowns</gold>, like increasing your <red>Notoriety</red> or playing with friends.
+    experience_and_leveling:
+      name: "Experience and Leveling"
+      priority: 8
+      content: |
+        Playing the game will grant you <gold>Exp</gold> that you can view in your <blue>Profile</blue>. Levels can be gained both globally and per-class.
+
+        Leveling up a class will give you <gold>Points</gold> that you can spend to unlock new <gold>Equipment</gold> for your future runs.
+
+        Of course, levels are also a measure of your progress. Show off your high levels on your favorite class to friends!
+    achievements:
+      name: "Achievements"
+      priority: 9
+      content: |
+        Achievements are a way to show off your accomplishments. You can view them in your <blue>Profile</blue>.
+
+        Some achievements are easy to get, while others are very difficult. Some achievements even grant you <gold>Titles</gold>!
+    glossary_command:
+      name: "Glossary Command"
+      priority: 10
+      content: |
+        You can view the <blue>glossary</blue> of any equipment by right clicking it in your inventory.
+
+        You can also view the <blue>glossary</blue> of any equipment or tag (like statuses) by using the command <gold>/nr glossary <name></gold>.
+
+        The glossary is a great way to learn about the game and its mechanics!

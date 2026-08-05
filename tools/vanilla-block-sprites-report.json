@@ -6,8 +6,8 @@
   "coverage_percent": 100.0,
   "resolution_counts": {
     "blockstate": 133,
-    "item_model": 989,
-    "override": 67
+    "item_model": 988,
+    "override": 68
   },
   "excluded": [
     "air",

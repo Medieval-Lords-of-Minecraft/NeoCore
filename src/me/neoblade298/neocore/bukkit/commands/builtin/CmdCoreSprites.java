@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.util.Util;
+import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -20,6 +21,7 @@ public class CmdCoreSprites extends Subcommand {
 
 	public CmdCoreSprites(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
+		args.add(new Arg("Page", false));
 	}
 
 	@Override

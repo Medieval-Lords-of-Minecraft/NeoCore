@@ -16,6 +16,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.bar.BarAPI;
+import me.neoblade298.neocore.bukkit.book.BookClickListener;
+import me.neoblade298.neocore.bukkit.book.BookRegistry;
 import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreBroadcast;
@@ -24,6 +26,7 @@ import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreMutableBroadcast;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreSend;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreSilentMutableBroadcast;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreAddTag;
+import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreBook;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreBroadcast;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreCommandSet;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreDebug;
@@ -123,6 +126,9 @@ public class NeoCore extends JavaPlugin implements Listener {
         
         // Main listener
         getServer().getPluginManager().registerEvents(this, this);
+		saveResource("books.yml", false);
+		BookRegistry.reload();
+		getServer().getPluginManager().registerEvents(new BookClickListener(), this);
         
         // core commands
         initCommands();
@@ -141,6 +147,7 @@ public class NeoCore extends JavaPlugin implements Listener {
             PlayerIOManager.register(this, new PlayerDataManager(), "PlayerDataManager", -100);
             
             ptags = PlayerDataManager.createPlayerTags("neocore", NeoCore.inst(), false);
+			BookRegistry.setReadTags(PlayerDataManager.createPlayerTags("books", NeoCore.inst(), true));
         }
         
         // CoreBar
@@ -196,6 +203,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdCoreHasField("hasfield", "Checks a player field", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreResetField("resetfield", "Resets a player field", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreTitle("title", "Sends a title to a player", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreBook("book", "Opens a configured book", "neocore.book", SubcommandRunner.PLAYER_ONLY));
 
 		mngr = new SubcommandManager("bcore", "neocore.admin", NamedTextColor.DARK_RED, this);
 		mngr.registerCommandList("");
@@ -231,6 +239,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		MiniMessageManager.reloadBukkit();
 		CommandSetManager.reload();
 		GradientManager.load(Config.load(new File(NeoCore.inst().getDataFolder(), "gradients.yml")));
+		BookRegistry.reload();
 	}
 	
 	public void onDisable() {

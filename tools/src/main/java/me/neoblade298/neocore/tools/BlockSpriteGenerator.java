@@ -44,6 +44,7 @@ public final class BlockSpriteGenerator {
         overrides.put("copper_chest", "minecraft:entity/chest/copper");
         addHeadOverrides(overrides, "creeper_head", "minecraft:entity/creeper/creeper");
         addHeadOverrides(overrides, "dragon_head", "minecraft:entity/enderdragon/dragon");
+        overrides.put("dried_ghast", "minecraft:block/dried_ghast_hydration_0_north");
         overrides.put("ender_chest", "minecraft:entity/chest/ender");
         overrides.put("exposed_copper_chest", "minecraft:entity/chest/copper_exposed");
         overrides.put("fire", "minecraft:block/fire_0");

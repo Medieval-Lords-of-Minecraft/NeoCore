@@ -50,7 +50,7 @@ final class BlockSpriteResolver {
 	record SpriteRef(Key atlas, Key sprite) {
 		Component component() {
 			ObjectContents contents = atlas.equals(PLAYER_HEAD_OBJECT)
-					? ObjectContents.playerHead().texture(sprite).build()
+					? ObjectContents.playerHead().texture(sprite).hat(false).build()
 					: ObjectContents.sprite(atlas, sprite);
 			return Component.object(contents).color(NamedTextColor.WHITE);
 		}

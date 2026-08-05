@@ -21,9 +21,14 @@ class BlockSpriteResolverTest {
 		assertSprite(Material.OAK_STAIRS, "minecraft:blocks", "minecraft:block/oak_planks");
 		assertSprite(Material.WHITE_BED, "minecraft:blocks", "minecraft:block/white_bed_foot_up");
 		assertSprite(Material.CHEST, "minecraft:chests", "minecraft:entity/chest/normal");
+		assertSprite(Material.CARVED_PUMPKIN, "minecraft:blocks", "minecraft:block/carved_pumpkin");
+		assertSprite(Material.DRIED_GHAST, "minecraft:blocks", "minecraft:block/dried_ghast_hydration_0_north");
 		assertSprite(Material.PLAYER_HEAD, "minecraft:player_head", "minecraft:entity/player/wide/steve");
 		assertSprite(Material.PLAYER_WALL_HEAD, "minecraft:player_head", "minecraft:entity/player/wide/steve");
 		assertSprite(Material.CREEPER_HEAD, "minecraft:player_head", "minecraft:entity/creeper/creeper");
+		assertSprite(Material.SKELETON_SKULL, "minecraft:player_head", "minecraft:entity/skeleton/skeleton");
+		assertSprite(Material.WITHER_SKELETON_SKULL, "minecraft:player_head", "minecraft:entity/skeleton/wither_skeleton");
+		assertSprite(Material.ZOMBIE_HEAD, "minecraft:player_head", "minecraft:entity/zombie/zombie");
 	}
 
 	@Test
@@ -32,14 +37,15 @@ class BlockSpriteResolverTest {
 	}
 
 	@Test
-	void buildsDirectPlayerHeadObject() {
-		Object componentValue = BlockSpriteResolver.resolve(Material.PLAYER_HEAD).component();
+	void buildsDirectPlayerHeadObjectWithoutObscuringHatLayer() {
+		Object componentValue = BlockSpriteResolver.resolve(Material.SKELETON_SKULL).component();
 		assertInstanceOf(ObjectComponent.class, componentValue);
 		ObjectComponent component = (ObjectComponent) componentValue;
 		Object contentsValue = component.contents();
 		assertInstanceOf(PlayerHeadObjectContents.class, contentsValue);
 		PlayerHeadObjectContents contents = (PlayerHeadObjectContents) contentsValue;
-		assertEquals(Key.key("minecraft:entity/player/wide/steve"), contents.texture());
+		assertEquals(Key.key("minecraft:entity/skeleton/skeleton"), contents.texture());
+		assertEquals(false, contents.hat());
 	}
 
 	@Test
