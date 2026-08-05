@@ -40,7 +40,7 @@ public final class BlockSpriteGenerator {
         overrides.put("attached_melon_stem", "minecraft:block/melon_stem_attached");
         overrides.put("attached_pumpkin_stem", "minecraft:block/pumpkin_stem_attached");
         overrides.put("bubble_column", "minecraft:block/water_still");
-        overrides.put("chest", "minecraft:entity/chest/normal");
+        overrides.put("chest", "minecraft:block/oak_planks");
         overrides.put("copper_chest", "minecraft:entity/chest/copper");
         addHeadOverrides(overrides, "creeper_head", "minecraft:entity/creeper/creeper");
         addHeadOverrides(overrides, "dragon_head", "minecraft:entity/enderdragon/dragon");

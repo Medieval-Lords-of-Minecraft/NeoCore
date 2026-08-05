@@ -22,7 +22,8 @@ import net.kyori.adventure.text.object.ObjectContents;
 
 public class Util {
 	private static final Key ITEM_SPRITE_ATLAS = Key.key("minecraft", "items");
-	private static final Key SHIELD_SPRITE_ATLAS = Key.key("minecraft", "shield_patterns");
+	private static final Key BLOCK_SPRITE_ATLAS = Key.key("minecraft", "blocks");
+	private static final Key OAK_PLANKS_SPRITE = Key.key("minecraft", "block/oak_planks");
 	private static Component prefix;
 	
 	static {
@@ -79,7 +80,7 @@ public class Util {
 
 	public static Component materialToSprite(Material material) {
 		if (material == Material.SHIELD) {
-			return sprite(SHIELD_SPRITE_ATLAS, Key.key("minecraft", "entity/shield/shield_base_nopattern"));
+			return sprite(BLOCK_SPRITE_ATLAS, OAK_PLANKS_SPRITE);
 		}
 		if (material == Material.CROSSBOW) {
 			return sprite(ITEM_SPRITE_ATLAS, Key.key("minecraft", "item/crossbow_standby"));

@@ -20,13 +20,10 @@ import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 
-import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.bungee.chat.ChatResponseHandler;
 import me.neoblade298.neocore.bungee.commands.builtin.CmdBroadcast;
 import me.neoblade298.neocore.bungee.commands.builtin.CmdHub;
 import me.neoblade298.neocore.bungee.commands.builtin.CmdKickAll;
@@ -40,13 +37,10 @@ import me.neoblade298.neocore.bungee.commands.builtin.CmdTp;
 import me.neoblade298.neocore.bungee.commands.builtin.CmdTphere;
 import me.neoblade298.neocore.bungee.commands.builtin.CmdUptime;
 import me.neoblade298.neocore.bungee.io.FileLoader;
-import me.neoblade298.neocore.bungee.listeners.ChatListener;
 import me.neoblade298.neocore.bungee.listeners.MainListener;
 import me.neoblade298.neocore.bungee.util.Util;
-import me.neoblade298.neocore.shared.chat.MiniMessageManager;
 import me.neoblade298.neocore.shared.io.Config;
 import me.neoblade298.neocore.shared.io.SQLManager;
-import me.neoblade298.neocore.shared.util.GradientManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent.Builder;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -96,11 +90,7 @@ public class BungeeCore {
         mngr.register(CmdSend.meta(mngr, this), new CmdSend());
         mngr.register(CmdKickAll.meta(mngr, this), new CmdKickAll());
         proxy.getEventManager().register(this, new MainListener());
-        proxy.getEventManager().register(this, new ChatListener());
         proxy.getChannelRegistrar().register(IDENTIFIER);
-        
-		// Maybe doesn't work as of non-bungification
-        GradientManager.load(Config.load(new File(NeoCore.inst().getDataFolder(), "gradients.yml")));
 
 		Config cfg = Config.load(new File(folder, "config.yml"));
         // sql
@@ -129,7 +119,6 @@ public class BungeeCore {
     }
     
     private void reload() throws IOException {
-    	MiniMessageManager.reloadBungee();
     	announceCfg = Config.load(new File(folder, "announcements.yml"));
     	announceList = announceCfg.getStringList("announcements");
 
@@ -195,14 +184,6 @@ public class BungeeCore {
 	
 	public static BungeeCore inst() {
 		return inst;
-	}
-	
-	public static void promptChatResponse(Player p, ChatResponseHandler... handler) {
-		ChatListener.addChatHandler(p, 30, handler);
-	}
-	
-	public static void promptChatResponse(Player p, int timeoutSeconds, ChatResponseHandler... handler) {
-		ChatListener.addChatHandler(p, timeoutSeconds, handler);
 	}
 	
 	public static void loadFiles(File load, FileLoader loader) {
