@@ -15,12 +15,11 @@ public class ParticleContainer extends Effect {
 	protected double spreadXZ, spreadY, speed, offsetForward, offsetForwardAngle, offsetY;
 	protected BlockData blockData;
 	protected DustOptions dustOptions;
+	protected Color color;
 	
 	public ParticleContainer(Particle particle) {
 		super(HIDE_TAG);
-		this.particle = particle;
-		
-		if (particle == Particle.DUST) dustOptions = new DustOptions(Color.RED, count);
+		particle(particle);
 	}
 	
 	public ParticleContainer clone() {
@@ -30,12 +29,16 @@ public class ParticleContainer extends Effect {
 		pc.speed(speed);
 		pc.blockData = blockData;
 		pc.dustOptions = dustOptions;
+		pc.color = color;
 		pc.forceVisibility = forceVisibility;
 		return pc;
 	}
 	
 	public ParticleContainer particle(Particle particle) {
 		this.particle = particle;
+		this.blockData = null;
+		this.dustOptions = particle == Particle.DUST ? new DustOptions(Color.RED, count) : null;
+		this.color = particle == Particle.FLASH ? Color.WHITE : null;
 		return this;
 	}
 	
@@ -84,13 +87,22 @@ public class ParticleContainer extends Effect {
 	
 	public ParticleContainer blockData(BlockData blockData) {
 		this.dustOptions = null;
+		this.color = null;
 		this.blockData = blockData;
 		return this;
 	}
 	
 	public ParticleContainer dustOptions(DustOptions dustOptions) {
 		this.blockData = null;
+		this.color = null;
 		this.dustOptions = dustOptions;
+		return this;
+	}
+
+	public ParticleContainer color(Color color) {
+		this.blockData = null;
+		this.dustOptions = null;
+		this.color = color;
 		return this;
 	}
 	
@@ -104,11 +116,17 @@ public class ParticleContainer extends Effect {
 	
 	@Override
 	public void playEffect(Player p, Location loc) {
-		p.spawnParticle(particle, calculateOffset(loc), count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
+		p.spawnParticle(particle, calculateOffset(loc), count, spreadXZ, spreadY, spreadXZ, speed, getData());
 	}
 
 	@Override
 	protected void playEffect(Location loc) {
-		loc.getWorld().spawnParticle(particle, calculateOffset(loc), count, spreadXZ, spreadY, spreadXZ, speed, blockData != null ? blockData : dustOptions);
+		loc.getWorld().spawnParticle(particle, calculateOffset(loc), count, spreadXZ, spreadY, spreadXZ, speed, getData());
+	}
+
+	private Object getData() {
+		if (blockData != null) return blockData;
+		if (dustOptions != null) return dustOptions;
+		return color;
 	}
 }
