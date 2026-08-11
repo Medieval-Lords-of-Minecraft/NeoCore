@@ -54,7 +54,6 @@ import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
 import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.listeners.BungeeListener;
-import me.neoblade298.neocore.bukkit.listeners.EssentialsListener;
 import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
 import me.neoblade298.neocore.bukkit.player.PlayerDataManager;
 import me.neoblade298.neocore.bukkit.player.PlayerFields;
@@ -148,11 +147,6 @@ public class NeoCore extends JavaPlugin implements Listener {
         
         // Teleports
         getServer().getPluginManager().registerEvents(new TeleportAPI(), this);
-		
-		// Outside compatibilities
-		if (getServer().getPluginManager().isPluginEnabled("Essentials")) {
-			getServer().getPluginManager().registerEvents(new EssentialsListener(), this);
-		}
 	}
 
 	private void initCommands() {
