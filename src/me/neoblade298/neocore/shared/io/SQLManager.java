@@ -2,13 +2,27 @@ package me.neoblade298.neocore.shared.io;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class SQLManager {
+	private static final String[] TABLE_SCHEMAS = {
+		"CREATE TABLE IF NOT EXISTS neocore_fields_strings ("
+			+ "uuid CHAR(36) NOT NULL, `key` VARCHAR(255) NOT NULL, field VARCHAR(255) NOT NULL, "
+			+ "value TEXT NOT NULL, expiration BIGINT NOT NULL, PRIMARY KEY (uuid, `key`, field))",
+		"CREATE TABLE IF NOT EXISTS neocore_fields_integers ("
+			+ "uuid CHAR(36) NOT NULL, `key` VARCHAR(255) NOT NULL, field VARCHAR(255) NOT NULL, "
+			+ "value INT NOT NULL, expiration BIGINT NOT NULL, PRIMARY KEY (uuid, `key`, field))",
+		"CREATE TABLE IF NOT EXISTS neocore_tags ("
+			+ "uuid CHAR(36) NOT NULL, `key` VARCHAR(255) NOT NULL, tag VARCHAR(255) NOT NULL, "
+			+ "expiration BIGINT NOT NULL, PRIMARY KEY (uuid, `key`, tag))"
+	};
 	private static HashMap<String, String> userDbs = new HashMap<String, String>(); // User -> database key -> datasource
     private static HashMap<String, HikariDataSource> dataSources = new HashMap<String, HikariDataSource>();
     private static boolean enabled = false;
@@ -43,7 +57,28 @@ public class SQLManager {
 				}
 			}
 		}
-		enabled = true;
+		try {
+			initializeTables();
+			enabled = true;
+		} catch (SQLException ex) {
+			Bukkit.getLogger().log(Level.SEVERE, "[NeoCore] Failed to initialize SQL tables", ex);
+			for (HikariDataSource dataSource : dataSources.values()) {
+				dataSource.close();
+			}
+			dataSources.clear();
+			userDbs.clear();
+			enabled = false;
+		}
+	}
+
+	private static void initializeTables() throws SQLException {
+		for (HikariDataSource dataSource : dataSources.values()) {
+			try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
+				for (String tableSchema : TABLE_SCHEMAS) {
+					statement.executeUpdate(tableSchema);
+				}
+			}
+		}
 	}
 	
 	public static String getDatabase(String user) {
