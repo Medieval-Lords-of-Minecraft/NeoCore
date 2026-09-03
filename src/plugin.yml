@@ -27,3 +27,6 @@ permissions:
    neocore.book:
       description: Allows players to open configured books
       default: true
+   neocore.book.others:
+      description: Allows opening configured books for other players
+      default: op
