@@ -55,6 +55,7 @@ import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
 import me.neoblade298.neocore.bukkit.listeners.BungeeListener;
 import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
+import me.neoblade298.neocore.bukkit.listeners.MotdListener;
 import me.neoblade298.neocore.bukkit.player.PlayerDataManager;
 import me.neoblade298.neocore.bukkit.player.PlayerFields;
 import me.neoblade298.neocore.bukkit.player.PlayerTags;
@@ -106,15 +107,13 @@ public class NeoCore extends JavaPlugin implements Listener {
         }
 
 		// Config
-		Config cfg = Config.load(new File(this.getDataFolder(), "config.yml"));
+		saveResource("config.yml", false);
+		Config cfg = loadConfig();
 		SQLManager.load(cfg.getSection("sql"));
-		Section gen = cfg.getSection("general");
-		if (gen != null) {
-			welcome = gen.getString("welcome", "<dark_red>[<red><bold>MLMC</red></bold>] <gray>Welcome <yellow>%player%</yellow>to MLMC!");
-		}
         
         // Main listener
         getServer().getPluginManager().registerEvents(this, this);
+		getServer().getPluginManager().registerEvents(new MotdListener(), this);
 		saveResource("books.yml", false);
 		BookRegistry.reload();
 		getServer().getPluginManager().registerEvents(new BookClickListener(), this);
@@ -197,7 +196,18 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 	
 	public static void reload() {
+		loadConfig();
 		BookRegistry.reload();
+	}
+
+	private static Config loadConfig() {
+		Config cfg = Config.load(new File(inst.getDataFolder(), "config.yml"));
+		Section gen = cfg.getSection("general");
+		if (gen != null) {
+			welcome = gen.getString("welcome", "<dark_red>[<red><bold>MLMC</red></bold>] <gray>Welcome <yellow>%player%</yellow>to MLMC!");
+		}
+		MotdListener.reload(cfg.getSection("motd"));
+		return cfg;
 	}
 	
 	public void onDisable() {

@@ -1,0 +1,14 @@
+# NeoCore configuration
+
+general:
+  welcome: '<dark_red>[<red><bold>MLMC</bold></red>] <gray>Welcome <yellow>%player%</yellow> to MLMC!'
+
+# Sends this message to players after they join. Supports MiniMessage formatting
+# and, when PlaceholderAPI is installed, player and server placeholders.
+motd:
+  enabled: true
+  # Delay before sending, in ticks (20 ticks = 1 second).
+  delay: 60
+  text: |-
+    <gradient:#5e9cff:#8ff0d2><bold>Welcome to MLMC!</bold></gradient>
+    <gray>There are <white>%server_online%</white> players online.</gray>
