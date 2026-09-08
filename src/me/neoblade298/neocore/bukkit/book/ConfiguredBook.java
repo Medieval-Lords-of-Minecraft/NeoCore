@@ -143,7 +143,7 @@ public class ConfiguredBook {
 				page.append(divider()).append(Component.newline());
 			}
 			if (!chunk.isEmpty()) page.append(mm(String.join("\n", chunk)));
-			page.append(Component.newline()).append(Component.newline()).append(back);
+			page.append(Component.newline()).append(back);
 			pages.add(page.build());
 			contentIndex = end;
 			firstPage = false;
