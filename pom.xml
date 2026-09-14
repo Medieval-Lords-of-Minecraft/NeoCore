@@ -177,6 +177,24 @@
 
   <profiles>
     <profile>
+      <id>paper-only</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+              <excludes combine.children="append">
+                <exclude>me/neoblade298/neocore/bungee/**</exclude>
+                <exclude>bungee.yml</exclude>
+                <exclude>velocity-plugin.json</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>deploy-local</id>
       <activation>
         <file>

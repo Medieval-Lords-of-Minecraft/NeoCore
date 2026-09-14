@@ -2,9 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "mvn package",
+            "label": "mvn package (paper-only)",
             "type": "shell",
-            "command": "mvn package",
+            "command": "mvn package -Ppaper-only",
             "group": {
                 "kind": "build",
                 "isDefault": true

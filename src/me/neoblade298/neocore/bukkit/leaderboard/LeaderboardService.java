@@ -1,6 +1,5 @@
 package me.neoblade298.neocore.bukkit.leaderboard;
 
-import java.net.http.WebSocket.Listener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,10 +18,14 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.entity.Display.Billboard;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -216,7 +219,7 @@ public final class LeaderboardService<K, R> implements Listener, AutoCloseable {
 	}
 
 	private TextDisplay createDisplay(Location location, Component text) {
-		TextDisplay display = location.getWorld().spawn(location, TextDisplay.class);
+		TextDisplay display = (TextDisplay) location.getWorld().spawnEntity(location, EntityType.TEXT_DISPLAY);
 		display.text(withShadow(text));
 		display.setDefaultBackground(false);
 		display.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
