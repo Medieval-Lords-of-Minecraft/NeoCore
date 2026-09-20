@@ -99,7 +99,13 @@ public class PlayerIOManager implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
-		load(e.getPlayer());
+		Player player = e.getPlayer();
+		runAfterIO(new BukkitRunnable() {
+			@Override
+			public void run() {
+				load(player);
+			}
+		}, IOType.PRELOAD, player.getUniqueId(), false);
 	}
 	
 	@EventHandler
@@ -132,7 +138,7 @@ public class PlayerIOManager implements Listener {
 		long timestamp = System.currentTimeMillis();
 		lastSave.put(uuid, timestamp);
 		IOType type = IOType.SAVE;
-		performingIO.get(type).add(uuid);
+		startIOTask(type, uuid);
 		
 		new BukkitRunnable() {
 			public void run() {
@@ -195,7 +201,7 @@ public class PlayerIOManager implements Listener {
 				continue;
 			}
 			lastSave.put(uuid, timestamp);
-			performingIO.get(type).add(uuid);
+			startIOTask(type, uuid);
 			toSave.add(p);
 		}
 		
@@ -252,8 +258,8 @@ public class PlayerIOManager implements Listener {
 		if (disabledKeys.contains("*")) {
 			return;
 		}
-		performingIO.get(type).add(p.getUniqueId());
-		performingIO.get(IOType.FULLLOAD).add(p.getUniqueId());
+		startIOTask(type, p.getUniqueId());
+		startIOTask(IOType.FULLLOAD, p.getUniqueId());
 		
 		new BukkitRunnable() {
 			public void run() {
@@ -298,7 +304,7 @@ public class PlayerIOManager implements Listener {
 		if (disabledKeys.contains("*")) {
 			return;
 		}
-		performingIO.get(type).add(p.getUniqueId());
+		startIOTask(type, p.getUniqueId());
 		
 		new BukkitRunnable() {
 			int count = 0;
@@ -351,7 +357,7 @@ public class PlayerIOManager implements Listener {
 					ex.printStackTrace();
 				}
 			}
-		}.runTaskTimerAsynchronously(NeoCore.inst(), 40L, 20L);
+		}.runTaskTimerAsynchronously(NeoCore.inst(), 0L, 20L);
 	}
 	
 	// Synchronous save for all online players. Intended to be called by dependent plugins
@@ -500,13 +506,38 @@ public class PlayerIOManager implements Listener {
 	}
 	
 	public static void addPostIORunnable(BukkitRunnable task, IOType type, UUID uuid, boolean async) {
-		ArrayList<PostIOTask> tasks = postIORunnables.get(type).getOrDefault(uuid, new ArrayList<PostIOTask>());
-		tasks.add(new PostIOTask(task, async));
-		postIORunnables.get(type).putIfAbsent(uuid,	tasks);
+		synchronized (performingIO) {
+			ArrayList<PostIOTask> tasks = postIORunnables.get(type).getOrDefault(uuid, new ArrayList<PostIOTask>());
+			tasks.add(new PostIOTask(task, async));
+			postIORunnables.get(type).putIfAbsent(uuid, tasks);
+		}
+	}
+
+	private static void runAfterIO(BukkitRunnable task, IOType type, UUID uuid, boolean async) {
+		synchronized (performingIO) {
+			if (performingIO.get(type).contains(uuid)) {
+				addPostIORunnable(task, type, uuid, async);
+				return;
+			}
+		}
+		if (async) {
+			task.runTaskAsynchronously(NeoCore.inst());
+		}
+		else {
+			task.runTask(NeoCore.inst());
+		}
 	}
 	
 	public static boolean isPerformingIO(UUID uuid, IOType type) {
-		return performingIO.get(type).contains(uuid);
+		synchronized (performingIO) {
+			return performingIO.get(type).contains(uuid);
+		}
+	}
+
+	private static void startIOTask(IOType type, UUID uuid) {
+		synchronized (performingIO) {
+			performingIO.get(type).add(uuid);
+		}
 	}
 	
 	private static void closeStatements(HashMap<String, Statement> stmts) {
@@ -537,9 +568,13 @@ public class PlayerIOManager implements Listener {
 	}
 	
 	private static void endIOTask(IOType type, UUID uuid, ArrayList<Connection> cons) {
-		performingIO.get(type).remove(uuid);
-		if (postIORunnables.get(type).containsKey(uuid)) {
-			for (PostIOTask task : postIORunnables.get(type).get(uuid)) {
+		ArrayList<PostIOTask> tasks;
+		synchronized (performingIO) {
+			performingIO.get(type).remove(uuid);
+			tasks = postIORunnables.get(type).remove(uuid);
+		}
+		if (tasks != null) {
+			for (PostIOTask task : tasks) {
 				if (task.isAsync()) {
 					task.getRunnable().runTaskAsynchronously(NeoCore.inst());
 				}
@@ -547,7 +582,6 @@ public class PlayerIOManager implements Listener {
 					task.getRunnable().runTask(NeoCore.inst());
 				}
 			}
-			postIORunnables.get(type).remove(uuid);
 		}
 
 		// Close all connections

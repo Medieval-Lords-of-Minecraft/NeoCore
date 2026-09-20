@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -18,6 +19,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -95,7 +97,7 @@ public class BungeeCore {
 		Config cfg = Config.load(new File(folder, "config.yml"));
         // sql
 		try {
-	        SQLManager.load(cfg.getSection("sql"));
+	        SQLManager.load(cfg.getSection("sql"), logger);
 	        reload();
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -155,8 +157,13 @@ public class BungeeCore {
 		announceCfg.save();
     }
 	
-	public static Connection getConnection(String user) {
+	public static Connection getConnection(String user) throws SQLException {
 		return SQLManager.getConnection(user);
+	}
+
+	@Subscribe
+	public void onProxyShutdown(ProxyShutdownEvent e) {
+		SQLManager.shutdown();
 	}
 	
 	// All servers

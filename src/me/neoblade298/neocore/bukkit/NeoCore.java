@@ -2,6 +2,7 @@ package me.neoblade298.neocore.bukkit;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Random;
 import java.util.UUID;
 
@@ -109,7 +110,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		// Config
 		saveResource("config.yml", false);
 		Config cfg = loadConfig();
-		SQLManager.load(cfg.getSection("sql"));
+		SQLManager.load(cfg.getSection("sql"), getLogger());
         
         // Main listener
         getServer().getPluginManager().registerEvents(this, this);
@@ -212,6 +213,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public void onDisable() {
 		PlayerIOManager.handleDisable();
+		SQLManager.shutdown();
 	    org.bukkit.Bukkit.getServer().getLogger().info("NeoCore Disabled");
 	    this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
 	    super.onDisable();
@@ -241,7 +243,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		return PlayerIOManager.register(plugin, component, key, 0);
 	}
 	
-	public static Connection getConnection(String user) {
+	public static Connection getConnection(String user) throws SQLException {
 		return SQLManager.getConnection(user);
 	}
 	
