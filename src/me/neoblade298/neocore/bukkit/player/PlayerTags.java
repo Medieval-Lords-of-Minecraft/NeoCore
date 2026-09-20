@@ -27,7 +27,7 @@ public class PlayerTags {
 	private HashMap<UUID, HashSet<String>> changedValues;
 	private final boolean hidden;
 	
-	public PlayerTags(String key, boolean hidden) {
+	PlayerTags(String key, boolean hidden) {
 		this.key = key;
 		this.values = new HashMap<UUID, HashMap<String, Value>>();
 		this.changedValues = new HashMap<UUID, HashSet<String>>();

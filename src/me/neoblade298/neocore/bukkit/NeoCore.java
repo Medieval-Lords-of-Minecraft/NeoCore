@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -30,13 +29,10 @@ import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreAddTag;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreBook;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreBroadcast;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreDebug;
-import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreHasField;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreHasTag;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreMessage;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreReload;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreRemoveTag;
-import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreResetField;
-import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreSetField;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreSprites;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreTitle;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdFix;
@@ -58,7 +54,6 @@ import me.neoblade298.neocore.bukkit.listeners.BungeeListener;
 import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
 import me.neoblade298.neocore.bukkit.listeners.MotdListener;
 import me.neoblade298.neocore.bukkit.player.PlayerDataManager;
-import me.neoblade298.neocore.bukkit.player.PlayerFields;
 import me.neoblade298.neocore.bukkit.player.PlayerTags;
 import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
@@ -135,8 +130,8 @@ public class NeoCore extends JavaPlugin implements Listener {
     		// Playerdata should save last in case other plugins edit playerdata during save
             PlayerIOManager.register(this, new PlayerDataManager(), "PlayerDataManager", -100);
             
-            ptags = PlayerDataManager.createPlayerTags("neocore", NeoCore.inst(), false);
-			BookRegistry.setReadTags(PlayerDataManager.createPlayerTags("books", NeoCore.inst(), true));
+            ptags = PlayerDataManager.getPlayerTags("neocore");
+			BookRegistry.setReadTags(PlayerDataManager.getPlayerTags("books"));
         }
         
         // CoreBar
@@ -160,9 +155,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdCoreAddTag("addtag", "Adds a player tag", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreRemoveTag("removetag", "Removes a player tag", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreHasTag("hastag", "Checks a player tag", "neocore.basic", SubcommandRunner.BOTH));
-		mngr.register(new CmdCoreSetField("setfield", "Sets a player field", "neocore.basic", SubcommandRunner.BOTH));
-		mngr.register(new CmdCoreHasField("hasfield", "Checks a player field", "neocore.basic", SubcommandRunner.BOTH));
-		mngr.register(new CmdCoreResetField("resetfield", "Resets a player field", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreTitle("title", "Sends a title to a player", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreBook("book", "Opens a configured book", "neocore.book", SubcommandRunner.BOTH));
 
@@ -276,18 +268,6 @@ public class NeoCore extends JavaPlugin implements Listener {
 	
 	public static Economy getEconomy() {
 		return econ;
-	}
-	
-	public static PlayerFields createPlayerFields(String key, Plugin plugin, boolean hidden) {
-		return PlayerDataManager.createPlayerFields(key, plugin, hidden);
-	}
-	
-	public static PlayerTags createPlayerTags(String key, Plugin plugin, boolean hidden) {
-		return PlayerDataManager.createPlayerTags(key, plugin, hidden);
-	}
-	
-	public static PlayerFields getPlayerFields(String key) {
-		return PlayerDataManager.getPlayerFields(key);
 	}
 	
 	public static PlayerTags getPlayerTags(String key) {

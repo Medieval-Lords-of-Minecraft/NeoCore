@@ -16,6 +16,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class CmdCoreRemoveTag extends Subcommand {
 	private static Component notOnline = Component.text("That user isn't online!", NamedTextColor.RED);
 	private static Component noPerms = Component.text("You can't change this!", NamedTextColor.RED);
+	private static Component unknownKeyError = Component.text("That tag namespace doesn't exist!", NamedTextColor.RED);
 	public CmdCoreRemoveTag(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
 		args.add(new Arg("player"), new Arg("key"), new Arg("subkey"));
@@ -25,6 +26,11 @@ public class CmdCoreRemoveTag extends Subcommand {
 	public void run(CommandSender s, String[] args) {
 		PlayerTags tags = PlayerDataManager.getPlayerTags(args[1]);
 		Player p = Bukkit.getPlayer(args[0]);
+
+		if (tags == null) {
+			Util.msg(s, unknownKeyError);
+			return;
+		}
 		
 		if (p == null) {
 			Util.msg(s, notOnline);

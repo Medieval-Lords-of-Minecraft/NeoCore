@@ -17,6 +17,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class CmdCoreAddTag extends Subcommand {
 	private static Component userOnlineError = Component.text("That user isn't online!", NamedTextColor.RED);
 	private static Component noPermError = Component.text("You can't change this!", NamedTextColor.RED);
+	private static Component unknownKeyError = Component.text("That tag namespace doesn't exist!", NamedTextColor.RED);
 	
 	public CmdCoreAddTag(String key, String desc, String perm, SubcommandRunner runner) {
 		super(key, desc, perm, runner);
@@ -27,6 +28,11 @@ public class CmdCoreAddTag extends Subcommand {
 	public void run(CommandSender s, String[] args) {
 		PlayerTags tags = PlayerDataManager.getPlayerTags(args[1]);
 		Player p = Bukkit.getPlayer(args[0]);
+
+		if (tags == null) {
+			Util.msg(s, unknownKeyError);
+			return;
+		}
 		
 		if (p == null) {
 			Util.msg(s, userOnlineError);

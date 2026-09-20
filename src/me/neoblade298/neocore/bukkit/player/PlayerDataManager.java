@@ -3,27 +3,23 @@ package me.neoblade298.neocore.bukkit.player;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import me.neoblade298.neocore.bukkit.io.IOComponent;
 
 public class PlayerDataManager implements IOComponent {
-	private static HashMap<String, PlayerFields> fields = new HashMap<String, PlayerFields>();
-	private static HashMap<String, PlayerTags> tags = new HashMap<String, PlayerTags>();
+	private static final Map<String, PlayerTags> tags = Map.of(
+			"neocore", new PlayerTags("neocore", false),
+			"books", new PlayerTags("books", true));
 
 	@Override
 	public void savePlayer(Player p, Connection con, List<PreparedStatement> stmts) throws Exception {
-		for (PlayerFields pFields : fields.values()) {
-			pFields.save(con, stmts, p.getUniqueId());
-		}
 		for (PlayerTags pTags : tags.values()) {
 			pTags.save(con, stmts, p.getUniqueId());
 		}
@@ -35,9 +31,6 @@ public class PlayerDataManager implements IOComponent {
 	// Load instead of preload so it has time to save from boss fights
 	@Override
 	public void loadPlayer(Player p, Statement stmt) {
-		for (PlayerFields pFields : fields.values()) {
-			pFields.load(stmt, p.getUniqueId());
-		}
 		for (PlayerTags pTags : tags.values()) {
 			pTags.load(stmt, p.getUniqueId());
 		}
@@ -48,43 +41,13 @@ public class PlayerDataManager implements IOComponent {
 	public void cleanup(Connection con, List<PreparedStatement> stmts) throws Exception {
 		for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 			Player p = Objects.requireNonNull(onlinePlayer);
-			for (PlayerFields pFields : fields.values()) {
-				pFields.save(con, stmts, p.getUniqueId());
-			}
 			for (PlayerTags pTags : tags.values()) {
 				pTags.save(con, stmts, p.getUniqueId());
 			}
 		}
 	}
-	
-	public static PlayerFields getPlayerFields(String key) {
-		return fields.get(key);
-	}
-	
+
 	public static PlayerTags getPlayerTags(String key) {
 		return tags.get(key);
 	}
-	
-	public static PlayerFields createPlayerFields(String key, Plugin plugin, boolean hidden) {
-		if (fields.containsKey(key)) {
-			Bukkit.getLogger().log(Level.INFO, "[NeoCore] Player fields " + key + " for plugin " + plugin.getName() + " already exists. Returning existing keyed player data.");
-			return fields.get(key);
-		}
-		Bukkit.getLogger().log(Level.INFO, "[NeoCore] Created player fields of " + key + " for plugin " + plugin.getName() + ", hidden: " + hidden + ".");
-		PlayerFields newFields = new PlayerFields(key, hidden);
-		fields.put(key, newFields);
-		return newFields;
-	}
-	
-	public static PlayerTags createPlayerTags(String key, Plugin plugin, boolean hidden) {
-		if (tags.containsKey(key)) {
-			Bukkit.getLogger().log(Level.INFO, "[NeoCore] Player tags " + key + " for plugin " + plugin.getName() + " already exists. Returning existing keyed player data.");
-			return tags.get(key);
-		}
-		Bukkit.getLogger().log(Level.INFO, "[NeoCore] Created player tags of " + key + " for plugin " + plugin.getName() + ", hidden: " + hidden + ".");
-		PlayerTags newTags = new PlayerTags(key, hidden);
-		tags.put(key, newTags);
-		return newTags;
-	}
-
 }

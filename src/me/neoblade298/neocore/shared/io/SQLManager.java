@@ -15,12 +15,6 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class SQLManager {
 	private static final String[] TABLE_SCHEMAS = {
-		"CREATE TABLE IF NOT EXISTS neocore_fields_strings ("
-			+ "uuid CHAR(36) NOT NULL, `key` VARCHAR(255) NOT NULL, field VARCHAR(255) NOT NULL, "
-			+ "value TEXT NOT NULL, expiration BIGINT NOT NULL, PRIMARY KEY (uuid, `key`, field))",
-		"CREATE TABLE IF NOT EXISTS neocore_fields_integers ("
-			+ "uuid CHAR(36) NOT NULL, `key` VARCHAR(255) NOT NULL, field VARCHAR(255) NOT NULL, "
-			+ "value INT NOT NULL, expiration BIGINT NOT NULL, PRIMARY KEY (uuid, `key`, field))",
 		"CREATE TABLE IF NOT EXISTS neocore_tags ("
 			+ "uuid CHAR(36) NOT NULL, `key` VARCHAR(255) NOT NULL, tag VARCHAR(255) NOT NULL, "
 			+ "expiration BIGINT NOT NULL, PRIMARY KEY (uuid, `key`, tag))"
