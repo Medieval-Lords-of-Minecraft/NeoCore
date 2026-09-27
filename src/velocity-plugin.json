@@ -5,5 +5,5 @@
 	"description":"Neo's core plugin for his suite!",
 	"authors":["Ascheladd"],
 	"dependencies":[],
-	"main":"me.neoblade298.neocore.bungee.BungeeCore"
+	"main":"me.neoblade298.neocore.velocity.VelocityCore"
 }

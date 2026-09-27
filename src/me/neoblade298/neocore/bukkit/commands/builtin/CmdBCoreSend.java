@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
+import me.neoblade298.neocore.bukkit.bungee.ProxyAPI;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
@@ -18,10 +18,10 @@ public class CmdBCoreSend extends Subcommand {
 	@Override
 	public void run(CommandSender s, String[] args) {
 		if (args.length == 1 && s instanceof Player) {
-			BungeeAPI.sendPlayer((Player) s, args[0]);
+			ProxyAPI.sendPlayer((Player) s, args[0]);
 		}
 		else if (args.length == 2) {
-			BungeeAPI.sendPlayer(Bukkit.getPlayer(args[0]), args[1]);
+			ProxyAPI.sendPlayer(Bukkit.getPlayer(args[0]), args[1]);
 		}
 	}
 }

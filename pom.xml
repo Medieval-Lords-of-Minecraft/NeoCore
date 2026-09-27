@@ -102,10 +102,6 @@
     <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
   </repository>
 	  <repository>
-	    <id>alessiodp-repo</id>
-	    <url>https://repo.alessiodp.com/releases/</url>
-	  </repository>
-	  <repository>
 	    <id>codemc-creatorfromhell</id>
 	    <url>https://repo.codemc.io/repository/creatorfromhell/</url>
 	  </repository>
@@ -167,12 +163,6 @@
 		    <artifactId>commons-lang3</artifactId>
 		    <version>3.12.0</version>
 		</dependency>
-    <dependency>
-      <groupId>com.alessiodp.lastloginapi</groupId>
-      <artifactId>lastloginapi-api</artifactId>
-      <version>1.7.4</version>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
   <profiles>
@@ -185,9 +175,30 @@
             <artifactId>maven-jar-plugin</artifactId>
             <configuration>
               <excludes combine.children="append">
-                <exclude>me/neoblade298/neocore/bungee/**</exclude>
-                <exclude>bungee.yml</exclude>
+                <exclude>me/neoblade298/neocore/velocity/**</exclude>
                 <exclude>velocity-plugin.json</exclude>
+                <exclude>velocity-config.yml</exclude>
+                <exclude>announcements.yml</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>velocity-only</id>
+      <build>
+        <finalName>NeoCore-Velocity</finalName>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+              <excludes combine.children="append">
+                <exclude>me/neoblade298/neocore/bukkit/**</exclude>
+                <exclude>plugin.yml</exclude>
+                <exclude>config.yml</exclude>
+                <exclude>books.yml</exclude>
               </excludes>
             </configuration>
           </plugin>

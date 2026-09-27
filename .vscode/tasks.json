@@ -10,6 +10,13 @@
                 "isDefault": true
             },
             "problemMatcher": []
+        },
+        {
+            "label": "mvn package (velocity-only)",
+            "type": "shell",
+            "command": "mvn package -Pvelocity-only",
+            "group": "build",
+            "problemMatcher": []
         }
     ]
 }

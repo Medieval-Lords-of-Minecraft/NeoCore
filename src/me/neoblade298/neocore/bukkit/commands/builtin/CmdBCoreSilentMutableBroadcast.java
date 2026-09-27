@@ -3,7 +3,7 @@ package me.neoblade298.neocore.bukkit.commands.builtin;
 import org.bukkit.command.CommandSender;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
+import me.neoblade298.neocore.bukkit.bungee.ProxyAPI;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.util.SharedUtil;
@@ -18,6 +18,6 @@ public class CmdBCoreSilentMutableBroadcast extends Subcommand {
 
 	@Override
 	public void run(CommandSender s, String[] args) {
-		BungeeAPI.mutableBroadcast(args[0], NeoCore.miniMessage().deserialize(SharedUtil.connectArgs(args, 1)), false);
+		ProxyAPI.mutableBroadcast(args[0], NeoCore.miniMessage().deserialize(SharedUtil.connectArgs(args, 1)), false);
 	}
 }

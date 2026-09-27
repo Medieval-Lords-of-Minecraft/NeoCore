@@ -6,14 +6,14 @@ import java.util.List;
 import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.BukkitTabResolver;
-import me.neoblade298.neocore.bungee.commands.BungeeTabResolver;
+import me.neoblade298.neocore.velocity.commands.VelocityTabResolver;
 
 public class Arg {
 	private boolean required;
 	private String display;
 	private List<String> tabOptions;
 	private BukkitTabResolver bukkitResolver;
-	private BungeeTabResolver bungeeResolver;
+	private VelocityTabResolver velocityResolver;
 	private ArgType type;
 	
 	public Arg(String display) {
@@ -56,8 +56,8 @@ public class Arg {
 	}
 	
 	public List<String> getTabOptions(com.velocitypowered.api.proxy.Player p) {
-		if (bungeeResolver != null) {
-			return bungeeResolver.resolve(p);
+		if (velocityResolver != null) {
+			return velocityResolver.resolve(p);
 		}
 		return tabOptions;
 	}

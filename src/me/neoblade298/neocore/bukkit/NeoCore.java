@@ -18,7 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import me.neoblade298.neocore.bukkit.bar.BarAPI;
 import me.neoblade298.neocore.bukkit.book.BookClickListener;
 import me.neoblade298.neocore.bukkit.book.BookRegistry;
-import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
+import me.neoblade298.neocore.bukkit.bungee.ProxyAPI;
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreBroadcast;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreCmd;
@@ -50,11 +50,12 @@ import me.neoblade298.neocore.bukkit.io.IOComponent;
 import me.neoblade298.neocore.bukkit.io.IOComponentWrapper;
 import me.neoblade298.neocore.bukkit.io.IOType;
 import me.neoblade298.neocore.bukkit.io.PlayerIOManager;
-import me.neoblade298.neocore.bukkit.listeners.BungeeListener;
+import me.neoblade298.neocore.bukkit.listeners.ProxyMessageListener;
 import me.neoblade298.neocore.bukkit.listeners.InventoryListener;
 import me.neoblade298.neocore.bukkit.listeners.MotdListener;
 import me.neoblade298.neocore.bukkit.player.PlayerDataManager;
 import me.neoblade298.neocore.bukkit.player.PlayerTags;
+import me.neoblade298.neocore.shared.proxy.ProxyMessage;
 import me.neoblade298.neocore.bukkit.teleport.TeleportAPI;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neocore.shared.io.Config;
@@ -117,12 +118,11 @@ public class NeoCore extends JavaPlugin implements Listener {
         // core commands
         initCommands();
         
-        // Bungeecord
-        BungeeListener bl = new BungeeListener();
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-	    this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", bl);
-        getServer().getMessenger().registerIncomingPluginChannel( this, "neocore:bungee", bl); 
-        getServer().getPluginManager().registerEvents(bl, this);
+        // Proxy messaging
+        ProxyMessageListener proxyMessageListener = new ProxyMessageListener();
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, ProxyMessage.CHANNEL);
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, ProxyMessage.CHANNEL, proxyMessageListener);
+        getServer().getPluginManager().registerEvents(proxyMessageListener, this);
         
         // io and playerdata
         if (SQLManager.isEnabled()) {
@@ -160,7 +160,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 
 		mngr = new SubcommandManager("bcore", "neocore.admin", NamedTextColor.DARK_RED, this);
 		mngr.registerCommandList("");
-		mngr.register(new CmdBCoreCmd("cmd", "Sends a command to bungeecord", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdBCoreCmd("cmd", "Sends a command to the proxy", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdBCoreBroadcast("sbc", "Sends a broadcast cross-server without prefix", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdBCoreBroadcast("bc", "Sends a broadcast cross-server", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdBCoreMutableBroadcast("mbc", "Sends a mutable broadcast cross-server", null, SubcommandRunner.BOTH));
@@ -308,7 +308,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		if (instType == InstanceType.HUB && !e.getPlayer().hasPlayedBefore()) {
 			new BukkitRunnable() {
 				public void run() {
-					BungeeAPI.broadcast(welcome.replaceAll("%player%", e.getPlayer().getName()));
+					ProxyAPI.broadcast(welcome.replaceAll("%player%", e.getPlayer().getName()));
 				}
 			}.runTaskLaterAsynchronously(this, 60L);
 		}
