@@ -1,5 +1,7 @@
 package me.neoblade298.neocore.bukkit.effects;
 
+import java.util.List;
+
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -13,6 +15,7 @@ public class ParticleContainer extends Effect {
 	protected Particle particle;
 	protected int count = 1;
 	protected double spreadXZ, spreadY, speed, offsetForward, offsetForwardAngle, offsetY;
+	protected boolean offsetForwardUseOriginalY = true;
 	protected BlockData blockData;
 	protected DustOptions dustOptions;
 	protected Color color;
@@ -31,10 +34,17 @@ public class ParticleContainer extends Effect {
 		pc.dustOptions = dustOptions;
 		pc.color = color;
 		pc.forceVisibility = forceVisibility;
+		pc.offsetY = offsetY;
+		pc.offsetForward = offsetForward;
+		pc.offsetForwardAngle = offsetForwardAngle;
+		pc.offsetForwardUseOriginalY = offsetForwardUseOriginalY;
 		return pc;
 	}
 	
 	public ParticleContainer particle(Particle particle) {
+		if (particle == null) {
+			throw new IllegalArgumentException("Particle cannot be null");
+		}
 		this.particle = particle;
 		this.blockData = null;
 		this.dustOptions = particle == Particle.DUST ? new DustOptions(Color.RED, count) : null;
@@ -43,6 +53,9 @@ public class ParticleContainer extends Effect {
 	}
 	
 	public ParticleContainer count(int count) {
+		if (count < 0) {
+			throw new IllegalArgumentException("Particle count cannot be negative");
+		}
 		this.count = count;
 		return this;
 	}
@@ -53,34 +66,41 @@ public class ParticleContainer extends Effect {
 	}
 	
 	public ParticleContainer spread(double spreadXZ, double spreadY) {
+		validateFiniteNonNegative(spreadXZ, "Horizontal spread");
+		validateFiniteNonNegative(spreadY, "Vertical spread");
 		this.spreadXZ = spreadXZ;
 		this.spreadY = spreadY;
 		return this;
 	}
 	
 	public ParticleContainer offsetY(double offsetY) {
+		validateFinite(offsetY, "Vertical offset");
 		this.offsetY = offsetY;
 		return this;
 	}
 	
 	public ParticleContainer offsetForward(double offsetForward) {
+		validateFinite(offsetForward, "Forward offset");
 		this.offsetForward = offsetForward;
 		return this;
 	}
 	
 	public ParticleContainer offsetForward(double offsetForward, double offsetForwardAngle) {
+		validateFinite(offsetForward, "Forward offset");
+		validateFinite(offsetForwardAngle, "Forward offset angle");
 		this.offsetForward = offsetForward;
 		this.offsetForwardAngle = offsetForwardAngle;
 		return this;
 	}
 	
 	public ParticleContainer offsetForward(double offsetForward, double offsetForwardAngle, boolean offsetForwardUseOriginalY) {
-		this.offsetForward = offsetForward;
-		this.offsetForwardAngle = offsetForwardAngle;
+		offsetForward(offsetForward, offsetForwardAngle);
+		this.offsetForwardUseOriginalY = offsetForwardUseOriginalY;
 		return this;
 	}
 	
 	public ParticleContainer speed(double speed) {
+		validateFiniteNonNegative(speed, "Particle speed");
 		this.speed = speed;
 		return this;
 	}
@@ -107,16 +127,49 @@ public class ParticleContainer extends Effect {
 	}
 	
 	private Location calculateOffset(Location loc) {
-		loc = loc.clone();
-		loc.add(0, offsetY, 0);
-		Vector forward = loc.getDirection();
-		forward.rotateAroundY(Math.toDegrees(offsetForwardAngle));
-		return loc.add(forward.multiply(offsetForward));
+		if (offsetY == 0 && offsetForward == 0) return loc;
+
+		Location offset = loc.clone().add(0, offsetY, 0);
+		if (offsetForward == 0) return offset;
+
+		Vector forward;
+		if (offsetForwardUseOriginalY) {
+			forward = loc.getDirection();
+		}
+		else {
+			Location horizontal = loc.clone();
+			horizontal.setPitch(0);
+			forward = horizontal.getDirection();
+		}
+		forward.rotateAroundY(offsetForwardAngle);
+		return offset.add(forward.multiply(offsetForward));
 	}
 	
 	@Override
 	public void playEffect(Player p, Location loc) {
 		p.spawnParticle(particle, calculateOffset(loc), count, spreadXZ, spreadY, spreadXZ, speed, getData());
+	}
+
+	@Override
+	public void playWithCache(List<Player> cache, Location loc) {
+		if (cache.isEmpty()) return;
+
+		Location offset = calculateOffset(loc);
+		Object data = getData();
+		offset.getWorld().spawnParticle(
+				particle,
+				cache,
+				null,
+				offset.getX(),
+				offset.getY(),
+				offset.getZ(),
+				count,
+				spreadXZ,
+				spreadY,
+				spreadXZ,
+				speed,
+				data,
+				false);
 	}
 
 	@Override
@@ -128,5 +181,17 @@ public class ParticleContainer extends Effect {
 		if (blockData != null) return blockData;
 		if (dustOptions != null) return dustOptions;
 		return color;
+	}
+
+	private static void validateFinite(double value, String name) {
+		if (!Double.isFinite(value)) {
+			throw new IllegalArgumentException(name + " must be finite");
+		}
+	}
+
+	private static void validateFiniteNonNegative(double value, String name) {
+		if (!Double.isFinite(value) || value < 0) {
+			throw new IllegalArgumentException(name + " must be finite and non-negative");
+		}
 	}
 }

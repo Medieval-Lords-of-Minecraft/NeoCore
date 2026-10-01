@@ -5,7 +5,7 @@ public enum Audience {
 	ORIGIN(true, false),
 	NOT_ORIGIN(false, true),
 	ALL(true, true);
-	private boolean origin, nonOrigin;
+	private final boolean origin, nonOrigin;
 	private Audience(boolean origin, boolean nonOrigin) {
 		this.origin = origin;
 		this.nonOrigin = nonOrigin;

@@ -1,6 +1,7 @@
 package me.neoblade298.neocore.bukkit.effects;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -12,9 +13,19 @@ public class Circle extends ParticleShape2D {
 	
 	private double radius, metersPerParticle;
 	private int points;
-	private LinkedList<Vector> flatEdges, flatFill; // For flat circles only, can be moved anywhere
+	private List<Vector> flatEdges, flatFill; // For flat circles only, can be moved anywhere
+	private LocalAxes cachedAxes;
+	private ParticleShapeMemory cachedShape;
 	
 	public Circle(double radius, int points, double metersPerParticle) {
+		if (!Double.isFinite(radius) || radius < 0) {
+			throw new IllegalArgumentException("Radius must be finite and non-negative");
+		}
+		if (points <= 0) {
+			throw new IllegalArgumentException("Points must be greater than zero");
+		}
+		ParticleUtil.validateSpacing(metersPerParticle);
+		ParticleUtil.ensurePointBudget(points);
 		this.radius = radius;
 		this.points = points;
 		this.metersPerParticle = metersPerParticle;
@@ -25,26 +36,37 @@ public class Circle extends ParticleShape2D {
 	}
 	
 	public Circle(double radius) {
-		this(radius, (int) (POINTS_PER_CIRCUMFERENCE * (Math.PI * radius * radius)), DEFAULT_METERS);
+		this(radius, Math.max(1, (int) Math.ceil(POINTS_PER_CIRCUMFERENCE * 2 * Math.PI * radius)), DEFAULT_METERS);
 	}
 
 	@Override
-	public void playWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, LocalAxes axes, ParticleContainer fill) {
+	public void playWithCache(List<Player> cache, ParticleContainer particle, Location center, LocalAxes axes, ParticleContainer fill) {
 		// If circle is flat, no need to recreate circle except for the first time
 		if (axes.isXZ()) {
 			drawFlatWithCache(cache, particle, center, fill);
 		}
 		else {
-			calculate(center, axes).playWithCache(cache, particle, fill);
+			drawOrientedWithCache(cache, particle, center, axes, fill);
 		}
 	}
+
+	private void drawOrientedWithCache(List<Player> cache, ParticleContainer particle, Location center, LocalAxes axes, ParticleContainer fill) {
+		if (cachedAxes != null && cachedAxes.equals(axes)) {
+			cachedShape.playAtWithCache(cache, particle, center, fill);
+			return;
+		}
+
+		cachedAxes = axes;
+		cachedShape = calculate(center, axes);
+		cachedShape.playWithCache(cache, particle, fill);
+	}
 	
-	private void drawFlatWithCache(LinkedList<Player> cache, ParticleContainer particle, Location center, ParticleContainer fill) {
+	private void drawFlatWithCache(List<Player> cache, ParticleContainer particle, Location center, ParticleContainer fill) {
 		LocalAxes axes = LocalAxes.xz();
 		if (flatEdges == null) {
 			ParticleShapeMemory mem = calculate(center, axes);
-			flatEdges = mem.getEdgeVectors();
-			flatFill = mem.getFillVectors();
+			flatEdges = new ArrayList<Vector>(mem.getEdgeVectors());
+			flatFill = new ArrayList<Vector>(mem.getFillVectors());
 			mem.playWithCache(cache, particle, fill);
 			return;
 		}
@@ -63,21 +85,22 @@ public class Circle extends ParticleShape2D {
 		double rotationPerPoint = (2 * Math.PI) / (double) points;
 		Vector rotator = axes.up().multiply(radius);
 		
-		LinkedList<Location> edges = new LinkedList<Location>();
+		List<Location> edges = new ArrayList<Location>(points);
 		for (int i = 0; i < points; i++) {
 			edges.add(center.clone().add(rotator.rotateAroundAxis(axes.forward(), rotationPerPoint)));
 		}
 
-		LinkedList<Location> fill = new LinkedList<Location>();
+		List<Location> fill = new ArrayList<Location>();
 		Location topLeft = center.clone().add(axes.left().multiply(radius)).add(axes.up().multiply(radius));
 		Vector right = axes.left().multiply(radius * -2);
 		Vector down = axes.up().multiply(radius * -2);
 		double radiusSq = radius * radius;
-		for (Location horizontal : ParticleUtil.calculateLine(topLeft, topLeft.clone().add(right), metersPerParticle, true)) {
-			for (Location point : ParticleUtil.calculateLine(horizontal, horizontal.clone().add(down), metersPerParticle, true)) {
+		for (Location horizontal : ParticleUtil.calculateLinePoints(topLeft, topLeft.clone().add(right), metersPerParticle, true)) {
+			for (Location point : ParticleUtil.calculateLinePoints(horizontal, horizontal.clone().add(down), metersPerParticle, true)) {
 				
 				if (point.distanceSquared(center) >= radiusSq) continue;
 				fill.add(point);
+				ParticleUtil.ensurePointBudget(edges.size(), fill.size());
 			}
 		}
 		
