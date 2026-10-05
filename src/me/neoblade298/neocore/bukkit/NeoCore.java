@@ -156,6 +156,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdCoreRemoveTag("removetag", "Removes a player tag", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreHasTag("hastag", "Checks a player tag", "neocore.basic", SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreTitle("title", "Sends a title to a player", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreTitle("bctitle", "Broadcasts a title to all players", null, SubcommandRunner.BOTH, true));
 		mngr.register(new CmdCoreBook("book", "Opens a configured book", "neocore.book", SubcommandRunner.BOTH));
 
 		mngr = new SubcommandManager("bcore", "neocore.admin", NamedTextColor.DARK_RED, this);

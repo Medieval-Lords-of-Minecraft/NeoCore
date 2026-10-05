@@ -2,6 +2,7 @@ package me.neoblade298.neocore.bukkit.commands.builtin;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,25 +16,34 @@ import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.Title.Times;
 
 public class CmdCoreTitle extends Subcommand {
+	private final boolean broadcast;
 
 	public CmdCoreTitle(String key, String desc, String perm, SubcommandRunner runner) {
+		this(key, desc, perm, runner, false);
+	}
+
+	public CmdCoreTitle(String key, String desc, String perm, SubcommandRunner runner, boolean broadcast) {
 		super(key, desc, perm, runner);
-		args.add(new Arg("player"));
-		args.setOverride("[player] {--title x} {--subtitle y} {--in a} {--stay b} {--out c} ");
-		args.setMin(1);
+		this.broadcast = broadcast;
+		if (broadcast) {
+			args.setOverride("{--title x} {--subtitle y} {--in a} {--stay b} {--out c} ");
+		}
+		else {
+			args.add(new Arg("player"));
+			args.setOverride("[player] {--title x} {--subtitle y} {--in a} {--stay b} {--out c} ");
+			args.setMin(1);
+		}
 	}
 	
 	@Override
 	public void run(CommandSender s, String[] args) {
-		Player p = Bukkit.getPlayer(args[0]);
 		String title = "";
 		String subtitle = "";
 		long fadeIn = 1;
 		long stay = 3;
 		long fadeOut = 1;
-		Times times = Times.times(Duration.of(fadeIn, ChronoUnit.SECONDS), Duration.of(stay, ChronoUnit.SECONDS), Duration.of(fadeOut, ChronoUnit.SECONDS));
 		
-		for (int i = 1; i < args.length; i++) {
+		for (int i = broadcast ? 0 : 1; i < args.length; i++) {
 			String arg = args[i];
 			if (arg.equalsIgnoreCase("--title")) {
 				int size = 0;
@@ -74,7 +84,17 @@ public class CmdCoreTitle extends Subcommand {
 			}
 		}
 		MiniMessage mini = NeoCore.miniMessage();
+		Times times = Times.times(Duration.of(fadeIn, ChronoUnit.SECONDS), Duration.of(stay, ChronoUnit.SECONDS), Duration.of(fadeOut, ChronoUnit.SECONDS));
 		Title t = Title.title(mini.deserialize(title), mini.deserialize(subtitle), times);
-		p.showTitle(t);
+		if (broadcast) {
+			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+				Player p = Objects.requireNonNull(onlinePlayer);
+				p.showTitle(t);
+			}
+		}
+		else {
+			Player p = Bukkit.getPlayer(args[0]);
+			p.showTitle(t);
+		}
 	}
 }
