@@ -16,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.bar.BarAPI;
+import me.neoblade298.neocore.bukkit.bar.BossBarTimer;
 import me.neoblade298.neocore.bukkit.book.BookClickListener;
 import me.neoblade298.neocore.bukkit.book.BookRegistry;
 import me.neoblade298.neocore.bukkit.bungee.ProxyAPI;
@@ -27,6 +28,7 @@ import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreSend;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdBCoreSilentMutableBroadcast;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreAddTag;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreBook;
+import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreBossBar;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreBroadcast;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreDebug;
 import me.neoblade298.neocore.bukkit.commands.builtin.CmdCoreHasTag;
@@ -72,6 +74,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	private static boolean debug;
 	private static PlayerTags ptags;
 	private static MiniMessage mini;
+	private BossBarTimer bossBarTimer;
 	
 	// Instance information
 	private static InstanceType instType = InstanceType.TOWNY;
@@ -116,6 +119,8 @@ public class NeoCore extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents(new BookClickListener(), this);
         
         // core commands
+        bossBarTimer = new BossBarTimer(this);
+        getServer().getPluginManager().registerEvents(bossBarTimer, this);
         initCommands();
         
         // Proxy messaging
@@ -158,6 +163,8 @@ public class NeoCore extends JavaPlugin implements Listener {
 		mngr.register(new CmdCoreTitle("title", "Sends a title to a player", null, SubcommandRunner.BOTH));
 		mngr.register(new CmdCoreTitle("bctitle", "Broadcasts a title to all players", null, SubcommandRunner.BOTH, true));
 		mngr.register(new CmdCoreBook("book", "Opens a configured book", "neocore.book", SubcommandRunner.BOTH));
+		mngr.register(new CmdCoreBossBar("bossbar", "Starts a bossbar timer for all players", null,
+				SubcommandRunner.BOTH, bossBarTimer));
 
 		mngr = new SubcommandManager("bcore", "neocore.admin", NamedTextColor.DARK_RED, this);
 		mngr.registerCommandList("");
@@ -205,6 +212,7 @@ public class NeoCore extends JavaPlugin implements Listener {
 	}
 	
 	public void onDisable() {
+		if (bossBarTimer != null) bossBarTimer.stop();
 		PlayerIOManager.handleDisable();
 		SQLManager.shutdown();
 	    org.bukkit.Bukkit.getServer().getLogger().info("NeoCore Disabled");
