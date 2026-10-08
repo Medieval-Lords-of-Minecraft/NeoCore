@@ -118,8 +118,10 @@ public final class LeaderboardService<K, R> implements Listener, AutoCloseable {
 			RefreshGroup<K> group = entry.getKey();
 			List<String> locationIds = List.copyOf(entry.getValue());
 			refreshGroup(group, locationIds);
-			refreshTasks.add(Bukkit.getScheduler().runTaskTimer(owner,
-					() -> refreshGroup(group, locationIds), group.refreshTicks(), group.refreshTicks()));
+			if (group.refreshTicks() > 0) {
+				refreshTasks.add(Bukkit.getScheduler().runTaskTimer(owner,
+						() -> refreshGroup(group, locationIds), group.refreshTicks(), group.refreshTicks()));
+			}
 		}
 	}
 
@@ -260,7 +262,7 @@ public final class LeaderboardService<K, R> implements Listener, AutoCloseable {
 		public Options {
 			Objects.requireNonNull(serviceId, "serviceId");
 			if (serviceId.isBlank()) throw new IllegalArgumentException("serviceId cannot be blank");
-			if (refreshTicks <= 0) throw new IllegalArgumentException("refreshTicks must be positive");
+			if (refreshTicks < 0) throw new IllegalArgumentException("refreshTicks cannot be negative");
 			if (entryLimit <= 0) throw new IllegalArgumentException("entryLimit must be positive");
 			excludedPlayerIds = Set.copyOf(excludedPlayerIds);
 		}
@@ -273,7 +275,7 @@ public final class LeaderboardService<K, R> implements Listener, AutoCloseable {
 			location = Objects.requireNonNull(location, "location").clone();
 			if (id.isBlank()) throw new IllegalArgumentException("id cannot be blank");
 			if (entryLimit != null && entryLimit <= 0) throw new IllegalArgumentException("entryLimit must be positive");
-			if (refreshTicks != null && refreshTicks <= 0) throw new IllegalArgumentException("refreshTicks must be positive");
+			if (refreshTicks != null && refreshTicks < 0) throw new IllegalArgumentException("refreshTicks cannot be negative");
 		}
 
 		@Override
