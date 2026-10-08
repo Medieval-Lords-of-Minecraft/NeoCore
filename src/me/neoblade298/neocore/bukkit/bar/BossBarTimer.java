@@ -24,9 +24,12 @@ public class BossBarTimer implements Listener {
 		stop();
 
 		long durationTicks = Math.multiplyExact(durationSeconds, 20L);
-		activeBar = BossBar.bossBar(message, 1F, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS);
+		BossBar bar = BossBar.bossBar(message, 1F, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS);
+		activeBar = bar;
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			player.showBossBar(activeBar);
+			if (player == null)
+				continue;
+			player.showBossBar(bar);
 		}
 
 		timerTask = Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
@@ -34,8 +37,9 @@ public class BossBarTimer implements Listener {
 
 			@Override
 			public void run() {
+				if (activeBar != bar) return;
 				elapsedTicks++;
-				activeBar.progress(Math.max(0F, 1F - (float) elapsedTicks / durationTicks));
+				bar.progress(Math.max(0F, 1F - (float) elapsedTicks / durationTicks));
 				if (elapsedTicks >= durationTicks) {
 					stop();
 				}
@@ -50,6 +54,7 @@ public class BossBarTimer implements Listener {
 		}
 		if (activeBar != null) {
 			for (Player player : Bukkit.getOnlinePlayers()) {
+				if (player == null) continue;
 				player.hideBossBar(activeBar);
 			}
 			activeBar = null;
